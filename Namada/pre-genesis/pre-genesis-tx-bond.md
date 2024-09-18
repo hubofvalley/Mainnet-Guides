@@ -94,7 +94,7 @@ mkdir -p $HOME/namada-pre-genesis
 
 ### 2. create the unsign bond pre-genesis transaction
 
-Input the `amount` of NAM you wannna delegate. also you can modify the validator address
+Input the `amount` of NAM you wannna delegate
 
 ```bash
 cd $HOME/namada-pre-genesis
