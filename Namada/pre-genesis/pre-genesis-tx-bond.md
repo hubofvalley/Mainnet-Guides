@@ -117,8 +117,8 @@ namadac utils sign-genesis-txs \
 
 #### Make a Pull Request to the [mainnet-genesis repo](https://github.com/anoma/namada-mainnet-genesis) by doing the following:
 
-#### a) rename the signed-bond.toml file to match the Github username of the account you'll be submitting from; ie. github_username-bond.toml
+#### a) rename the signed-bond.toml file to match the Github username of the account you'll be submitting from; ie. `github_username-bond.toml`
 
-#### b) clone the repo and place your github_username-bond.toml in the transactions/ folder
+#### b) clone the repo and place your `github_username-bond.toml` in the transactions/ folder
 
 #### c) create a new Pull Request with the name "Add {github_username}-bond.toml"
