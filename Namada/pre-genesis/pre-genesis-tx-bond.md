@@ -1,6 +1,7 @@
 # Namada pre-genesis mainnet transactions guide
 
 ## Namada app deployment
+
 ### Install dependencies for building from source
 
 ```bash
@@ -84,6 +85,7 @@ PUB_KEY=$(echo "$output" | awk '/Public key:/ {print $NF}')
 ```
 
 ## Pre-genesis bond transaction (PHASE 2)
+
 ### 1. create namada-pre-genesis folder
 
 ```bash
@@ -92,7 +94,7 @@ mkdir -p $HOME/namada-pre-genesis
 
 ### 2. create the unsign bond pre-genesis transaction
 
-Input the ``amount`` of NAM you wannna delegate. also you can modify the validator address
+Input the `amount` of NAM you wannna delegate. also you can modify the validator address
 
 ```bash
 cd $HOME/namada-pre-genesis
