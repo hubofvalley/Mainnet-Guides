@@ -1,5 +1,6 @@
 # Namada pre-genesis mainnet transactions guide
 
+## Namada app deployment
 ### Install dependencies for building from source
 
 ```bash
@@ -74,29 +75,24 @@ namadaw --pre-genesis derive --alias $ALIAS
 namadaw --pre-genesis add --alias $ALIAS --value <your-private-key>
 ```
 
-### 7. display your addresses
+### 7. display your addresses store public key as a variable
 
 ```bash
 namadaw --pre-genesis list
-```
-
-### 8. store public key as variable
-
-```bash
 output=$(namadaw --pre-genesis list)
 PUB_KEY=$(echo "$output" | awk '/Public key:/ {print $NF}')
-echo "PUB_KEY=$PUB_KEY"
 ```
 
-### 9. create namada-pre-genesis folder
+## Pre-genesis bond transaction (PHASE 2)
+### 1. create namada-pre-genesis folder
 
 ```bash
 mkdir -p $HOME/namada-pre-genesis
 ```
 
-### 10. create the unsign bond pre-genesis transaction
+### 2. create the unsign bond pre-genesis transaction
 
-Input the amount of NAM you wannna delegate. also you can modify the validator address
+Input the ``amount`` of NAM you wannna delegate. also you can modify the validator address
 
 ```bash
 cd $HOME/namada-pre-genesis
@@ -107,7 +103,7 @@ namadac utils genesis-bond \
   --path ~/namada-pre-genesis/bond.toml
 ```
 
-### 10. sign the transaction file
+### 3. sign the transaction file
 
 ```bash
 namadac utils sign-genesis-txs \
@@ -115,7 +111,7 @@ namadac utils sign-genesis-txs \
   --output signed-bond.toml
 ```
 
-### 11. Make a pull request
+### 4. Make a pull request
 
     a) rename the signed-bond.toml file to match the Github username of the account you'll be submitting from; ie. github_username-bond.toml
 
