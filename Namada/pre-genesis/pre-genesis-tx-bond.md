@@ -84,7 +84,7 @@ output=$(namadaw --pre-genesis list)
 PUB_KEY=$(echo "$output" | awk '/Public key:/ {print $NF}')
 ```
 
-## Pre-genesis bond transaction (PHASE 2)
+## Pre-genesis bond transaction (PHASE 1 - stage 2)
 
 ### 1. create namada-pre-genesis folder
 
