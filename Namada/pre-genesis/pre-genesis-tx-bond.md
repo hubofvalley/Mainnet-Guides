@@ -2,7 +2,7 @@
 
 ## Namada app deployment
 
-### Install dependencies for building from source
+### 1. Install dependencies for building from source
 
 ```bash
 sudo apt update -y && sudo apt upgrade -y && \
