@@ -122,3 +122,15 @@ namadac utils sign-genesis-txs \
 #### b) clone the repo and place your `github_username-bond.toml` in the transactions/ folder
 
 #### c) create a new Pull Request with the name "Add {github_username}-bond.toml"
+
+![alt text](resources/image.png)
+
+![alt text](/resources/image-1.png)
+
+![alt text](resources/image-2.png)
+
+![alt text](resources/image-3.png)
+
+![alt text](resources/image-4.png)
+
+![alt text](resources/image-5.png)
