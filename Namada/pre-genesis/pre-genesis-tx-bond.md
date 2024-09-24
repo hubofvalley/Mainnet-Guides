@@ -125,11 +125,13 @@ namadac utils sign-genesis-txs \
 
 ![alt text](resources/image.png)
 
-![alt text](/resources/image-1.png)
+![alt text](resources/image-1.png)
 
 ![alt text](resources/image-2.png)
 
 ![alt text](resources/image-3.png)
+
+### i forgot to change the file name to `github_username-bond.toml` (it's still `signed-bond.toml` in the picture) ---> example: my github username is `hubofvalley` so the file name should be `hubofvalley-bond.toml`. so before you upload the file, u must rename it first
 
 ![alt text](resources/image-4.png)
 
