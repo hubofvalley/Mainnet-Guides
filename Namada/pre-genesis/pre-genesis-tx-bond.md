@@ -94,7 +94,7 @@ mkdir -p $HOME/namada-pre-genesis
 
 ### 2. create the unsign bond pre-genesis transaction
 
-Input the `amount` of NAM you wannna delegate
+Input the `amount` of NAM you wannna delegate and your github username
 
 ```bash
 cd $HOME/namada-pre-genesis
@@ -102,7 +102,7 @@ namadac utils genesis-bond \
   --source $PUB_KEY \
   --validator tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6 \
   --amount <amount> \
-  --path ~/namada-pre-genesis/bond.toml
+  --path ~/namada-pre-genesis/github_username-bond.toml
 ```
 
 ### 3. sign the transaction file
