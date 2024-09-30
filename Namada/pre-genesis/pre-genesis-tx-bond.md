@@ -2,6 +2,9 @@
 
 ## Namada app deployment
 
+current cometbft version: `v0.37.9`
+current binary version: `v0.44.0`
+
 ### 1. Install dependencies for building from source
 
 ```bash
@@ -45,12 +48,12 @@ sudo cp $HOME/cometbft/build/cometbft /usr/local/bin/
 
 ```bash
 cd $HOME
-git clone -b v0.43.0 https://github.com/anoma/namada
+git clone -b v0.44.0 https://github.com/anoma/namada
 cd namada
-wget https://github.com/anoma/namada/releases/download/v0.43.0/namada-v0.43.0-Linux-x86_64.tar.gz
-tar -xvf namada-v0.43.0-Linux-x86_64.tar.gz
-rm namada-v0.43.0-Linux-x86_64.tar.gz
-cd namada-v0.43.0-Linux-x86_64
+wget https://github.com/anoma/namada/releases/download/v0.44.0/namada-v0.44.0-Linux-x86_64.tar.gz
+tar -xvf namada-v0.44.0-Linux-x86_64.tar.gz
+rm namada-v0.44.0-Linux-x86_64.tar.gz
+cd namada-v0.44.0-Linux-x86_64
 sudo mv namad* /usr/local/bin/
 namada --version
 ```
