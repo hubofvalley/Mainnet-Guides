@@ -36,7 +36,7 @@ rustc --version
 
 ```bash
 cd $HOME
-git clone -b v0.37.9 https://github.com/cometbft/cometbft.git
+git clone -b v0.37.11 https://github.com/cometbft/cometbft.git
 cd $HOME/cometbft
 git stash
 git fetch --all --tags
@@ -48,12 +48,12 @@ sudo cp $HOME/cometbft/build/cometbft /usr/local/bin/
 
 ```bash
 cd $HOME
-git clone -b v0.44.0 https://github.com/anoma/namada
+git clone -b v0.45.1 https://github.com/anoma/namada
 cd namada
-wget https://github.com/anoma/namada/releases/download/v0.44.0/namada-v0.44.0-Linux-x86_64.tar.gz
-tar -xvf namada-v0.44.0-Linux-x86_64.tar.gz
-rm namada-v0.44.0-Linux-x86_64.tar.gz
-cd namada-v0.44.0-Linux-x86_64
+wget https://github.com/anoma/namada/releases/download/v0.45.1/namada-v0.45.1-Linux-x86_64.tar.gz
+tar -xvf namada-v0.45.1-Linux-x86_64.tar.gz
+rm namada-v0.45.1-Linux-x86_64.tar.gz
+cd namada-v0.45.1-Linux-x86_64
 sudo mv namad* /usr/local/bin/
 namada --version
 ```
