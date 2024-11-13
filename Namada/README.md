@@ -94,7 +94,7 @@ With Public Testnet, Namada's docs and code become public. Check them out below!
 Run the following command to install Valley of Namada:
 
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Testnet-Guides/main/Namada/resources/valleyofNamada.sh)
+bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Testnet-Guides/main/Namada/resources/namada_validator_node_install_dryrun.sh)
 ```
 
 ## Namada Validator Node Deployment Guide With Cosmovisor
