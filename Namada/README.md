@@ -239,12 +239,6 @@ echo "input2. $input2"
 echo "input3. $input3"
 ```
 
-#### save the results, they'll be used in the next step
-
-#### this is an example of the result
-
-![image](https://github.com/user-attachments/assets/af974b3d-f195-406f-9f97-c5b7c30cc88f)
-
 ### 12. create service file
 
 ```bash
