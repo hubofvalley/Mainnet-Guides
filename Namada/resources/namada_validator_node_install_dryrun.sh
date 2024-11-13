@@ -24,6 +24,7 @@ read -p "Enter your preferred port number: (leave empty to use default: 26)" NAM
 if [ -z "$NAMADA_PORT" ]; then
     NAMADA_PORT=26
 fi
+read -p "Enter your wallet name: " WALLET
 read -p "Do you want to enable the indexer? (yes/no): " ENABLE_INDEXER
 
 # 1. Install dependencies for building from source
@@ -61,6 +62,7 @@ cometbft version
 
 # 5. Set environment variables
 echo "export MONIKER=\"$MONIKER\"" >> $HOME/.bash_profile
+echo "export WALLET="$WALLET"" >> $HOME/.bash_profile
 echo "export NAMADA_CHAIN_ID=\"namada-dryrun.abaaeaf7b78cb3ac\"" >> $HOME/.bash_profile
 echo "export NAMADA_PORT=\"$NAMADA_PORT\"" >> $HOME/.bash_profile
 echo "export BASE_DIR=\"$HOME/.local/share/namada\"" >> $HOME/.bash_profile
