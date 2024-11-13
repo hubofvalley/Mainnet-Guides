@@ -190,11 +190,8 @@ main_script() {
     # Restore your validator state
     sudo cp $HOME/.local/share/namada/priv_validator_state.json.backup $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/data/priv_validator_state.json
 
-    # Update version
-    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Testnet-Guides/main/Namada/resources/namada_update.sh)
-
     # Start your namada node
-    sudo systemctl restart namada
+    sudo systemctl restart namadad
 
     echo -e "${GREEN}Snapshot setup completed successfully.${NC}"
 }
