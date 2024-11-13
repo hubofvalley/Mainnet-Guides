@@ -1,70 +1,71 @@
-# Namada Testnet Guide
+# Namada Mainnet Guide
 
 `will always update`
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/2ac53a77-8eec-48be-9106-eb832ae5fee3" width="600" height="300">
+  <img src="resources/namadagrandvalley.png" width="600" height="300">
 </p>
 
-## Namada
+# Namada
 
-### What Is Namada?
+## What is Namada?
 
-Namada is a decentralized, permissionless, privacy-focused blockchain designed to facilitate the creation and management of decentralized applications (dApps) with built-in privacy features. It aims to provide a scalable and secure infrastructure for various use cases, including decentralized finance (DeFi), non-fungible tokens (NFTs), and more.
+Namada is a proof-of-stake Layer 1 (L1) for interchain asset-agnostic data protection. It natively interoperates with fast-finality chains via the Inter-Blockchain Communication (IBC) protocol. For data protection, Namada deploys an upgraded version of the multi-asset shielded pool (MASP) circuit that allows all assets (fungible and non-fungible) to share a common shielded set – this way, transferring a CryptoKitty is indistinguishable from transferring ETH, DAI, ATOM, OSMO, NAM (Namada's native asset), or any other asset on Namada. The MASP also enables shielded set rewards, a novel feature that funds data protection as a public good.
 
-![image](https://github.com/user-attachments/assets/2ceec88b-8c84-4b48-a31d-e2c888c6b80d)
+## Key Features
 
-In the sections below, we will delve deeper into this architecture and explore the key use cases it unlocks.
+### Asset-Agnostic Shielded Transfers
 
-### Namada’s Architecture
+- **Zcash-like Data Protection**: Transfer any fungible and non-fungible tokens with Zcash-like data protection, including native and non-native tokens.
+- **zk-SNARKs**: Enabled by the deployment of novel zk-SNARKs.
 
-Namada Network is a purpose-built layer 1 blockchain that combines the advantages of EVM (Ethereum Virtual Machine) and Cosmos SDK. It is fully EVM-compatible and features deep execution layer optimizations to support complex data structures like IP quickly and cost-efficiently. Key features include:
+### Shared Shielded Set
 
-1. **Precompiled Primitives**: These allow the system to traverse complex data structures like IP graphs within seconds at marginal costs, ensuring that the licensing process is both fast and affordable.
+- **Indistinguishable Transfers**: A shielded transfer involving a Stargaze NFT is indistinguishable from an ATOM or NAM transfer.
+- **Upgraded MASP**: The MASP, an upgraded version of Zcash's Sapling circuit, enables all assets to share the same shielded set, ensuring data protection guarantees are not fragmented among individual assets and are independent of the transaction volume of a particular asset.
 
-2. **Consensus Layer**: Based on the mature CometBFT stack, this layer ensures fast finality and cheap transactions, further enhancing the efficiency of the network.
+### Fast ZKP Generation on Edge Devices
 
-The Proof-of-Creativity Protocol is a set of smart contracts natively deployed on Namada Network. It allows creators to register their IP as "IP Assets" (IPA) on the protocol.
+- **Vertical Integration**: Namada is vertically integrated, allowing users to interact at mainnet with the protocol and send shielded transfers via browser applications.
 
-#### Components
+### Low Transaction Latency and Near-Zero Fees
 
-- **On-Chain NFT**: Represents the IP, which could be an existing NFT or a new NFT minted to represent off-chain IP.
-- **IP Account**: A modified ERC-6551 (Token Bound Account) implementation that manages the IP.
+- **Fast-Proof Generation**: Supports Visa-like speed with fast-proof generation and modern BFT consensus.
+- **Scalability**: Namada scales via fractal instances, similar to Anoma.
 
-#### Modules
+### IBC Compatibility
 
-- **Licensing Module**: Allows creators to set terms on their IP, such as whether derivative works can use the IP commercially.
-- **Royalty Module**: Enables the creation of revenue streams from derivative works.
-- **Dispute Module**: Facilitates the resolution of disputes.
+- **Interoperability**: Interoperates with any fast-finality chain that is IBC compatible.
 
-### Programmable IP License (PIL)
+### Data Protection as a Public Good
 
-The PIL is an off-chain legal contract that enforces the terms of IP Assets and License Tokens. It allows the redemption of tokenized IP into the off-chain legal system, outlining real legal terms for how creators can remix, monetize, and create derivatives of their IP.
+- **Incentives**: The Namada protocol incentivizes users that hold shielded assets, thereby contributing to the shared shielded set, via the latest update of the MASP circuit that includes the novel Convert Circuit.
+- **Public Good**: The shielded set in Namada is a non-exclusive and anti-rivalrous public good; the more people use shielded transfers, the better the data protection guarantees for each individual.
 
-### Namada Solving Target
+## Cubic Proof-of-Stake (CPoS)
 
-The increasing need for greater efficiency in IP management has coincided with the rise of blockchain technology, which is essential for addressing the current system's challenges. Traditional methods of protecting and licensing IP are cumbersome and expensive, often requiring the involvement of lawyers. This makes the process inaccessible for many creators, particularly those without substantial resources.
+### Innovations for Validators and Delegators
 
-Moreover, the current system relies on one-to-one licensing deals, which are not scalable. This leads to many potential licensing opportunities being missed, stifling creativity and innovation. Additionally, the rapid proliferation of AI-generated media has outpaced the current IP system, which was designed for physical replication. There is an urgent need to automate and optimize the licensing of IP to keep up with the digital age.
+- **Cubic Slashing**: Penalties for safety faults in Namada are calculated following a cubic slashing algorithm, encouraging validators to deploy more diverse and uncorrelated setups.
+- **Improved PoS Guarantees**: The cost of attacking Namada is quantifiable due to the automatic detection mechanism on which accounts contributed to the fault (validators, delegators, etc.).
+- **Transaction Fees in Multiple Assets**: Fees can be paid in many tokens and can be updated via a governance vote.
 
-Namada offers a solution with a specialized layer 1 blockchain that combines the advantages of EVM and Cosmos SDK, providing the infrastructure needed for massive IP data scalability. Key applications of Namada include:
+## Namada Governance
 
-1. **Creators**: Namada enables creators to register their IP as IP Assets and set terms using the Programmable IP License (PIL).
-2. **Derivative Works**: Creators of derivative works can license IP automatically through the blockchain, making the process efficient and scalable.
-3. **AI-Generated Media**: Namada supports the efficient management of AI-generated content by automating the licensing process.
-4. **Scalable Licensing**: Namada's approach to licensing ensures that all potential opportunities are captured, fostering creativity and collaboration.
+### Formal On-Chain Mechanism
 
-### Example Use Case
+- **Stake-Weighted Voting**: Namada's on-chain governance protocol supports text-based proposals with stake-weighted voting.
+- **Proposal Format**: Proposals in Namada use a similar format to BIP2.
+- **Voting**: Anyone with NAM tokens can vote in governance, and delegators can overwrite their validators' votes.
 
-Without Namada, creating a comic with multiple IPs (e.g., Azuki and Pudgy NFTs) would require extensive legal work, making it impractical. With Namada, IP holders can register their IP, set terms, and license their work automatically through the blockchain, making the process efficient and scalable.
+### Public Goods Funding (PGF)
 
-### Conclusion
-
-By leveraging blockchain technology, Namada is poised to revolutionize IP management, making it more efficient, scalable, and accessible for creators worldwide. It provides a scalable, low-cost, and fully programmable IP management solution essential for bringing vast amounts of IP on-chain.
+- **Retroactive and Continuous Funding**: Namada supports both retroactive and continuous public-goods funding.
+- **Council**: Managed by a public-goods-funding council composed of trusted community members (elected by governance).
+- **Disbursement**: Continuous funding is regularly distributed, while retroactive funding is distributed in lump-sum payments based on past work.
+- **Veto Mechanism**: The community has a veto mechanism to check on council members' spending proposals.
 
 For more detailed information, visit the [Namada Documentation](https://docs.namada.net/).
-
----
 
 With Public Testnet, Namada's docs and code become public. Check them out below!
 
@@ -172,6 +173,7 @@ echo "export WALLET="$WALLET"" >> $HOME/.bash_profile
 echo "export MONIKER="$ALIAS"" >> $HOME/.bash_profile
 echo "export NAMADA_CHAIN_ID="namada-dryrun.abaaeaf7b78cb3ac"" >> $HOME/.bash_profile
 echo "export NAMADA_PORT="${NAMADA_PORT:-26}"" >> $HOME/.bash_profile
+export NAMADA_NETWORK_CONFIGS_SERVER="https://testnet.namada-dryrun.tududes.com/configs"
 source $HOME/.bash_profile
 ```
 
@@ -181,6 +183,7 @@ source $HOME/.bash_profile
 cd $HOME
 wget https://github.com/anoma/namada/releases/download/v0.45.1/namada-v0.45.1-Linux-x86_64.tar.gz
 tar -xvf namada-v0.45.1-Linux-x86_64.tar.gz
+cd namada-v0.45.1-Linux-x86_64
 mv namad* /usr/local/bin/
 ```
 
