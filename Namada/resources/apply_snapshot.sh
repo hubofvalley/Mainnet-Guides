@@ -48,7 +48,7 @@ display_snapshot_details() {
     echo -e "${GREEN}Snapshot Height:${NC} $snapshot_height"
 
     # Get the real-time block height
-    realtime_block_height=$(curl -s -X POST "https://lightnode-json-rpc-mainnet-namada.grandvalleys.com" -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' | jq -r '.result' | xargs printf "%d\n")
+    realtime_block_height=$(curl -s -X POST "https://lightnode-json-rpc-namada.grandvalleys.com" -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' | jq -r '.result' | xargs printf "%d\n")
 
     # Calculate the difference
     block_difference=$((realtime_block_height - snapshot_height))
@@ -145,13 +145,13 @@ main_script() {
     sudo apt-get install wget lz4 jq -y
 
     # Stop your namada node
-    sudo systemctl stop namadad
+    sudo systemctl stop namada
 
     # Back up your validator state
-    sudo cp $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/cometbft/data/priv_validator_state.json $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/priv_validator_state.json.backup
+    sudo cp $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/data/priv_validator_state.json $HOME/.local/share/namada/priv_validator_state.json.backup
 
     # Delete previous namada data folders
-    sudo rm -rf $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/cometbft/data $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/{db,wasm}
+    sudo rm -rf $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/{db,wasm}
 
     # Download and decompress snapshots based on the provider
     if [[ $provider_choice -eq 1 ]]; then
@@ -182,10 +182,13 @@ main_script() {
     fi
 
     # Restore your validator state
-    sudo cp $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/priv_validator_state.json.backup $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/cometbft/data/priv_validator_state.json
+    sudo cp $HOME/.local/share/namada/priv_validator_state.json.backup $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/data/priv_validator_state.json
+
+    # Update version
+    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Testnet-Guides/main/Namada/resources/namada_update.sh)
 
     # Start your namada node
-    sudo systemctl restart namadad
+    sudo systemctl restart namada
 
     echo -e "${GREEN}Snapshot setup completed successfully.${NC}"
 }
