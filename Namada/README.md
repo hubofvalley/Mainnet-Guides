@@ -69,7 +69,7 @@ For more detailed information, visit the [Namada Documentation](https://docs.nam
 With Public Testnet, Namada's docs and code become public. Check them out below!
 
 - [Namada Website](https://namada.net/)
-- [Namada Twitter](https://twitter.com/NamadaNet)
+- [Namada Twitter](https://twitter.com/namada)
 - [Namada Discord](https://discord.gg/namada)
 - [Namada Docs](https://docs.namada.net/)
 - [Namada GitHub](https://github.com/anoma)
@@ -77,11 +77,9 @@ With Public Testnet, Namada's docs and code become public. Check them out below!
 
 ## Grand Valley's Namada public endpoints:
 
-- cosmos rpc: `https://lightnode-rpc-namada.grandvalleys.com`
-- json-rpc: `https://lightnode-json-rpc-namada.grandvalleys.com`
-- cosmos rest-api: `https://lightnode-api-namada.grandvalleys.com`
-- cosmos ws: `wss://lightnode-rpc-namada.grandvalleys.com/websocket`
-- evm ws: `wss://lightnode-wss-namada.grandvalleys.com`
+- cosmos rpc: `https://lightnode-rpc-mainnet-namada.grandvalleys.com`
+- json-rpc: `https://lightnode-json-rpc-mainnet-namada.grandvalleys.com`
+- cosmos ws: `wss://lightnode-rpc-mainnet-namada.grandvalleys.com/websocket`
 
 ## Valley Of Namada: Namada Tools Created by Grand Valley
 
@@ -172,7 +170,7 @@ read -p "Enter your wallet name: " WALLET && echo "Current wallet name: $WALLET"
 
 echo "export WALLET="$WALLET"" >> $HOME/.bash_profile
 echo "export MONIKER="$ALIAS"" >> $HOME/.bash_profile
-echo "export OG_CHAIN_ID="namada-dryrun.abaaeaf7b78cb3ac"" >> $HOME/.bash_profile
+echo "export NAMADA_CHAIN_ID="namada-dryrun.abaaeaf7b78cb3ac"" >> $HOME/.bash_profile
 echo "export NAMADA_PORT="${NAMADA_PORT:-26}"" >> $HOME/.bash_profile
 source $HOME/.bash_profile
 ```
@@ -189,7 +187,7 @@ mv namad* /usr/local/bin/
 ### 7. join the network as post-genesis validator
 
 ```bash
-namadac utils join-network --chain-id $CHAIN_ID
+namadac utils join-network --chain-id $NAMADA_CHAIN_ID
 peers=$(curl -sS https://lightnode-rpc-mainnet-namada.grandvalleys.com/net_info | jq -r '.result.peers[] | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr)"' | awk -F ':' '{print $1":"$(NF)}' | paste -sd, -)
 echo $peers
 sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$peers\"|" $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml
