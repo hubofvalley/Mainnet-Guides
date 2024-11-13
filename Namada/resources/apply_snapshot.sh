@@ -151,7 +151,13 @@ main_script() {
     sudo cp $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/data/priv_validator_state.json $HOME/.local/share/namada/priv_validator_state.json.backup
 
     # Delete previous namada data folders
-    sudo rm -rf $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/{db,wasm}
+    if [[ $provider_choice -eq 1 ]]; then
+        sudo rm -rf $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/db
+        sudo rm -rf $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/cometbft/data
+    elif [[ $provider_choice -eq 2 ]]; then
+        sudo rm -rf $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/cometbft/data
+        sudo rm -rf $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/{db,wasm}
+    fi
 
     # Download and decompress snapshots based on the provider
     if [[ $provider_choice -eq 1 ]]; then
