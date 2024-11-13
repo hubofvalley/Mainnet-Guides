@@ -1,4 +1,4 @@
-# Namada Protocol Testnet Guide
+# Namada Testnet Guide
 
 `will always update`
 
@@ -6,7 +6,7 @@
   <img src="https://github.com/user-attachments/assets/2ac53a77-8eec-48be-9106-eb832ae5fee3" width="600" height="300">
 </p>
 
-## Namada Protocol
+## Namada
 
 ### What Is Namada?
 
@@ -75,7 +75,7 @@ With Public Testnet, Namada's docs and code become public. Check them out below!
 - [Namada GitHub](https://github.com/anoma)
 - [Namada Explorer](https://explorer.namada.net/)
 
-## Grand Valley's Namada Protocol public endpoints:
+## Grand Valley's Namada public endpoints:
 
 - cosmos rpc: `https://lightnode-rpc-namada.grandvalleys.com`
 - json-rpc: `https://lightnode-json-rpc-namada.grandvalleys.com`
@@ -83,12 +83,12 @@ With Public Testnet, Namada's docs and code become public. Check them out below!
 - cosmos ws: `wss://lightnode-rpc-namada.grandvalleys.com/websocket`
 - evm ws: `wss://lightnode-wss-namada.grandvalleys.com`
 
-## Valley Of Namada: Namada Protocol Tools Created by Grand Valley
+## Valley Of Namada: Namada Tools Created by Grand Valley
 
 ![Valley of Namada Image 1](https://github.com/user-attachments/assets/5110da6d-4ec2-492d-86ea-887b34b279b4)
 ![Valley of Namada Image 2](https://github.com/user-attachments/assets/537ca1db-1a0c-4908-a733-3f45872dc8ca)
 
-**Valley of Namada** by Grand Valley is an all-in-one infrastructure solution providing powerful tools for efficient node management and validator interactions within the **Namada Protocol** network. Designed for node runners in the **Namada Protocol** ecosystem, **Valley of Namada** offers an accessible, streamlined interface to manage nodes, maintain network participation, and perform validator functions effectively.
+**Valley of Namada** by Grand Valley is an all-in-one infrastructure solution providing powerful tools for efficient node management and validator interactions within the **Namada** network. Designed for node runners in the **Namada** ecosystem, **Valley of Namada** offers an accessible, streamlined interface to manage nodes, maintain network participation, and perform validator functions effectively.
 
 ### Installation
 
@@ -98,7 +98,7 @@ Run the following command to install Valley of Namada:
 bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Testnet-Guides/main/Namada/resources/valleyofNamada.sh)
 ```
 
-## 0G Validator Node Deployment Guide With Cosmovisor
+## Namada Validator Node Deployment Guide With Cosmovisor
 
 ### **System Requirements**
 
@@ -198,11 +198,11 @@ sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$peers\"|" $HOME/.local
 ### 8. set custom ports in config.toml file
 
 ```bash
-sed -i.bak -e "/^\[p2p\]/,/^$/ s%laddr = \"tcp://0.0.0.0:26656\"%laddr = \"tcp://0.0.0.0:${0G_PORT}656\"%g;
-s%prometheus_listen_addr = \":26660\"%prometheus_listen_addr = \":${0G_PORT}660\"%g;
+sed -i.bak -e "/^\[p2p\]/,/^$/ s%laddr = \"tcp://0.0.0.0:26656\"%laddr = \"tcp://0.0.0.0:${NAMADA_PORT}656\"%g;
+s%prometheus_listen_addr = \":26660\"%prometheus_listen_addr = \":${NAMADA_PORT}660\"%g;
 s%proxy_app = \"tcp://127.0.0.1:26658\"%proxy_app = \"tcp://127.0.0.1:${NAMADA_PORT}658\"%g;
-s%^laddr = \"tcp://127.0.0.1:26657\"%laddr = \"tcp://127.0.0.1:${0G_PORT}657\"%g;
-s%^pprof_laddr = \"localhost:26060\"%pprof_laddr = \"localhost:${0G_PORT}060\"%g" $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml
+s%^laddr = \"tcp://127.0.0.1:26657\"%laddr = \"tcp://127.0.0.1:${NAMADA_PORT}657\"%g;
+s%^pprof_laddr = \"localhost:26060\"%pprof_laddr = \"localhost:${NAMADA_PORT}060\"%g" $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml
 ```
 
 ### 9. disable indexer (optional) (if u want to run a full node, skip this step)
