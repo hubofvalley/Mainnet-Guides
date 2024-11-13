@@ -165,6 +165,7 @@ main_script() {
         wget -O $DATA_SNAPSHOT_FILE $MAND_DATA_SNAPSHOT_URL
         decompress_mandragora_snapshots
     elif [[ $provider_choice -eq 2 ]]; then
+        SNAPSHOT_FILE=$FILE_NAME
         wget -O $SNAPSHOT_FILE $SNAPSHOT_URL
         decompress_itrocket_snapshot
     fi
