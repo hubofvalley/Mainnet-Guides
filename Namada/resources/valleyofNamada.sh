@@ -636,7 +636,7 @@ function transfer_unshielding() {
 function vote_proposal() {
     DEFAULT_WALLET=$WALLET  # Assuming $WALLET is set elsewhere in your script
     while true; do
-        read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
+        read -p "Enter wallet name/alias to use as signing keys (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
         if [ -z "$WALLET_NAME" ]; then
             WALLET_NAME=$DEFAULT_WALLET
         fi
@@ -659,11 +659,11 @@ function vote_proposal() {
     echo "3. Vote on a proposal"
     read -p "Enter your choice (1, 2, or 3): " CHOICE
 
-    read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
+    read -p "Do you want to use your own RPC or Grand Valley's RPC? (o/g): " RPC_CHOICE
 
     case $CHOICE in
         1)
-            if [ "$RPC_CHOICE" == "grandvalley" ]; then
+            if [ "$RPC_CHOICE" == "g" ]; then
                 namadac query-proposal --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
             else
                 namadac query-proposal
@@ -671,7 +671,7 @@ function vote_proposal() {
             ;;
         2)
             read -p "Enter proposal ID: " PROPOSAL_ID
-            if [ "$RPC_CHOICE" == "grandvalley" ]; then
+            if [ "$RPC_CHOICE" == "g" ]; then
                 namadac query-proposal --proposal-id $PROPOSAL_ID --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
             else
                 namadac query-proposal --proposal-id $PROPOSAL_ID
@@ -679,11 +679,11 @@ function vote_proposal() {
             ;;
         3)
             read -p "Enter proposal ID: " PROPOSAL_ID
-            read -p "Enter your vote (yay/nay): " VOTE
+            read -p "Enter your vote (y/n): " VOTE
 
-            read -p "Do you want to vote through your implicit address or your validator address? (implicit/validator): " ADDRESS_TYPE
+            read -p "Do you want to vote through your implicit address or your validator address? (i/v): " ADDRESS_TYPE
 
-            if [ "$ADDRESS_TYPE" == "validator" ]; then
+            if [ "$ADDRESS_TYPE" == "v" ]; then
                 # Query validator address
                 port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml")
                 VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) | grep 'Found validator address' | awk -F'"' '{print $2}')
@@ -692,7 +692,7 @@ function vote_proposal() {
                 ADDRESS=$WALLET_ADDRESS
             fi
 
-            if [ "$RPC_CHOICE" == "grandvalley" ]; then
+            if [ "$RPC_CHOICE" == "g" ]; then
                 namadac vote-proposal --proposal-id $PROPOSAL_ID --vote $VOTE --address $ADDRESS --signing-keys $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
             else
                 namadac vote-proposal --proposal-id $PROPOSAL_ID --vote $VOTE --address $ADDRESS --signing-keys $WALLET_NAME
