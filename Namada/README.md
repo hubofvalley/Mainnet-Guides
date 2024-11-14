@@ -97,6 +97,43 @@ Run the following command to install Valley of Namada:
 bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Namada/resources/valleyofNamada.sh)
 ```
 
+### Key Features of Valley of Namada
+
+#### 1. Node Interactions
+
+- **Deploy and Manage Validator Nodes**: Deploy new validator nodes or remove existing ones. **Important!** Always back up critical files (e.g., seed phrases, private keys, `priv_validator_key.json`) before deletion.
+- **Node Control**: Start, stop, or restart validator nodes as needed.
+- **Node Status**: Monitor the current operational status of the validator node.
+- **Peer Management**: Add peers to enhance network stability and communication.
+- **Logging**: Access unified logs for troubleshooting and monitoring.
+- **Snapshot Application**: Quickly synchronize with the network by applying the latest snapshot, expediting node setup.
+
+#### 2. Validator and Key Interactions
+
+- **Validator Setup**: Create a validator to engage in network consensus and security.
+- **Key Management**: Create and manage wallets, restore wallets, and create payment addresses.
+- **Stake and Unstake Tokens**: Stake tokens to support network security or unstake them as required. Also, query validator public keys and account balances.
+- **Redelegate Tokens**: Redelegate tokens to another validator.
+- **Withdraw Unbonded Tokens**: Withdraw unbonded tokens from a validator.
+- **Claim Rewards**: Claim rewards from a validator.
+- **Transfer Tokens**: Transfer tokens between transparent and shielded accounts.
+
+#### 3. Namada App Installation
+
+- Install the Namada app (v0.45.1) for command-line transactions and network interactions without running a full node.
+
+### Usage
+
+To use the script, simply run it in a terminal. The script will display the logo and introduction, then prompt the user to press Enter to continue. After that, the main menu will be displayed, allowing the user to select various options for managing the Namada validator node.
+
+### Menu Interface
+
+The script provides a menu-driven interface that allows users to select different options for managing and interacting with the Namada validator node. The menu is organized into categories such as "Node Interactions," "Validator/Key Interactions," and "Install Namada App."
+
+### Conclusion
+
+**Valley of Namada** is a powerful tool for managing and interacting with a Namada validator node. It provides a user-friendly interface for performing a wide range of tasks related to the Namada blockchain, making it easier for users to set up, manage, and interact with their validator nodes.
+
 ## Namada Validator Node Deployment Guide With Cosmovisor
 
 ### **System Requirements**
