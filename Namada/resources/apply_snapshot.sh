@@ -95,7 +95,7 @@ decompress_mandragora_snapshots() {
 
 # Function to decompress ITRocket snapshot
 decompress_itrocket_snapshot() {
-    tar -xzvf $SNAPSHOT_FILE -C $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac
+    lz4 -c -d $SNAPSHOT_FILE | tar -xv -C $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac
 }
 
 # Function to prompt user to back or continue
