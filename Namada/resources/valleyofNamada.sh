@@ -208,14 +208,14 @@ function query_balance() {
     case $CHOICE in
         1)
             if [ "$RPC_CHOICE" == "grandvalley" ]; then
-                namadac balance --owner $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+                namadac balance --owner $WALLET_NAME --token nam --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
             else
                 namadac balance --owner $WALLET_NAME
             fi
             ;;
         2)
             if [ "$RPC_CHOICE" == "grandvalley" ]; then
-                namadac balance --owner ${WALLET_NAME}-shielded --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+                namadac balance --owner ${WALLET_NAME}-shielded --token nam --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
             else
                 namadac balance --owner ${WALLET_NAME}-shielded
             fi
