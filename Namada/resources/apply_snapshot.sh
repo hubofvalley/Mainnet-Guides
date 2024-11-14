@@ -156,7 +156,7 @@ main_script() {
         sudo rm -rf $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/cometbft/data
     elif [[ $provider_choice -eq 2 ]]; then
         sudo rm -rf $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/cometbft/data
-        sudo rm -rf $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/{db,wasm}
+        sudo rm -rf $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/db
     fi
 
     # Download and decompress snapshots based on the provider
