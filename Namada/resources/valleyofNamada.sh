@@ -159,7 +159,7 @@ function restart_validator_node() {
     menu
 }
 
-function validator_node_logs() {
+function show_validator_node_logs() {
     echo "Displaying Namada Validator Node Logs:"
     sudo journalctl -u namadad -fn 100
     menu
@@ -706,13 +706,13 @@ function menu() {
     echo "Menu:"
     echo -e "${GREEN}1. Node Interactions:${RESET}"
     echo "   a. Deploy/re-Deploy Validator Node (includes Cosmovisor deployment)"
-    echo "   b. Add Peers"
-    echo "   c. Delete Validator Node"
-    echo "   d. Stop Validator Node"
-    echo "   e. Restart Validator Node"
-    echo "   f. Show Validator Node Logs"
-    echo "   g. Show Validator Node Status"
-    echo "   h. Apply Snapshot"
+    echo "   b. Show Validator Node Status"
+    echo "   c. Show Validator Node Logs"
+    echo "   d. Apply Snapshot"
+    echo "   e. Add Peers"
+    echo "   f. Restart Validator Node"
+    echo "   g. Stop Validator Node"
+    echo "   h. Delete Validator Node"
     echo -e "${GREEN}2. Validator/Key Interactions:${RESET}"
     echo "   a. Create Validator"
     echo "   b. Create Wallet"
@@ -749,13 +749,13 @@ function menu() {
         1)
             case $SUB_OPTION in
                 a) deploy_validator_node ;;
-                b) add_peers ;;
-                c) delete_validator_node ;;
-                d) stop_validator_node ;;
-                e) restart_validator_node ;;
-                f) validator_node_logs ;;
-                g) show_validator_node_status ;;
-                h) apply_snapshot ;;
+                b) show_validator_node_status ;;
+                c) show_validator_node_logs ;;
+                d) apply_snapshot ;;
+                e) add_peers ;;
+                f) restart_validator_node ;;
+                g) stop_validator_node ;;
+                h) delete_validator_node ;;
                 *) echo "Invalid sub-option. Please try again." ;;
             esac
             ;;
@@ -784,6 +784,7 @@ function menu() {
         *) echo "Invalid option. Please try again." ;;
     esac
 }
+
 
 # Function to show endpoints
 function show_endpoints() {
