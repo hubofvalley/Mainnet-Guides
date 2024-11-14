@@ -175,49 +175,13 @@ function install_namada_app() {
 }
 
 function create_wallet() {
-    DEFAULT_WALLET=$WALLET  # Assuming $WALLET is set elsewhere in your script
-    while true; do
-        read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
-        if [ -z "$WALLET_NAME" ]; then
-            WALLET_NAME=$DEFAULT_WALLET
-        fi
-
-        # Get wallet address
-        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
-
-        if [ -n "$WALLET_ADDRESS" ]; then
-            break
-        else
-            echo "Wallet name not found. Please check the wallet name/alias and try again."
-        fi
-    done
-
-    echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
-
+    read -p "Enter wallet name/alias: " WALLET_NAME
     namadaw gen --alias $WALLET_NAME
     menu
 }
 
 function restore_wallet() {
-    DEFAULT_WALLET=$WALLET  # Assuming $WALLET is set elsewhere in your script
-    while true; do
-        read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
-        if [ -z "$WALLET_NAME" ]; then
-            WALLET_NAME=$DEFAULT_WALLET
-        fi
-
-        # Get wallet address
-        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
-
-        if [ -n "$WALLET_ADDRESS" ]; then
-            break
-        else
-            echo "Wallet name not found. Please check the wallet name/alias and try again."
-        fi
-    done
-
-    echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
-
+    read -p "Enter wallet name/alias: " WALLET_NAME
     namada wallet derive --alias $WALLET_NAME --hd-path default
     namadaw derive --alias $WALLET_NAME --hd-path default
     namadaw derive --shielded --alias ${WALLET_NAME}-shielded
@@ -226,25 +190,7 @@ function restore_wallet() {
 }
 
 function create_payment_address() {
-    DEFAULT_WALLET=$WALLET  # Assuming $WALLET is set elsewhere in your script
-    while true; do
-        read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
-        if [ -z "$WALLET_NAME" ]; then
-            WALLET_NAME=$DEFAULT_WALLET
-        fi
-
-        # Get wallet address
-        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
-
-        if [ -n "$WALLET_ADDRESS" ]; then
-            break
-        else
-            echo "Wallet name not found. Please check the wallet name/alias and try again."
-        fi
-    done
-
-    echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
-
+    read -p "Enter wallet name/alias: " WALLET_NAME
     namadaw gen-payment-addr --key ${WALLET_NAME}-shielded --alias ${WALLET_NAME}-shielded-addr
     echo -e "${GREEN}Payment address created successfully.${RESET}"
     menu
