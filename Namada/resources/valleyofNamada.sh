@@ -293,7 +293,7 @@ function stake_tokens() {
         2)
             read -p "Enter amount to stake: " AMOUNT
             port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml")
-            VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) --node https://lightnode-rpc-mainnet-namada.grandvalleys.com | grep 'Found validator address' | awk -F'"' '{print $2}')
+            VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) | grep 'Found validator address' | awk -F'"' '{print $2}')
             if [ "$RPC_CHOICE" == "grandvalley" ]; then
                 namadac bond --source $WALLET_NAME --validator $VALIDATOR_ADDRESS --amount $AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
             else
@@ -680,10 +680,22 @@ function vote_proposal() {
         3)
             read -p "Enter proposal ID: " PROPOSAL_ID
             read -p "Enter your vote (yay/nay): " VOTE
-            if [ "$RPC_CHOICE" == "grandvalley" ]; then
-                namadac vote-proposal --proposal-id $PROPOSAL_ID --vote $VOTE --address $WALLET_ADDRESS --signing-keys $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+
+            read -p "Do you want to vote through your implicit address or your validator address? (implicit/validator): " ADDRESS_TYPE
+
+            if [ "$ADDRESS_TYPE" == "validator" ]; then
+                # Query validator address
+                port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml")
+                VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address))
+                ADDRESS=$VALIDATOR_ADDRESS
             else
-                namadac vote-proposal --proposal-id $PROPOSAL_ID --vote $VOTE --address $WALLET_ADDRESS --signing-keys $WALLET_NAME
+                ADDRESS=$WALLET_ADDRESS
+            fi
+
+            if [ "$RPC_CHOICE" == "grandvalley" ]; then
+                namadac vote-proposal --proposal-id $PROPOSAL_ID --vote $VOTE --address $ADDRESS --signing-keys $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+            else
+                namadac vote-proposal --proposal-id $PROPOSAL_ID --vote $VOTE --address $ADDRESS --signing-keys $WALLET_NAME
             fi
             ;;
         *)
