@@ -249,7 +249,7 @@ function stake_tokens() {
     echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
 
     echo "Choose an option:"
-    echo "1. Delegate to Grand Valley validator"
+    echo "1. Delegate to Grand Valley"
     echo "2. Self-delegate"
     echo "3. Delegate to another validator"
     read -p "Enter your choice (1, 2, or 3): " CHOICE
@@ -369,7 +369,7 @@ function redelegate_tokens() {
     echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
 
     echo "Choose an option:"
-    echo "1. Redelegate to Grand Valley validator"
+    echo "1. Redelegate to Grand Valley"
     echo "2. Redelegate from your validator"
     echo "3. Redelegate from another validator"
     read -p "Enter your choice (1, 2, or 3): " CHOICE
@@ -394,7 +394,7 @@ function redelegate_tokens() {
             SOURCE_VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) --node https://lightnode-rpc-mainnet-namada.grandvalleys.com | grep 'Found validator address' | awk -F'"' '{print $2}')
 
             echo "Choose a destination validator:"
-            echo "1. Grand Valley validator"
+            echo "1. Grand Valley"
             echo "2. Another validator"
             read -p "Enter your choice (1 or 2): " DEST_CHOICE
 
@@ -422,7 +422,7 @@ function redelegate_tokens() {
             read -p "Enter amount to redelegate: " AMOUNT
 
             echo "Choose a destination validator:"
-            echo "1. Grand Valley validator"
+            echo "1. Grand Valley"
             echo "2. Another validator"
             read -p "Enter your choice (1 or 2): " DEST_CHOICE
 
