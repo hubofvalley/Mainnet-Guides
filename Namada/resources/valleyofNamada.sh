@@ -686,7 +686,7 @@ function vote_proposal() {
             if [ "$ADDRESS_TYPE" == "validator" ]; then
                 # Query validator address
                 port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml")
-                VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address))
+                VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) | grep 'Found validator address' | awk -F'"' '{print $2}')
                 ADDRESS=$VALIDATOR_ADDRESS
             else
                 ADDRESS=$WALLET_ADDRESS
