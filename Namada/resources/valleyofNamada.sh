@@ -679,7 +679,7 @@ function vote_proposal() {
             ;;
         3)
             read -p "Enter proposal ID: " PROPOSAL_ID
-            read -p "Enter your vote (1 for yay, 2 for nay): " VOTE
+            read -p "Enter your vote (yay/nay): " VOTE
 
             read -p "Do you want to vote through your implicit address or your validator address? (1 for implicit, 2 for validator): " ADDRESS_TYPE
 
