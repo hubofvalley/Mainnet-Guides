@@ -165,6 +165,12 @@ function validator_node_logs() {
     menu
 }
 
+function show_validator_node_status() {
+    port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml")
+    curl -s 127.0.0.1:$port/status
+    menu
+}
+
 function install_namada_app() {
     echo -e "${YELLOW}This option is only for those who want to execute the transactions without running the node.${RESET}"
     wget https://github.com/anoma/namada/releases/download/v0.45.1/namada-v0.45.1-Linux-x86_64.tar.gz
@@ -705,7 +711,8 @@ function menu() {
     echo "   d. Stop Validator Node"
     echo "   e. Restart Validator Node"
     echo "   f. Show Validator Node Logs"
-    echo "   g. Apply Snapshot"
+    echo "   g. Show Validator Node Status"
+    echo "   h. Apply Snapshot"
     echo -e "${GREEN}2. Validator/Key Interactions:${RESET}"
     echo "   a. Create Validator"
     echo "   b. Create Wallet"
@@ -747,7 +754,8 @@ function menu() {
                 d) stop_validator_node ;;
                 e) restart_validator_node ;;
                 f) validator_node_logs ;;
-                g) apply_snapshot ;;
+                g) show_validator_node_status ;;
+                h) apply_snapshot ;;
                 *) echo "Invalid sub-option. Please try again." ;;
             esac
             ;;
