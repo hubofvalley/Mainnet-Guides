@@ -249,14 +249,24 @@ function stake_tokens() {
     echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
 
     echo "Choose an option:"
-    echo "1. Self-delegate"
-    echo "2. Delegate to another validator"
-    read -p "Enter your choice (1 or 2): " CHOICE
+    echo "1. Delegate to Grand Valley validator"
+    echo "2. Self-delegate"
+    echo "3. Delegate to another validator"
+    read -p "Enter your choice (1, 2, or 3): " CHOICE
 
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
     case $CHOICE in
         1)
+            read -p "Enter amount to stake: " AMOUNT
+            VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
+            if [ "$RPC_CHOICE" == "grandvalley" ]; then
+                namadac bond --source $WALLET_NAME --validator $VALIDATOR_ADDRESS --amount $AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+            else
+                namadac bond --source $WALLET_NAME --validator $VALIDATOR_ADDRESS --amount $AMOUNT
+            fi
+            ;;
+        2)
             read -p "Enter amount to stake: " AMOUNT
             port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml")
             VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) --node https://lightnode-rpc-mainnet-namada.grandvalleys.com | grep 'Found validator address' | awk -F'"' '{print $2}')
@@ -266,7 +276,7 @@ function stake_tokens() {
                 namadac bond --source $WALLET_NAME --validator $VALIDATOR_ADDRESS --amount $AMOUNT
             fi
             ;;
-        2)
+        3)
             read -p "Enter validator address: " VALIDATOR_ADDRESS
             read -p "Enter amount to stake: " AMOUNT
             if [ "$RPC_CHOICE" == "grandvalley" ]; then
@@ -276,7 +286,7 @@ function stake_tokens() {
             fi
             ;;
         *)
-            echo "Invalid choice. Please enter 1 or 2."
+            echo "Invalid choice. Please enter 1, 2, or 3."
             ;;
     esac
 
@@ -359,14 +369,26 @@ function redelegate_tokens() {
     echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
 
     echo "Choose an option:"
-    echo "1. Redelegate from your validator"
-    echo "2. Redelegate from another validator"
-    read -p "Enter your choice (1 or 2): " CHOICE
+    echo "1. Redelegate to Grand Valley validator"
+    echo "2. Redelegate from your validator"
+    echo "3. Redelegate from another validator"
+    read -p "Enter your choice (1, 2, or 3): " CHOICE
 
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
     case $CHOICE in
         1)
+            read -p "Enter amount to redelegate: " AMOUNT
+            SOURCE_VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) --node https://lightnode-rpc-mainnet-namada.grandvalleys.com | grep 'Found validator address' | awk -F'"' '{print $2}')
+            TARGET_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
+
+            if [ "$RPC_CHOICE" == "grandvalley" ]; then
+                namadac redelegate --source-validator $SOURCE_VALIDATOR_ADDRESS --destination-validator $TARGET_VALIDATOR_ADDRESS --owner $WALLET_NAME --amount $AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+            else
+                namadac redelegate --source-validator $SOURCE_VALIDATOR_ADDRESS --destination-validator $TARGET_VALIDATOR_ADDRESS --owner $WALLET_NAME --amount $AMOUNT
+            fi
+            ;;
+        2)
             read -p "Enter amount to redelegate: " AMOUNT
             port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml")
             SOURCE_VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) --node https://lightnode-rpc-mainnet-namada.grandvalleys.com | grep 'Found validator address' | awk -F'"' '{print $2}')
@@ -395,7 +417,7 @@ function redelegate_tokens() {
                 namadac redelegate --source-validator $SOURCE_VALIDATOR_ADDRESS --destination-validator $TARGET_VALIDATOR_ADDRESS --owner $WALLET_NAME --amount $AMOUNT
             fi
             ;;
-        2)
+        3)
             read -p "Enter source validator address: " SOURCE_VALIDATOR_ADDRESS
             read -p "Enter amount to redelegate: " AMOUNT
 
@@ -424,7 +446,7 @@ function redelegate_tokens() {
             fi
             ;;
         *)
-            echo "Invalid choice. Please enter 1 or 2."
+            echo "Invalid choice. Please enter 1, 2, or 3."
             ;;
     esac
 
