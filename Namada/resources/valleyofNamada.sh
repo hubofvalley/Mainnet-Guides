@@ -175,13 +175,49 @@ function install_namada_app() {
 }
 
 function create_wallet() {
-    read -p "Enter wallet name: " WALLET_NAME
+    DEFAULT_WALLET=$WALLET  # Assuming $WALLET is set elsewhere in your script
+    while true; do
+        read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
+        if [ -z "$WALLET_NAME" ]; then
+            WALLET_NAME=$DEFAULT_WALLET
+        fi
+
+        # Get wallet address
+        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+
+        if [ -n "$WALLET_ADDRESS" ]; then
+            break
+        else
+            echo "Wallet name not found. Please check the wallet name/alias and try again."
+        fi
+    done
+
+    echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
+
     namadaw gen --alias $WALLET_NAME
     menu
 }
 
 function restore_wallet() {
-    read -p "Enter wallet name: " WALLET_NAME
+    DEFAULT_WALLET=$WALLET  # Assuming $WALLET is set elsewhere in your script
+    while true; do
+        read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
+        if [ -z "$WALLET_NAME" ]; then
+            WALLET_NAME=$DEFAULT_WALLET
+        fi
+
+        # Get wallet address
+        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+
+        if [ -n "$WALLET_ADDRESS" ]; then
+            break
+        else
+            echo "Wallet name not found. Please check the wallet name/alias and try again."
+        fi
+    done
+
+    echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
+
     namada wallet derive --alias $WALLET_NAME --hd-path default
     namadaw derive --alias $WALLET_NAME --hd-path default
     namadaw derive --shielded --alias ${WALLET_NAME}-shielded
@@ -190,14 +226,50 @@ function restore_wallet() {
 }
 
 function create_payment_address() {
-    read -p "Enter wallet name: " WALLET_NAME
+    DEFAULT_WALLET=$WALLET  # Assuming $WALLET is set elsewhere in your script
+    while true; do
+        read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
+        if [ -z "$WALLET_NAME" ]; then
+            WALLET_NAME=$DEFAULT_WALLET
+        fi
+
+        # Get wallet address
+        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+
+        if [ -n "$WALLET_ADDRESS" ]; then
+            break
+        else
+            echo "Wallet name not found. Please check the wallet name/alias and try again."
+        fi
+    done
+
+    echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
+
     namadaw gen-payment-addr --key ${WALLET_NAME}-shielded --alias ${WALLET_NAME}-shielded-addr
     echo -e "${GREEN}Payment address created successfully.${RESET}"
     menu
 }
 
 function query_balance() {
-    read -p "Enter wallet name: " WALLET_NAME
+    DEFAULT_WALLET=$WALLET  # Assuming $WALLET is set elsewhere in your script
+    while true; do
+        read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
+        if [ -z "$WALLET_NAME" ]; then
+            WALLET_NAME=$DEFAULT_WALLET
+        fi
+
+        # Get wallet address
+        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+
+        if [ -n "$WALLET_ADDRESS" ]; then
+            break
+        else
+            echo "Wallet name not found. Please check the wallet name/alias and try again."
+        fi
+    done
+
+    echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
+
     echo "Choose an option:"
     echo "1. Query balance from transparent address"
     echo "2. Query balance from shielded address"
@@ -210,14 +282,14 @@ function query_balance() {
             if [ "$RPC_CHOICE" == "grandvalley" ]; then
                 namadac balance --owner $WALLET_NAME --token nam --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
             else
-                namadac balance --owner $WALLET_NAME
+                namadac balance --owner $WALLET_NAME --token nam
             fi
             ;;
         2)
             if [ "$RPC_CHOICE" == "grandvalley" ]; then
                 namadac balance --owner ${WALLET_NAME}-shielded --token nam --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
             else
-                namadac balance --owner ${WALLET_NAME}-shielded
+                namadac balance --owner ${WALLET_NAME}-shielded --token nam
             fi
             ;;
         *)
@@ -394,19 +466,15 @@ function redelegate_tokens() {
             SOURCE_VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) --node https://lightnode-rpc-mainnet-namada.grandvalleys.com | grep 'Found validator address' | awk -F'"' '{print $2}')
 
             echo "Choose a destination validator:"
-            echo "1. Grand Valley"
             echo "2. Another validator"
-            read -p "Enter your choice (1 or 2): " DEST_CHOICE
+            read -p "Enter your choice (2): " DEST_CHOICE
 
             case $DEST_CHOICE in
-                1)
-                    TARGET_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
-                    ;;
                 2)
                     read -p "Enter destination validator address: " TARGET_VALIDATOR_ADDRESS
                     ;;
                 *)
-                    echo "Invalid choice. Please enter 1 or 2."
+                    echo "Invalid choice. Please enter 2."
                     menu
                     ;;
             esac
@@ -422,19 +490,15 @@ function redelegate_tokens() {
             read -p "Enter amount to redelegate: " AMOUNT
 
             echo "Choose a destination validator:"
-            echo "1. Grand Valley"
             echo "2. Another validator"
-            read -p "Enter your choice (1 or 2): " DEST_CHOICE
+            read -p "Enter your choice (2): " DEST_CHOICE
 
             case $DEST_CHOICE in
-                1)
-                    TARGET_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
-                    ;;
                 2)
                     read -p "Enter destination validator address: " TARGET_VALIDATOR_ADDRESS
                     ;;
                 *)
-                    echo "Invalid choice. Please enter 1 or 2."
+                    echo "Invalid choice. Please enter 2."
                     menu
                     ;;
             esac
@@ -520,7 +584,24 @@ function claim_rewards() {
 }
 
 function transfer_shielding() {
-    read -p "Enter wallet name: " WALLET_NAME
+    DEFAULT_WALLET=$WALLET  # Assuming $WALLET is set elsewhere in your script
+    while true; do
+        read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
+        if [ -z "$WALLET_NAME" ]; then
+            WALLET_NAME=$DEFAULT_WALLET
+        fi
+
+        # Get wallet address
+        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+
+        if [ -n "$WALLET_ADDRESS" ]; then
+            break
+        else
+            echo "Wallet name not found. Please check the wallet name/alias and try again."
+        fi
+    done
+
+    echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
 
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
@@ -535,7 +616,25 @@ function transfer_shielding() {
 }
 
 function transfer_shielded_to_shielded() {
-    read -p "Enter wallet name: " WALLET_NAME
+    DEFAULT_WALLET=$WALLET  # Assuming $WALLET is set elsewhere in your script
+    while true; do
+        read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
+        if [ -z "$WALLET_NAME" ]; then
+            WALLET_NAME=$DEFAULT_WALLET
+        fi
+
+        # Get wallet address
+        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+
+        if [ -n "$WALLET_ADDRESS" ]; then
+            break
+        else
+            echo "Wallet name not found. Please check the wallet name/alias and try again."
+        fi
+    done
+
+    echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
+
     read -p "Enter target shielded wallet address: " TARGET_SHIELDED_WALLET_ADDRESS
 
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
@@ -551,7 +650,24 @@ function transfer_shielded_to_shielded() {
 }
 
 function transfer_unshielding() {
-    read -p "Enter wallet name: " WALLET_NAME
+    DEFAULT_WALLET=$WALLET  # Assuming $WALLET is set elsewhere in your script
+    while true; do
+        read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
+        if [ -z "$WALLET_NAME" ]; then
+            WALLET_NAME=$DEFAULT_WALLET
+        fi
+
+        # Get wallet address
+        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+
+        if [ -n "$WALLET_ADDRESS" ]; then
+            break
+        else
+            echo "Wallet name not found. Please check the wallet name/alias and try again."
+        fi
+    done
+
+    echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
 
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
@@ -566,8 +682,24 @@ function transfer_unshielding() {
 }
 
 function vote_proposal() {
-    read -p "Enter wallet name: " WALLET_NAME
-    WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep "Implicit" | awk '{print $3}')
+    DEFAULT_WALLET=$WALLET  # Assuming $WALLET is set elsewhere in your script
+    while true; do
+        read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
+        if [ -z "$WALLET_NAME" ]; then
+            WALLET_NAME=$DEFAULT_WALLET
+        fi
+
+        # Get wallet address
+        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+
+        if [ -n "$WALLET_ADDRESS" ]; then
+            break
+        else
+            echo "Wallet name not found. Please check the wallet name/alias and try again."
+        fi
+    done
+
+    echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
 
     echo "Choose an option:"
     echo "1. Query all proposal list"
