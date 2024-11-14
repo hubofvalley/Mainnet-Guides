@@ -167,7 +167,7 @@ function validator_node_logs() {
 
 function show_validator_node_status() {
     port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml")
-    curl -s 127.0.0.1:$port/status
+    curl -s 127.0.0.1:$port/status | jq
     menu
 }
 
