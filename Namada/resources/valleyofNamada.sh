@@ -641,12 +641,14 @@ function transfer_shielding() {
 
     echo "Using target shielded wallet: $TARGET_WALLET_NAME ($TARGET_WALLET_ADDRESS)"
 
+    read -p "Enter the amount of NAM to shield: " AMOUNT
+
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
     if [ "$RPC_CHOICE" == "grandvalley" ]; then
-        namadac shield --source $SOURCE_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount 1 --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+        namadac shield --source $SOURCE_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount $AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
     else
-        namadac shield --source $SOURCE_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount 1
+        namadac shield --source $SOURCE_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount $AMOUNT
     fi
 
     echo -e "${GREEN}Transfer from transparent account to shielded account (shielding) completed successfully.${RESET}"
@@ -675,12 +677,14 @@ function transfer_shielded_to_shielded() {
 
     read -p "Enter target shielded wallet address: " TARGET_SHIELDED_WALLET_ADDRESS
 
+    read -p "Enter the amount of NAM to transfer: " AMOUNT
+
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
     if [ "$RPC_CHOICE" == "grandvalley" ]; then
-        namadac shield --source ${WALLET_NAME}-shielded --target $TARGET_SHIELDED_WALLET_ADDRESS --token nam --amount 1 --signing-keys $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+        namadac shield --source ${WALLET_NAME}-shielded --target $TARGET_SHIELDED_WALLET_ADDRESS --token nam --amount $AMOUNT --signing-keys $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
     else
-        namadac shield --source ${WALLET_NAME}-shielded --target $TARGET_SHIELDED_WALLET_ADDRESS --token nam --amount 1 --signing-keys $WALLET_NAME
+        namadac shield --source ${WALLET_NAME}-shielded --target $TARGET_SHIELDED_WALLET_ADDRESS --token nam --amount $AMOUNT --signing-keys $WALLET_NAME
     fi
 
     echo -e "${GREEN}Transfer from shielded address to another shielded address completed successfully.${RESET}"
@@ -734,12 +738,14 @@ function transfer_unshielding() {
 
     echo "Using target wallet: $TARGET_WALLET_NAME ($TARGET_WALLET_ADDRESS)"
 
+    read -p "Enter the amount of NAM to unshield: " AMOUNT
+
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
     if [ "$RPC_CHOICE" == "grandvalley" ]; then
-        namadac unshield --source $SHIELDED_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount 1 --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+        namadac unshield --source $SHIELDED_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount $AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
     else
-        namadac unshield --source $SHIELDED_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount 1
+        namadac unshield --source $SHIELDED_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount $AMOUNT
     fi
 
     echo -e "${GREEN}Transfer from shielded account to transparent account (unshielding) completed successfully.${RESET}"
