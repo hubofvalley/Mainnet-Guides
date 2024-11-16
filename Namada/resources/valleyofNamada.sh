@@ -539,30 +539,57 @@ function claim_rewards() {
 
 function transfer_shielding() {
     DEFAULT_WALLET=$WALLET  # Assuming $WALLET is set elsewhere in your script
+
+    # Show available wallets
+    echo "Available wallets:"
+    namadaw list | grep Implicit | grep -vE 'consensus-key|tendermint-node-key'
+
     while true; do
-        read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
-        if [ -z "$WALLET_NAME" ]; then
-            WALLET_NAME=$DEFAULT_WALLET
+        read -p "Enter source wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " SOURCE_WALLET_NAME
+        if [ -z "$SOURCE_WALLET_NAME" ]; then
+            SOURCE_WALLET_NAME=$DEFAULT_WALLET
         fi
 
-        # Get wallet address
-        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+        # Get source wallet address
+        SOURCE_WALLET_ADDRESS=$(namadaw find --alias $SOURCE_WALLET_NAME | grep -oP '(?<=Implicit: ).*')
 
-        if [ -n "$WALLET_ADDRESS" ]; then
+        if [ -n "$SOURCE_WALLET_ADDRESS" ]; then
             break
         else
-            echo "Wallet name not found. Please check the wallet name/alias and try again."
+            echo "Source wallet name not found. Please check the wallet name/alias and try again."
         fi
     done
 
-    echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
+    echo "Using source wallet: $SOURCE_WALLET_NAME ($SOURCE_WALLET_ADDRESS)"
+
+    # Show available shielded wallets
+    echo "Available shielded wallets:"
+    namadaw list | grep shielded-addr
+
+    while true; do
+        read -p "Enter target shielded wallet name/alias (leave empty to use default shielded wallet --> ${SOURCE_WALLET_NAME}-shielded-addr): " TARGET_WALLET_NAME
+        if [ -z "$TARGET_WALLET_NAME" ]; then
+            TARGET_WALLET_NAME="${SOURCE_WALLET_NAME}-shielded-addr"
+        fi
+
+        # Get target shielded wallet address
+        TARGET_WALLET_ADDRESS=$(namadaw find --alias $TARGET_WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+
+        if [ -n "$TARGET_WALLET_ADDRESS" ]; then
+            break
+        else
+            echo "Target shielded wallet name not found. Please check the wallet name/alias and try again."
+        fi
+    done
+
+    echo "Using target shielded wallet: $TARGET_WALLET_NAME ($TARGET_WALLET_ADDRESS)"
 
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
     if [ "$RPC_CHOICE" == "grandvalley" ]; then
-        namadac transfer --source $WALLET_NAME --target ${WALLET_NAME}-shielded-addr --token nam --amount 1 --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+        namadac shielded --source $SOURCE_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount 1 --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
     else
-        namadac transfer --source $WALLET_NAME --target ${WALLET_NAME}-shielded-addr --token nam --amount 1
+        namadac shielded --source $SOURCE_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount 1
     fi
 
     echo -e "${GREEN}Transfer from transparent account to shielded account (shielding) completed successfully.${RESET}"
@@ -594,9 +621,9 @@ function transfer_shielded_to_shielded() {
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
     if [ "$RPC_CHOICE" == "grandvalley" ]; then
-        namadac transfer --source ${WALLET_NAME}-shielded --target $TARGET_SHIELDED_WALLET_ADDRESS --token nam --amount 1 --signing-keys $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+        namadac shielded --source ${WALLET_NAME}-shielded --target $TARGET_SHIELDED_WALLET_ADDRESS --token nam --amount 1 --signing-keys $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
     else
-        namadac transfer --source ${WALLET_NAME}-shielded --target $TARGET_SHIELDED_WALLET_ADDRESS --token nam --amount 1 --signing-keys $WALLET_NAME
+        namadac shielded --source ${WALLET_NAME}-shielded --target $TARGET_SHIELDED_WALLET_ADDRESS --token nam --amount 1 --signing-keys $WALLET_NAME
     fi
 
     echo -e "${GREEN}Transfer from shielded address to another shielded address completed successfully.${RESET}"
@@ -605,106 +632,60 @@ function transfer_shielded_to_shielded() {
 
 function transfer_unshielding() {
     DEFAULT_WALLET=$WALLET  # Assuming $WALLET is set elsewhere in your script
+
+    # Show available shielded wallets
+    echo "Available shielded wallets:"
+    namadaw list | grep shielded-addr
+
     while true; do
-        read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
-        if [ -z "$WALLET_NAME" ]; then
-            WALLET_NAME=$DEFAULT_WALLET
+        read -p "Enter shielded wallet name/alias (leave empty to use default shielded wallet --> ${DEFAULT_WALLET}-shielded-addr): " SHIELDED_WALLET_NAME
+        if [ -z "$SHIELDED_WALLET_NAME" ]; then
+            SHIELDED_WALLET_NAME="${DEFAULT_WALLET}-shielded-addr"
         fi
 
-        # Get wallet address
-        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+        # Get shielded wallet address
+        SHIELDED_WALLET_ADDRESS=$(namadaw find --alias $SHIELDED_WALLET_NAME | grep -oP '(?<=Implicit: ).*')
 
-        if [ -n "$WALLET_ADDRESS" ]; then
+        if [ -n "$SHIELDED_WALLET_ADDRESS" ]; then
             break
         else
-            echo "Wallet name not found. Please check the wallet name/alias and try again."
+            echo "Shielded wallet name not found. Please check the wallet name/alias and try again."
         fi
     done
 
-    echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
+    echo "Using shielded wallet: $SHIELDED_WALLET_NAME ($SHIELDED_WALLET_ADDRESS)"
+
+    # Show available wallets
+    echo "Available wallets:"
+    namadaw list | grep Implicit | grep -vE 'consensus-key|tendermint-node-key'
+
+    while true; do
+        read -p "Enter target wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " TARGET_WALLET_NAME
+        if [ -z "$TARGET_WALLET_NAME" ]; then
+            TARGET_WALLET_NAME=$DEFAULT_WALLET
+        fi
+
+        # Get target wallet address
+        TARGET_WALLET_ADDRESS=$(namadaw find --alias $TARGET_WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+
+        if [ -n "$TARGET_WALLET_ADDRESS" ]; then
+            break
+        else
+            echo "Target wallet name not found. Please check the wallet name/alias and try again."
+        fi
+    done
+
+    echo "Using target wallet: $TARGET_WALLET_NAME ($TARGET_WALLET_ADDRESS)"
 
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
     if [ "$RPC_CHOICE" == "grandvalley" ]; then
-        namadac transfer --source ${WALLET_NAME}-shielded --target $WALLET_NAME --token nam --amount 1 --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+        namadac transfer --source $SHIELDED_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount 1 --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
     else
-        namadac transfer --source ${WALLET_NAME}-shielded --target $WALLET_NAME --token nam --amount 1
+        namadac transfer --source $SHIELDED_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount 1
     fi
 
     echo -e "${GREEN}Transfer from shielded account to transparent account (unshielding) completed successfully.${RESET}"
-    menu
-}
-
-function vote_proposal() {
-    DEFAULT_WALLET=$WALLET  # Assuming $WALLET is set elsewhere in your script
-    while true; do
-        read -p "Enter wallet name/alias to use as signing keys (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
-        if [ -z "$WALLET_NAME" ]; then
-            WALLET_NAME=$DEFAULT_WALLET
-        fi
-
-        # Get wallet address
-        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
-
-        if [ -n "$WALLET_ADDRESS" ]; then
-            break
-        else
-            echo "Wallet name not found. Please check the wallet name/alias and try again."
-        fi
-    done
-
-    echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
-
-    echo "Choose an option:"
-    echo "1. Query all proposal list"
-    echo "2. Query specific proposal"
-    echo "3. Vote on a proposal"
-    read -p "Enter your choice (1, 2, or 3): " CHOICE
-
-    read -p "Do you want to use your own RPC or Grand Valley's RPC? (1 for own, 2 for Grand Valley): " RPC_CHOICE
-
-    case $CHOICE in
-        1)
-            if [ "$RPC_CHOICE" == "2" ]; then
-                namadac query-proposal --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
-            else
-                namadac query-proposal
-            fi
-            ;;
-        2)
-            read -p "Enter proposal ID: " PROPOSAL_ID
-            if [ "$RPC_CHOICE" == "2" ]; then
-                namadac query-proposal --proposal-id $PROPOSAL_ID --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
-            else
-                namadac query-proposal --proposal-id $PROPOSAL_ID
-            fi
-            ;;
-        3)
-            read -p "Enter proposal ID: " PROPOSAL_ID
-            read -p "Enter your vote (yay/nay): " VOTE
-
-            read -p "Do you want to vote through your implicit address or your validator address? (1 for implicit, 2 for validator): " ADDRESS_TYPE
-
-            if [ "$ADDRESS_TYPE" == "2" ]; then
-                # Query validator address
-                port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml")
-                VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) | grep 'Found validator address' | awk -F'"' '{print $2}')
-                ADDRESS=$VALIDATOR_ADDRESS
-            else
-                ADDRESS=$WALLET_ADDRESS
-            fi
-
-            if [ "$RPC_CHOICE" == "2" ]; then
-                namadac vote-proposal --proposal-id $PROPOSAL_ID --vote $VOTE --address $ADDRESS --signing-keys $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
-            else
-                namadac vote-proposal --proposal-id $PROPOSAL_ID --vote $VOTE --address $ADDRESS --signing-keys $WALLET_NAME
-            fi
-            ;;
-        *)
-            echo "Invalid choice. Please enter 1, 2, or 3."
-            ;;
-    esac
-
     menu
 }
 
