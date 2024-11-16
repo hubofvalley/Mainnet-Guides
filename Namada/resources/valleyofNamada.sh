@@ -302,9 +302,9 @@ function transfer_transparent() {
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
     if [ "$RPC_CHOICE" == "grandvalley" ]; then
-        namadac transfer --source $WALLET_ADDRESS --target $TARGET_TRANSPARENT_WALLET_ADDRESS --token nam --amount 1 --signing-keys $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+        namadac transparent-transfer --source $WALLET_ADDRESS --target $TARGET_TRANSPARENT_WALLET_ADDRESS --token nam --amount 1 --signing-keys $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
     else
-        namadac transfer --source $WALLET_ADDRESS --target $TARGET_TRANSPARENT_WALLET_ADDRESS --token nam --amount 1 --signing-keys $WALLET_NAME
+        namadac transparent-transfer --source $WALLET_ADDRESS --target $TARGET_TRANSPARENT_WALLET_ADDRESS --token nam --amount 1 --signing-keys $WALLET_NAME
     fi
 
     echo -e "${GREEN}Transfer from transparent address to another transparent address completed successfully.${RESET}"
@@ -682,9 +682,9 @@ function transfer_shielded_to_shielded() {
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
     if [ "$RPC_CHOICE" == "grandvalley" ]; then
-        namadac shield --source ${WALLET_NAME}-shielded --target $TARGET_SHIELDED_WALLET_ADDRESS --token nam --amount $AMOUNT --signing-keys $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+        namadac transfer --source ${WALLET_NAME}-shielded --target $TARGET_SHIELDED_WALLET_ADDRESS --token nam --amount $AMOUNT --signing-keys $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
     else
-        namadac shield --source ${WALLET_NAME}-shielded --target $TARGET_SHIELDED_WALLET_ADDRESS --token nam --amount $AMOUNT --signing-keys $WALLET_NAME
+        namadac transfer --source ${WALLET_NAME}-shielded --target $TARGET_SHIELDED_WALLET_ADDRESS --token nam --amount $AMOUNT --signing-keys $WALLET_NAME
     fi
 
     echo -e "${GREEN}Transfer from shielded address to another shielded address completed successfully.${RESET}"
