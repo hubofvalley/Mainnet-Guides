@@ -43,6 +43,28 @@ ${YELLOW}| Category  | Requirements     |
 - current namada node version: ${CYAN}v0.45.1${RESET}
 "
 
+PRIVACY_SAFETY_STATEMENT="
+${YELLOW}Privacy and Safety Statement${RESET}
+
+${GREEN}No User Data Stored Externally${RESET}
+- This script does not store any user data externally. All operations are performed locally on your machine.
+
+${GREEN}No Phishing Links${RESET}
+- This script does not contain any phishing links. All URLs and commands are provided for legitimate purposes related to Namada validator node operations.
+
+${GREEN}Security Best Practices${RESET}
+- Always verify the integrity of the script and its source.
+- Ensure you are running the script in a secure environment.
+- Be cautious when entering sensitive information such as wallet names and addresses.
+
+${GREEN}Disclaimer${RESET}
+- The authors of this script are not responsible for any misuse or damage caused by the use of this script.
+- Use this script at your own risk.
+
+${GREEN}Contact${RESET}
+- If you have any concerns or questions, please contact us at letsbuidltogether@grandvalleys.com.
+"
+
 ENDPOINTS="${GREEN}
 Grand Valley Namada mainnet public endpoints:${RESET}
 - cosmos-rpc: ${BLUE}https://lightnode-rpc-mainnet-namada.grandvalleys.com${RESET}
@@ -64,6 +86,7 @@ ${GREEN}Connect with Grand Valley:${RESET}
 
 # Display LOGO and wait for user input to continue
 echo -e "$LOGO"
+echo -e "$PRIVACY_SAFETY_STATEMENT"
 echo -e "\n${YELLOW}Press Enter to continue...${RESET}"
 read -r
 
@@ -197,7 +220,7 @@ function restore_wallet() {
     menu
 }
 
-function create_payment_address() {
+function create_shielded_payment_address() {
     read -p "Enter wallet name/alias: " WALLET_NAME
     namadaw gen-payment-addr --key ${WALLET_NAME}-shielded --alias ${WALLET_NAME}-shielded-addr
     echo -e "${GREEN}Payment address created successfully.${RESET}"
@@ -251,6 +274,40 @@ function query_balance() {
             ;;
     esac
 
+    menu
+}
+
+function transfer_transparent() {
+    DEFAULT_WALLET=$WALLET  # Assuming $WALLET is set elsewhere in your script
+    while true; do
+        read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
+        if [ -z "$WALLET_NAME" ]; then
+            WALLET_NAME=$DEFAULT_WALLET
+        fi
+
+        # Get wallet address
+        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+
+        if [ -n "$WALLET_ADDRESS" ]; then
+            break
+        else
+            echo "Wallet name not found. Please check the wallet name/alias and try again."
+        fi
+    done
+
+    echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
+
+    read -p "Enter target transparent wallet address: " TARGET_TRANSPARENT_WALLET_ADDRESS
+
+    read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
+
+    if [ "$RPC_CHOICE" == "grandvalley" ]; then
+        namadac transfer --source $WALLET_ADDRESS --target $TARGET_TRANSPARENT_WALLET_ADDRESS --token nam --amount 1 --signing-keys $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+    else
+        namadac transfer --source $WALLET_ADDRESS --target $TARGET_TRANSPARENT_WALLET_ADDRESS --token nam --amount 1 --signing-keys $WALLET_NAME
+    fi
+
+    echo -e "${GREEN}Transfer from transparent address to another transparent address completed successfully.${RESET}"
     menu
 }
 
@@ -712,17 +769,18 @@ function menu() {
     echo "   a. Create Validator"
     echo "   b. Create Wallet"
     echo "   c. Restore Wallet"
-    echo "   d. Create Payment Address"
-    echo "   e. Query Balance"
+    echo "   d. Query Balance"
+    echo "   e. Transfer Transparent NAM"
     echo "   f. Stake NAM"
     echo "   g. Unstake NAM"
     echo "   h. Redelegate NAM"
     echo "   i. Withdraw Unbonded Tokens"
     echo "   j. Claim Rewards"
-    echo "   k. Transfer (Shielding)"
-    echo "   l. Transfer (Shielded to Shielded)"
-    echo "   m. Transfer (Unshielding)"
-    echo "   n. Vote Proposal"
+    echo "   k. Vote Proposal"
+    echo "   l. Create Shielded Payment Address"
+    echo "   m. Transfer (Shielding) NAM"
+    echo "   n. Transfer (Shielded to Shielded) NAM"
+    echo "   o. Transfer (Unshielding) NAM"
     echo -e "${GREEN}3. Install Namada App${RESET}"
     echo -e "${GREEN}4. Show Grand Valley's Endpoints${RESET}"
     echo -e "${RED}5. Exit${RESET}"
@@ -759,17 +817,18 @@ function menu() {
                 a) create_validator ;;
                 b) create_wallet ;;
                 c) restore_wallet ;;
-                d) create_payment_address ;;
-                e) query_balance ;;
+                d) query_balance ;;
+                e) transfer_transparent ;;
                 f) stake_tokens ;;
                 g) unstake_tokens ;;
                 h) redelegate_tokens ;;
                 i) withdraw_unbonded_tokens ;;
                 j) claim_rewards ;;
-                k) transfer_shielding ;;
-                l) transfer_shielded_to_shielded ;;
-                m) transfer_unshielding ;;
-                n) vote_proposal ;;
+                k) vote_proposal ;;
+                l) create_shielded_payment_address ;;
+                m) transfer_shielding ;;
+                n) transfer_shielded_to_shielded ;;
+                o) transfer_unshielding ;;
                 *) echo "Invalid sub-option. Please try again." ;;
             esac
             ;;
@@ -779,7 +838,6 @@ function menu() {
         *) echo "Invalid option. Please try again." ;;
     esac
 }
-
 
 # Function to show endpoints
 function show_endpoints() {
