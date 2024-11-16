@@ -257,16 +257,16 @@ function query_balance() {
     case $CHOICE in
         1)
             if [ "$RPC_CHOICE" == "grandvalley" ]; then
-                namadac balance --owner $WALLET_NAME --token nam --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+                namadac balance --owner $WALLET_NAME --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
             else
-                namadac balance --owner $WALLET_NAME --token nam
+                namadac balance --owner $WALLET_NAME --token NAM
             fi
             ;;
         2)
             if [ "$RPC_CHOICE" == "grandvalley" ]; then
-                namadac balance --owner ${WALLET_NAME}-shielded --token nam --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+                namadac balance --owner ${WALLET_NAME}-shielded --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
             else
-                namadac balance --owner ${WALLET_NAME}-shielded --token nam
+                namadac balance --owner ${WALLET_NAME}-shielded --token NAM
             fi
             ;;
         *)
@@ -299,12 +299,24 @@ function transfer_transparent() {
 
     read -p "Enter target transparent wallet address: " TARGET_TRANSPARENT_WALLET_ADDRESS
 
+    read -p "Enter the amount to transfer: " AMOUNT
+
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
-    if [ "$RPC_CHOICE" == "grandvalley" ]; then
-        namadac transparent-transfer --source $WALLET_ADDRESS --target $TARGET_TRANSPARENT_WALLET_ADDRESS --token nam --amount 1 --signing-keys $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+    read -p "Which token do you want to interact with? (1: NAM, 2: OSMO): " TOKEN_CHOICE
+    if [ "$TOKEN_CHOICE" == "1" ]; then
+        TOKEN="NAM"
+    elif [ "$TOKEN_CHOICE" == "2" ]; then
+        TOKEN="tnam1p5z8ruwyu7ha8urhq2l0dhpk2f5dv3ts7uyf2n75"
     else
-        namadac transparent-transfer --source $WALLET_ADDRESS --target $TARGET_TRANSPARENT_WALLET_ADDRESS --token nam --amount 1 --signing-keys $WALLET_NAME
+        echo "Invalid token choice. Defaulting to NAM."
+        TOKEN="NAM"
+    fi
+
+    if [ "$RPC_CHOICE" == "grandvalley" ]; then
+        namadac transparent-transfer --source $WALLET_ADDRESS --target $TARGET_TRANSPARENT_WALLET_ADDRESS --token $TOKEN --amount $AMOUNT --signing-keys $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+    else
+        namadac transparent-transfer --source $WALLET_ADDRESS --target $TARGET_TRANSPARENT_WALLET_ADDRESS --token $TOKEN --amount $AMOUNT --signing-keys $WALLET_NAME
     fi
 
     echo -e "${GREEN}Transfer from transparent address to another transparent address completed successfully.${RESET}"
@@ -641,14 +653,24 @@ function transfer_shielding() {
 
     echo "Using target shielded wallet: $TARGET_WALLET_NAME ($TARGET_WALLET_ADDRESS)"
 
-    read -p "Enter the amount of NAM to shield: " AMOUNT
+    read -p "Enter the amount to shield: " AMOUNT
 
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
-    if [ "$RPC_CHOICE" == "grandvalley" ]; then
-        namadac shield --source $SOURCE_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount $AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+    read -p "Which token do you want to interact with? (1: NAM, 2: OSMO): " TOKEN_CHOICE
+    if [ "$TOKEN_CHOICE" == "1" ]; then
+        TOKEN="NAM"
+    elif [ "$TOKEN_CHOICE" == "2" ]; then
+        TOKEN="tnam1p5z8ruwyu7ha8urhq2l0dhpk2f5dv3ts7uyf2n75"
     else
-        namadac shield --source $SOURCE_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount $AMOUNT
+        echo "Invalid token choice. Defaulting to NAM."
+        TOKEN="NAM"
+    fi
+
+    if [ "$RPC_CHOICE" == "grandvalley" ]; then
+        namadac shield --source $SOURCE_WALLET_NAME --target $TARGET_WALLET_NAME --token $TOKEN --amount $AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+    else
+        namadac shield --source $SOURCE_WALLET_NAME --target $TARGET_WALLET_NAME --token $TOKEN --amount $AMOUNT
     fi
 
     echo -e "${GREEN}Transfer from transparent account to shielded account (shielding) completed successfully.${RESET}"
@@ -677,14 +699,24 @@ function transfer_shielded_to_shielded() {
 
     read -p "Enter target shielded wallet address: " TARGET_SHIELDED_WALLET_ADDRESS
 
-    read -p "Enter the amount of NAM to transfer: " AMOUNT
+    read -p "Enter the amount to transfer: " AMOUNT
 
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
-    if [ "$RPC_CHOICE" == "grandvalley" ]; then
-        namadac transfer --source ${WALLET_NAME}-shielded --target $TARGET_SHIELDED_WALLET_ADDRESS --token nam --amount $AMOUNT --signing-keys $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+    read -p "Which token do you want to interact with? (1: NAM, 2: OSMO): " TOKEN_CHOICE
+    if [ "$TOKEN_CHOICE" == "1" ]; then
+        TOKEN="NAM"
+    elif [ "$TOKEN_CHOICE" == "2" ]; then
+        TOKEN="tnam1p5z8ruwyu7ha8urhq2l0dhpk2f5dv3ts7uyf2n75"
     else
-        namadac transfer --source ${WALLET_NAME}-shielded --target $TARGET_SHIELDED_WALLET_ADDRESS --token nam --amount $AMOUNT --signing-keys $WALLET_NAME
+        echo "Invalid token choice. Defaulting to NAM."
+        TOKEN="NAM"
+    fi
+
+    if [ "$RPC_CHOICE" == "grandvalley" ]; then
+        namadac transfer --source ${WALLET_NAME}-shielded --target $TARGET_SHIELDED_WALLET_ADDRESS --token $TOKEN --amount $AMOUNT --signing-keys $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+    else
+        namadac transfer --source ${WALLET_NAME}-shielded --target $TARGET_SHIELDED_WALLET_ADDRESS --token $TOKEN --amount $AMOUNT --signing-keys $WALLET_NAME
     fi
 
     echo -e "${GREEN}Transfer from shielded address to another shielded address completed successfully.${RESET}"
@@ -738,14 +770,24 @@ function transfer_unshielding() {
 
     echo "Using target wallet: $TARGET_WALLET_NAME ($TARGET_WALLET_ADDRESS)"
 
-    read -p "Enter the amount of NAM to unshield: " AMOUNT
+    read -p "Enter the amount to unshield: " AMOUNT
 
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
-    if [ "$RPC_CHOICE" == "grandvalley" ]; then
-        namadac unshield --source $SHIELDED_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount $AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+    read -p "Which token do you want to interact with? (1: NAM, 2: OSMO): " TOKEN_CHOICE
+    if [ "$TOKEN_CHOICE" == "1" ]; then
+        TOKEN="NAM"
+    elif [ "$TOKEN_CHOICE" == "2" ]; then
+        TOKEN="tnam1p5z8ruwyu7ha8urhq2l0dhpk2f5dv3ts7uyf2n75"
     else
-        namadac unshield --source $SHIELDED_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount $AMOUNT
+        echo "Invalid token choice. Defaulting to NAM."
+        TOKEN="NAM"
+    fi
+
+    if [ "$RPC_CHOICE" == "grandvalley" ]; then
+        namadac unshield --source $SHIELDED_WALLET_NAME --target $TARGET_WALLET_NAME --token $TOKEN --amount $AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+    else
+        namadac unshield --source $SHIELDED_WALLET_NAME --target $TARGET_WALLET_NAME --token $TOKEN --amount $AMOUNT
     fi
 
     echo -e "${GREEN}Transfer from shielded account to transparent account (unshielding) completed successfully.${RESET}"
@@ -776,17 +818,17 @@ function menu() {
     echo "   b. Create Wallet"
     echo "   c. Restore Wallet"
     echo "   d. Query Balance"
-    echo "   e. Transfer Transparent NAM"
-    echo "   f. Stake NAM"
-    echo "   g. Unstake NAM"
+    echo "   e. Transfer Transparent"
+    echo "   f. Delegate NAM"
+    echo "   g. Undelegate NAM"
     echo "   h. Redelegate NAM"
-    echo "   i. Withdraw Unbonded Tokens"
+    echo "   i. Withdraw Unbonded NAM"
     echo "   j. Claim Rewards"
     echo "   k. Vote Proposal"
     echo "   l. Create Shielded Payment Address"
-    echo "   m. Transfer (Shielding) NAM"
-    echo "   n. Transfer (Shielded to Shielded) NAM"
-    echo "   o. Transfer (Unshielding) NAM"
+    echo "   m. Transfer (Shielding)"
+    echo "   n. Transfer (Shielded to Shielded)"
+    echo "   o. Transfer (Unshielding)"
     echo -e "${GREEN}3. Install Namada App${RESET}"
     echo -e "${GREEN}4. Show Grand Valley's Endpoints${RESET}"
     echo -e "${RED}5. Exit${RESET}"
