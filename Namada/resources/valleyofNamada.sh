@@ -818,7 +818,7 @@ function menu() {
     echo "   b. Create Wallet"
     echo "   c. Restore Wallet"
     echo "   d. Query Balance"
-    echo "   e. Transfer Transparent"
+    echo "   e. Transfer (Transparent)"
     echo "   f. Delegate NAM"
     echo "   g. Undelegate NAM"
     echo "   h. Redelegate NAM"
