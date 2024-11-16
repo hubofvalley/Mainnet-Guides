@@ -630,7 +630,7 @@ function transfer_shielding() {
         fi
 
         # Get target shielded wallet address
-        TARGET_WALLET_ADDRESS=$(namadaw find --alias $TARGET_WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+        TARGET_WALLET_ADDRESS=$(namadaw find --alias $TARGET_WALLET_NAME | grep 'znam' | awk '{print $2}' | tr -d '"')
 
         if [ -n "$TARGET_WALLET_ADDRESS" ]; then
             break
@@ -701,7 +701,7 @@ function transfer_unshielding() {
         fi
 
         # Get shielded wallet address
-        SHIELDED_WALLET_ADDRESS=$(namadaw find --alias $SHIELDED_WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+        SHIELDED_WALLET_ADDRESS=$(namadaw find --alias $SHIELDED_WALLET_NAME | grep 'znam' | awk '{print $2}' | tr -d '"')
 
         if [ -n "$SHIELDED_WALLET_ADDRESS" ]; then
             break
