@@ -644,9 +644,9 @@ function transfer_shielding() {
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
     if [ "$RPC_CHOICE" == "grandvalley" ]; then
-        namadac shielded --source $SOURCE_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount 1 --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+        namadac shield --source $SOURCE_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount 1 --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
     else
-        namadac shielded --source $SOURCE_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount 1
+        namadac shield --source $SOURCE_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount 1
     fi
 
     echo -e "${GREEN}Transfer from transparent account to shielded account (shielding) completed successfully.${RESET}"
@@ -678,9 +678,9 @@ function transfer_shielded_to_shielded() {
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
     if [ "$RPC_CHOICE" == "grandvalley" ]; then
-        namadac shielded --source ${WALLET_NAME}-shielded --target $TARGET_SHIELDED_WALLET_ADDRESS --token nam --amount 1 --signing-keys $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+        namadac shield --source ${WALLET_NAME}-shielded --target $TARGET_SHIELDED_WALLET_ADDRESS --token nam --amount 1 --signing-keys $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
     else
-        namadac shielded --source ${WALLET_NAME}-shielded --target $TARGET_SHIELDED_WALLET_ADDRESS --token nam --amount 1 --signing-keys $WALLET_NAME
+        namadac shield --source ${WALLET_NAME}-shielded --target $TARGET_SHIELDED_WALLET_ADDRESS --token nam --amount 1 --signing-keys $WALLET_NAME
     fi
 
     echo -e "${GREEN}Transfer from shielded address to another shielded address completed successfully.${RESET}"
@@ -737,9 +737,9 @@ function transfer_unshielding() {
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
     if [ "$RPC_CHOICE" == "grandvalley" ]; then
-        namadac transfer --source $SHIELDED_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount 1 --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+        namadac unshield --source $SHIELDED_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount 1 --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
     else
-        namadac transfer --source $SHIELDED_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount 1
+        namadac unshield --source $SHIELDED_WALLET_NAME --target $TARGET_WALLET_NAME --token nam --amount 1
     fi
 
     echo -e "${GREEN}Transfer from shielded account to transparent account (unshielding) completed successfully.${RESET}"
