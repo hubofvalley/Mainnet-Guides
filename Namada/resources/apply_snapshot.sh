@@ -79,9 +79,9 @@ choose_itrocket_snapshot() {
     echo -n "Snapshot: "
     check_url $ITR_API_URL
 
-    prompt_back_or_continue
-
     display_snapshot_details $ITR_API_URL
+
+    prompt_back_or_continue
 
     FILE_NAME=$(curl -s $ITR_API_URL | jq -r '.snapshot_name')
     SNAPSHOT_URL="https://server-5.itrocket.net/mainnet/namada/$FILE_NAME"
