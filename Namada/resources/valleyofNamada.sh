@@ -883,9 +883,6 @@ function menu() {
     echo "   c. Show Validator Node Logs"
     echo "   d. Apply Snapshot"
     echo "   e. Add Peers"
-    echo "   f. Restart Validator Node"
-    echo "   g. Stop Validator Node"
-    echo "   h. Delete Validator Node"
     echo -e "${GREEN}2. Validator/Key Interactions:${RESET}"
     echo "   a. Create Validator"
     echo "   b. Create Wallet"
@@ -902,19 +899,23 @@ function menu() {
     echo "   m. Transfer (Shielding)"
     echo "   n. Transfer (Shielded to Shielded)"
     echo "   o. Transfer (Unshielding)"
-    echo -e "${GREEN}3. Install Namada App${RESET}"
-    echo -e "${GREEN}4. Show Grand Valley's Endpoints${RESET}"
-    echo -e "${RED}5. Exit${RESET}"
+    echo -e "${GREEN}3. Node Management:${RESET}"
+    echo "   a. Restart Validator Node"
+    echo "   b. Stop Validator Node"
+    echo "   c. Delete Validator Node"
+    echo -e "${GREEN}4. Install Namada App${RESET}"
+    echo -e "${GREEN}5. Show Grand Valley's Endpoints${RESET}"
+    echo -e "${RED}6. Exit${RESET}"
 
     echo -e "${GREEN}Let's Buidl Namada Together - Grand Valley${RESET}"
     read -p "Choose an option (e.g., 1a or 1 then a): " OPTION
 
-    if [[ $OPTION =~ ^[1-2][a-n]$ ]]; then
+    if [[ $OPTION =~ ^[1-3][a-o]$ ]]; then
         MAIN_OPTION=${OPTION:0:1}
         SUB_OPTION=${OPTION:1:1}
     else
         MAIN_OPTION=$OPTION
-        if [[ $MAIN_OPTION =~ ^[1-2]$ ]]; then
+        if [[ $MAIN_OPTION =~ ^[1-3]$ ]]; then
             read -p "Choose a sub-option: " SUB_OPTION
         fi
     fi
@@ -927,9 +928,6 @@ function menu() {
                 c) show_validator_node_logs ;;
                 d) apply_snapshot ;;
                 e) add_peers ;;
-                f) restart_validator_node ;;
-                g) stop_validator_node ;;
-                h) delete_validator_node ;;
                 *) echo "Invalid sub-option. Please try again." ;;
             esac
             ;;
@@ -953,9 +951,17 @@ function menu() {
                 *) echo "Invalid sub-option. Please try again." ;;
             esac
             ;;
-        3) install_namada_app ;;
-        4) show_endpoints ;;
-        5) exit 0 ;;
+        3)
+            case $SUB_OPTION in
+                a) restart_validator_node ;;
+                b) stop_validator_node ;;
+                c) delete_validator_node ;;
+                *) echo "Invalid sub-option. Please try again." ;;
+            esac
+            ;;
+        4) install_namada_app ;;
+        5) show_endpoints ;;
+        6) exit 0 ;;
         *) echo "Invalid option. Please try again." ;;
     esac
 }
