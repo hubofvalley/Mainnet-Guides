@@ -78,7 +78,7 @@ Environment=CMT_LOG_LEVEL=p2p:debug,pex:info
 Environment=NAMADA_CMT_STDOUT=true
 Environment="DAEMON_NAME=namadan"
 Environment="DAEMON_HOME=$input2"
-Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=true"
+Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=false"
 Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
 Environment="DAEMON_DATA_BACKUP_DIR=$input3"
 Environment="UNSAFE_SKIP_BACKUP=true"
