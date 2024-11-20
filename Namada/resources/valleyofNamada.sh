@@ -728,12 +728,12 @@ function transfer_unshielding() {
 
     # Show available shielded wallets
     echo "Available shielded wallets:"
-    namadaw list | grep shielded-addr
+    namadaw list | grep shielded
 
     while true; do
-        read -p "Enter shielded wallet name/alias (leave empty to use default shielded wallet --> ${DEFAULT_WALLET}-shielded-addr): " SHIELDED_WALLET_NAME
+        read -p "Enter shielded wallet name/alias (leave empty to use default shielded wallet --> ${DEFAULT_WALLET}-shielded): " SHIELDED_WALLET_NAME
         if [ -z "$SHIELDED_WALLET_NAME" ]; then
-            SHIELDED_WALLET_NAME="${DEFAULT_WALLET}-shielded-addr"
+            SHIELDED_WALLET_NAME="${DEFAULT_WALLET}-shielded"
         fi
 
         # Get shielded wallet address
