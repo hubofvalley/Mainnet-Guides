@@ -320,7 +320,7 @@ sudo journalctl -u namadad -fn 100
 
 ### this is an example of the node is running well
 
-![alt text](resources/image.png)
+![logs](resources/logs.png)
 
 ### 21. check node version
 
