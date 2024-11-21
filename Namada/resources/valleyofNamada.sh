@@ -324,6 +324,7 @@ function transfer_transparent() {
 }
 
 function stake_tokens() {
+    sudo apt install bc
     DEFAULT_WALLET=$WALLET  # Assuming $WALLET is set elsewhere in your script
     while true; do
         read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
@@ -365,19 +366,53 @@ function stake_tokens() {
             read -p "Enter amount to stake: " AMOUNT
             port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml")
             VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) | grep 'Found validator address' | awk -F'"' '{print $2}')
+
+            # Ask if the user wants to support Grand Valley
+            read -p "Let's buidl together! Support Grand Valley by delegating 5% of the amount you want to stake? (y/n): " SUPPORT_GV
+            if [ "$SUPPORT_GV" == "y" ]; then
+                GV_AMOUNT=$(echo "$AMOUNT * 0.05" | bc)
+                GV_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
+                AMOUNT=$(echo "$AMOUNT - $GV_AMOUNT" | bc)
+            fi
+
             if [ "$RPC_CHOICE" == "grandvalley" ]; then
                 namadac bond --source $WALLET_NAME --validator $VALIDATOR_ADDRESS --amount $AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
             else
                 namadac bond --source $WALLET_NAME --validator $VALIDATOR_ADDRESS --amount $AMOUNT
             fi
+
+            if [ "$SUPPORT_GV" == "y" ]; then
+                if [ "$RPC_CHOICE" == "grandvalley" ]; then
+                    namadac bond --source $WALLET_NAME --validator $GV_VALIDATOR_ADDRESS --amount $GV_AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+                else
+                    namadac bond --source $WALLET_NAME --validator $GV_VALIDATOR_ADDRESS --amount $GV_AMOUNT
+                fi
+            fi
             ;;
         3)
             read -p "Enter validator address: " VALIDATOR_ADDRESS
             read -p "Enter amount to stake: " AMOUNT
+
+            # Ask if the user wants to support Grand Valley
+            read -p "Let's buidl together! Support Grand Valley by delegating 5% of the amount you want to stake? (y/n): " SUPPORT_GV
+            if [ "$SUPPORT_GV" == "y" ]; then
+                GV_AMOUNT=$(echo "$AMOUNT * 0.05" | bc)
+                GV_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
+                AMOUNT=$(echo "$AMOUNT - $GV_AMOUNT" | bc)
+            fi
+
             if [ "$RPC_CHOICE" == "grandvalley" ]; then
                 namadac bond --source $WALLET_NAME --validator $VALIDATOR_ADDRESS --amount $AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
             else
                 namadac bond --source $WALLET_NAME --validator $VALIDATOR_ADDRESS --amount $AMOUNT
+            fi
+
+            if [ "$SUPPORT_GV" == "y" ]; then
+                if [ "$RPC_CHOICE" == "grandvalley" ]; then
+                    namadac bond --source $WALLET_NAME --validator $GV_VALIDATOR_ADDRESS --amount $GV_AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+                else
+                    namadac bond --source $WALLET_NAME --validator $GV_VALIDATOR_ADDRESS --amount $GV_AMOUNT
+                fi
             fi
             ;;
         *)
@@ -444,6 +479,7 @@ function unstake_tokens() {
 }
 
 function redelegate_tokens() {
+    sudo apt install bc
     DEFAULT_WALLET=$WALLET  # Assuming $WALLET is set elsewhere in your script
     while true; do
         read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
@@ -502,10 +538,26 @@ function redelegate_tokens() {
                     ;;
             esac
 
+            # Ask if the user wants to support Grand Valley
+            read -p "Let's buidl together! Support Grand Valley by redelegating 5% of the amount you want to redelegate? (y/n): " SUPPORT_GV
+            if [ "$SUPPORT_GV" == "y" ]; then
+                GV_AMOUNT=$(echo "$AMOUNT * 0.05" | bc)
+                GV_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
+                AMOUNT=$(echo "$AMOUNT - $GV_AMOUNT" | bc)
+            fi
+
             if [ "$RPC_CHOICE" == "grandvalley" ]; then
                 namadac redelegate --source-validator $SOURCE_VALIDATOR_ADDRESS --destination-validator $TARGET_VALIDATOR_ADDRESS --owner $WALLET_NAME --amount $AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
             else
                 namadac redelegate --source-validator $SOURCE_VALIDATOR_ADDRESS --destination-validator $TARGET_VALIDATOR_ADDRESS --owner $WALLET_NAME --amount $AMOUNT
+            fi
+
+            if [ "$SUPPORT_GV" == "y" ]; then
+                if [ "$RPC_CHOICE" == "grandvalley" ]; then
+                    namadac redelegate --source-validator $SOURCE_VALIDATOR_ADDRESS --destination-validator $GV_VALIDATOR_ADDRESS --owner $WALLET_NAME --amount $GV_AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+                else
+                    namadac redelegate --source-validator $SOURCE_VALIDATOR_ADDRESS --destination-validator $GV_VALIDATOR_ADDRESS --owner $WALLET_NAME --amount $GV_AMOUNT
+                fi
             fi
             ;;
         3)
@@ -526,10 +578,26 @@ function redelegate_tokens() {
                     ;;
             esac
 
+            # Ask if the user wants to support Grand Valley
+            read -p "Let's buidl together! Support Grand Valley by redelegating 5% of the amount you want to redelegate? (y/n): " SUPPORT_GV
+            if [ "$SUPPORT_GV" == "y" ]; then
+                GV_AMOUNT=$(echo "$AMOUNT * 0.05" | bc)
+                GV_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
+                AMOUNT=$(echo "$AMOUNT - $GV_AMOUNT" | bc)
+            fi
+
             if [ "$RPC_CHOICE" == "grandvalley" ]; then
                 namadac redelegate --source-validator $SOURCE_VALIDATOR_ADDRESS --destination-validator $TARGET_VALIDATOR_ADDRESS --owner $WALLET_NAME --amount $AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
             else
                 namadac redelegate --source-validator $SOURCE_VALIDATOR_ADDRESS --destination-validator $TARGET_VALIDATOR_ADDRESS --owner $WALLET_NAME --amount $AMOUNT
+            fi
+
+            if [ "$SUPPORT_GV" == "y" ]; then
+                if [ "$RPC_CHOICE" == "grandvalley" ]; then
+                    namadac redelegate --source-validator $SOURCE_VALIDATOR_ADDRESS --destination-validator $GV_VALIDATOR_ADDRESS --owner $WALLET_NAME --amount $GV_AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+                else
+                    namadac redelegate --source-validator $SOURCE_VALIDATOR_ADDRESS --destination-validator $GV_VALIDATOR_ADDRESS --owner $WALLET_NAME --amount $GV_AMOUNT
+                fi
             fi
             ;;
         *)
