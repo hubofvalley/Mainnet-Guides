@@ -390,8 +390,8 @@ function stake_tokens() {
             fi
             ;;
         3)
-            read -p "Enter validator address: " VALIDATOR_ADDRESS
             read -p "Enter amount to stake: " AMOUNT
+            read -p "Enter validator address: " VALIDATOR_ADDRESS
 
             # Ask if the user wants to support Grand Valley
             read -p "I hope you're enjoying this! Support Grand Valley by delegating 2% of your stake! :) (y/n): " SUPPORT_GV
@@ -549,22 +549,9 @@ function redelegate_tokens() {
             fi
             ;;
         3)
-            read -p "Enter source validator address: " SOURCE_VALIDATOR_ADDRESS
             read -p "Enter amount to redelegate: " AMOUNT
-
-            echo "Choose a destination validator:"
-            echo "2. Another validator"
-            read -p "Enter your choice (2): " DEST_CHOICE
-
-            case $DEST_CHOICE in
-                2)
-                    read -p "Enter destination validator address: " TARGET_VALIDATOR_ADDRESS
-                    ;;
-                *)
-                    echo "Invalid choice. Please enter 2."
-                    menu
-                    ;;
-            esac
+            read -p "Enter source validator address: " SOURCE_VALIDATOR_ADDRESS
+            read -p "Enter destination validator address: " TARGET_VALIDATOR_ADDRESS
 
             # Ask if the user wants to support Grand Valley
             read -p "Glad this helped! Would you consider supporting me by redelegating 2% of your amount to Grand Valley? :) (y/n): " SUPPORT_GV
