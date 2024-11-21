@@ -524,19 +524,7 @@ function redelegate_tokens() {
             port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml")
             SOURCE_VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) --node https://lightnode-rpc-mainnet-namada.grandvalleys.com | grep 'Found validator address' | awk -F'"' '{print $2}')
 
-            echo "Choose a destination validator:"
-            echo "2. Another validator"
-            read -p "Enter your choice (2): " DEST_CHOICE
-
-            case $DEST_CHOICE in
-                2)
-                    read -p "Enter destination validator address: " TARGET_VALIDATOR_ADDRESS
-                    ;;
-                *)
-                    echo "Invalid choice. Please enter 2."
-                    menu
-                    ;;
-            esac
+            read -p "Enter destination validator address: " TARGET_VALIDATOR_ADDRESS
 
             # Ask if the user wants to support Grand Valley
             read -p "Glad this helped! Would you consider supporting me by redelegating 2% of your amount to Grand Valley? :) (y/n): " SUPPORT_GV
