@@ -325,7 +325,7 @@ sudo journalctl -u namadad -fn 100
 ### 21. check node version
 
 ```bash
-cosmovisor run --version
+namada --version
 ```
 
 ## you can use any snapshots and no need to manually update the node version
