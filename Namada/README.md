@@ -132,7 +132,7 @@ The script provides a menu-driven interface that allows users to select differen
 
 ### Conclusion
 
-**Valley of Namada** is a powerful tool for managing and interacting with a Namada validator node. It provides a user-friendly interface for performing a wide range of tasks related to the Namada blockchain, making it easier for users to set up, manage, and interact with their validator nodes.
+**Valley of Namada** is a comprehensive tool designed to simplify the management and interaction with Namada validator nodes. It enables users to deploy, control, and monitor nodes, manage peers, access unified logs for troubleshooting, and apply snapshots for quick synchronization. The tool also facilitates validator setup, key management, staking and unstaking tokens, redelegation, unbonded token withdrawals, reward claims, and token transfers between transparent and shielded accounts. Additionally, it supports the installation of the Namada app (v0.45.1) for seamless command-line transactions and network interactions without requiring a full node. Featuring a user-friendly, menu-driven interface, **Valley of Namada** streamlines a wide range of tasks, making it an indispensable utility for both new and experienced Namada blockchain participants.
 
 ## Namada Validator Node Deployment Guide With Cosmovisor
 
