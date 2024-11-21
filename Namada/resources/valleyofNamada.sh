@@ -370,7 +370,7 @@ function stake_tokens() {
             # Ask if the user wants to support Grand Valley
             read -p "Enjoying this? Support Grand Valley by adding just 2% to your stake! (y/n): " SUPPORT_GV
             if [ "$SUPPORT_GV" == "y" ]; then
-                GV_AMOUNT=$(echo "$AMOUNT * 0.05" | bc)
+                GV_AMOUNT=$(echo "$AMOUNT * 0.02" | bc)
                 GV_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
                 AMOUNT=$(echo "$AMOUNT - $GV_AMOUNT" | bc)
             fi
@@ -396,7 +396,7 @@ function stake_tokens() {
             # Ask if the user wants to support Grand Valley
             read -p "I hope you're enjoying this! Would you consider supporting Grand Valley by adding 2% to your stake? :) (y/n): " SUPPORT_GV
             if [ "$SUPPORT_GV" == "y" ]; then
-                GV_AMOUNT=$(echo "$AMOUNT * 0.05" | bc)
+                GV_AMOUNT=$(echo "$AMOUNT * 0.02" | bc)
                 GV_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
                 AMOUNT=$(echo "$AMOUNT - $GV_AMOUNT" | bc)
             fi
@@ -541,7 +541,7 @@ function redelegate_tokens() {
             # Ask if the user wants to support Grand Valley
             read -p "Glad this helped! Would you consider supporting me by redelegating 2% of your amount to Grand Valley? :) (y/n): " SUPPORT_GV
             if [ "$SUPPORT_GV" == "y" ]; then
-                GV_AMOUNT=$(echo "$AMOUNT * 0.05" | bc)
+                GV_AMOUNT=$(echo "$AMOUNT * 0.02" | bc)
                 GV_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
                 AMOUNT=$(echo "$AMOUNT - $GV_AMOUNT" | bc)
             fi
@@ -581,7 +581,7 @@ function redelegate_tokens() {
             # Ask if the user wants to support Grand Valley
             read -p "Glad this helped! Would you consider supporting me by redelegating 2% of your amount to Grand Valley? :) (y/n): " SUPPORT_GV
             if [ "$SUPPORT_GV" == "y" ]; then
-                GV_AMOUNT=$(echo "$AMOUNT * 0.05" | bc)
+                GV_AMOUNT=$(echo "$AMOUNT * 0.02" | bc)
                 GV_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
                 AMOUNT=$(echo "$AMOUNT - $GV_AMOUNT" | bc)
             fi
