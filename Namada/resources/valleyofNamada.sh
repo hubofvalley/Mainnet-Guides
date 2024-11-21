@@ -510,8 +510,8 @@ function redelegate_tokens() {
     case $CHOICE in
         1)
             read -p "Enter amount to redelegate: " AMOUNT
-            SOURCE_VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) --node https://lightnode-rpc-mainnet-namada.grandvalleys.com | grep 'Found validator address' | awk -F'"' '{print $2}')
             TARGET_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
+            read -p "Enter destination validator address: " SOURCE_VALIDATOR_ADDRESS
 
             if [ "$RPC_CHOICE" == "grandvalley" ]; then
                 namadac redelegate --source-validator $SOURCE_VALIDATOR_ADDRESS --destination-validator $TARGET_VALIDATOR_ADDRESS --owner $WALLET_NAME --amount $AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
