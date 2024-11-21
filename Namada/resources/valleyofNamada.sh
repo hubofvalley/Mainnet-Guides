@@ -368,7 +368,7 @@ function stake_tokens() {
             VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) | grep 'Found validator address' | awk -F'"' '{print $2}')
 
             # Ask if the user wants to support Grand Valley
-            read -p "Let's buidl together! Support Grand Valley by delegating 5% of the amount you want to stake? (y/n): " SUPPORT_GV
+            read -p "Enjoying this? Support Grand Valley by adding just 2% to your stake! (y/n): " SUPPORT_GV
             if [ "$SUPPORT_GV" == "y" ]; then
                 GV_AMOUNT=$(echo "$AMOUNT * 0.05" | bc)
                 GV_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
@@ -394,7 +394,7 @@ function stake_tokens() {
             read -p "Enter amount to stake: " AMOUNT
 
             # Ask if the user wants to support Grand Valley
-            read -p "Let's buidl together! Support Grand Valley by delegating 5% of the amount you want to stake? (y/n): " SUPPORT_GV
+            read -p "I hope you're enjoying this! Would you consider supporting Grand Valley by adding 2% to your stake? :) (y/n): " SUPPORT_GV
             if [ "$SUPPORT_GV" == "y" ]; then
                 GV_AMOUNT=$(echo "$AMOUNT * 0.05" | bc)
                 GV_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
@@ -539,7 +539,7 @@ function redelegate_tokens() {
             esac
 
             # Ask if the user wants to support Grand Valley
-            read -p "Let's buidl together! Support Grand Valley by redelegating 5% of the amount you want to redelegate? (y/n): " SUPPORT_GV
+            read -p "Glad this helped! Would you consider supporting me by redelegating 2% of your amount to Grand Valley? :) (y/n): " SUPPORT_GV
             if [ "$SUPPORT_GV" == "y" ]; then
                 GV_AMOUNT=$(echo "$AMOUNT * 0.05" | bc)
                 GV_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
@@ -579,7 +579,7 @@ function redelegate_tokens() {
             esac
 
             # Ask if the user wants to support Grand Valley
-            read -p "Let's buidl together! Support Grand Valley by redelegating 5% of the amount you want to redelegate? (y/n): " SUPPORT_GV
+            read -p "Glad this helped! Would you consider supporting me by redelegating 2% of your amount to Grand Valley? :) (y/n): " SUPPORT_GV
             if [ "$SUPPORT_GV" == "y" ]; then
                 GV_AMOUNT=$(echo "$AMOUNT * 0.05" | bc)
                 GV_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
