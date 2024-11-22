@@ -74,7 +74,6 @@ With Public Testnet, Namada's docs and code become public. Check them out below!
 - [Namada Discord](https://discord.gg/namada)
 - [Namada Docs](https://docs.namada.net/)
 - [Namada GitHub](https://github.com/anoma)
-- [Namada Explorer](https://explorer.namada.net/)
 
 ## Grand Valley's Namada public endpoints:
 
