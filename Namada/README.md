@@ -227,7 +227,7 @@ mv namad* /usr/local/bin/
 
 ```bash
 namadac utils join-network --chain-id $NAMADA_CHAIN_ID
-peers=$(curl -sS https://lightnode-rpc-mainnet-namada.grandvalleys.com/net_info | jq -r '.result.peers[] | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr)"' | awk -F ':' '{print $1":"$(NF)}' | paste -sd, -)
+peers="tcp://05309c2cce2d163027a47c662066907e89cd6b99@74.50.93.254:14656,tcp://2bf5cdd25975c239e8feb68153d69c5eec004fdb@64.118.250.82:46656,tcp://abcf5f7802dffff5f146edb574f070ab684576a7@176.9.24.46:14656"
 echo $peers
 sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$peers\"|" $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml
 ```
