@@ -148,7 +148,7 @@ main_script() {
     sudo systemctl stop namadad
 
     # Back up your validator state
-    sudo cp $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/cometbft/data/priv_validator_state.json $HOME/.local/share/namada/priv_validator_state.json.backup
+    cp $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/cometbft/data/priv_validator_state.json $HOME/.local/share/namada/priv_validator_state.json.backup
 
     # Delete previous namada data folders
     if [[ $provider_choice -eq 1 ]]; then
@@ -189,7 +189,7 @@ main_script() {
     fi
 
     # Restore your validator state
-    sudo cp $HOME/.local/share/namada/priv_validator_state.json.backup $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/cometbft/data/priv_validator_state.json
+    cp $HOME/.local/share/namada/priv_validator_state.json.backup $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/cometbft/data/priv_validator_state.json
 
     # Start your namada node
     sudo systemctl restart namadad
