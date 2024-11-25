@@ -108,13 +108,13 @@ main_script() {
 
     case $provider_choice in
         1)
-            provider_name="Provider 1"
+            provider_name="Mandragora"
             echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
 
             choose_provider1_snapshot
             ;;
         2)
-            provider_name="Provider 2"
+            provider_name="ITRocket"
             echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
 
             choose_provider2_snapshot
