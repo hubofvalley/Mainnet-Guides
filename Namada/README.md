@@ -247,7 +247,7 @@ sed -i -e "s/^indexer *=.*/indexer = \"null\"/" $HOME/.local/share/namada/namada
 ```bash
 sudo tee /etc/systemd/system/namadad.service > /dev/null <<EOF
 [Unit]
-Description=Cosmovisor Namada Mainnet Node
+Description=Namada Mainnet Node
 After=network.target
 
 [Service]
