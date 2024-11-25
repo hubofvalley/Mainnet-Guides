@@ -920,7 +920,7 @@ function menu() {
     echo -e "${CYAN}Namada Validator Node${RESET}"
     echo "Menu:"
     echo -e "${GREEN}1. Node Interactions:${RESET}"
-    echo "   a. Deploy/re-Deploy Validator Node (includes Cosmovisor deployment)"
+    echo "   a. Deploy/re-Deploy Validator Node"
     echo "   b. Show Validator Node Status"
     echo "   c. Show Validator Node Logs"
     echo "   d. Apply Snapshot"
