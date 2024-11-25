@@ -155,7 +155,7 @@ function add_peers() {
             menu
             ;;
     esac
-    echo "Now you can restart your consensus client"
+    echo "Now you can restart your Namada node"
     menu
 }
 
