@@ -178,7 +178,6 @@ function stop_validator_node() {
 
 function restart_validator_node() {
     sudo systemctl daemon-reload
-    sudo rm -f $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/data/upgrade-info.json
     sudo systemctl restart namadad
     echo "Namada validator node service restarted."
     menu

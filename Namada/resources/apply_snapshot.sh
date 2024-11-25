@@ -136,9 +136,6 @@ main_script() {
             ;;
     esac
 
-    # Remove upgrade-info.json
-    sudo rm -f $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/data/upgrade-info.json
-
     cd $HOME
 
     # Install required dependencies

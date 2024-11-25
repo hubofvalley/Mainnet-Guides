@@ -169,13 +169,7 @@ echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin' >> ~/.bash_profile && \
 source ~/.bash_profile && go version
 ```
 
-### 3. install cosmovisor
-
-```bash
-go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@latest
-```
-
-### 4. install rust
+### 3. install rust
 
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -183,7 +177,7 @@ source $HOME/.cargo/env
 rustc --version
 ```
 
-### 5. install cometbft
+### 4. install cometbft
 
 ```bash
 cd $HOME
@@ -248,34 +242,7 @@ s%^pprof_laddr = \"localhost:26060\"%pprof_laddr = \"localhost:${NAMADA_PORT}060
 sed -i -e "s/^indexer *=.*/indexer = \"null\"/" $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml
 ```
 
-### 10. initialize cosmovisor
-
-```bash
-echo "export DAEMON_NAME=namadan" >> $HOME/.bash_profile
-echo "export DAEMON_HOME=$(find $HOME -type d -name "namada-dryrun.abaaeaf7b78cb3ac")" >> $HOME/.bash_profile
-source $HOME/.bash_profile
-cosmovisor init /usr/local/bin/namadan && \
-mkdir -p $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/cosmovisor/upgrades && \
-mkdir -p $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/cosmovisor/backup && \
-mkdir -p $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/data
-```
-
-### 11. define the path of cosmovisor
-
-```bash
-input1=$(which cosmovisor)
-input2=$(find $HOME -type d -name "namada-dryrun.abaaeaf7b78cb3ac")
-input3=$(find $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/cosmovisor -type d -name "backup")
-echo "export DAEMON_NAME=namadan" >> $HOME/.bash_profile
-echo "export DAEMON_HOME=$input2" >> $HOME/.bash_profile
-echo "export DAEMON_DATA_BACKUP_DIR=$(find $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/cosmovisor -type d -name "backup")" >> $HOME/.bash_profile
-source $HOME/.bash_profile
-echo "input1. $input1"
-echo "input2. $input2"
-echo "input3. $input3"
-```
-
-### 12. create service file
+### 10. create service file
 
 ```bash
 sudo tee /etc/systemd/system/namadad.service > /dev/null <<EOF
@@ -287,7 +254,7 @@ After=network.target
 User=$USER
 Type=simple
 WorkingDirectory=$HOME/.local/share/namada
-ExecStart=${input1} run ledger run
+ExecStart=namadan ledger run
 StandardOutput=journal
 StandardError=journal
 Restart=on-failure
@@ -296,19 +263,13 @@ LimitNOFILE=65536
 LimitNPROC=65536
 Environment=CMT_LOG_LEVEL=p2p:debug,pex:info
 Environment=NAMADA_CMT_STDOUT=true
-Environment="DAEMON_NAME=namadan"
-Environment="DAEMON_HOME=${input2}"
-Environment="DAEMON_ALLOW_DOWNLOAD_BINARIES=false"
-Environment="DAEMON_RESTART_AFTER_UPGRADE=true"
-Environment="DAEMON_DATA_BACKUP_DIR=${input3}"
-Environment="UNSAFE_SKIP_BACKUP=true"
 
 [Install]
 WantedBy=multi-user.target
 EOF
 ```
 
-### 20. start the node
+### 11. start the node
 
 ```bash
 sudo systemctl daemon-reload && \
@@ -321,7 +282,7 @@ sudo journalctl -u namadad -fn 100
 
 ![logs](resources/logs.png)
 
-### 21. check node version
+### 12. check node version
 
 ```bash
 namada --version
