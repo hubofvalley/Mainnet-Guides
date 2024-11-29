@@ -1060,7 +1060,7 @@ function menu() {
     echo "   c. Delete Validator Node"
     echo -e "${GREEN}4. Install Namada App${RESET}"
     echo -e "${GREEN}5. Show Grand Valley's Endpoints${RESET}"
-    echo -e "${GREEN}6. Guidelines${RESET}"
+    echo -e "${YELLOW}6. Show Guidelines${RESET}"
     echo -e "${RED}7. Exit${RESET}"
 
     echo -e "${GREEN}Let's Buidl Namada Together - Grand Valley${RESET}"
