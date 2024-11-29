@@ -192,6 +192,8 @@ function show_validator_node_logs() {
 function show_validator_node_status() {
     port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml")
     curl -s http://127.0.0.1:$port/status | jq
+    echo -e "\n${YELLOW}Press Enter to go back to main menu${RESET}"
+    read -r
     menu
 }
 
@@ -915,6 +917,116 @@ function apply_snapshot() {
     menu
 }
 
+# Function to show endpoints
+function show_endpoints() {
+    echo -e "$ENDPOINTS"
+    menu
+}
+
+function show_guidelines() {
+    echo -e "${CYAN}Guidelines on How to Use the Valley Of Story${RESET}"
+    echo -e "${YELLOW}Privacy and Safety Statement${RESET}"
+
+    echo -e "${GREEN}No User Data Stored Externally${RESET}"
+    echo "  - This script does not store any user data externally. All operations are performed locally on your machine."
+
+    echo -e "${GREEN}No Phishing Links${RESET}"
+    echo "  - This script does not contain any phishing links. All URLs and commands are provided for legitimate purposes related to Story node operations."
+
+    echo -e "${GREEN}Security Best Practices${RESET}"
+    echo "  - Always verify the integrity of the script and its source."
+    echo "  - Ensure you are running the script in a secure environment."
+    echo "  - Be cautious when entering sensitive information such as wallet names and addresses."
+
+    echo -e "${GREEN}Disclaimer${RESET}"
+    echo "  - The authors of this script are not responsible for any misuse or damage caused by the use of this script."
+    echo "  - Use this script at your own risk."
+
+    echo -e "${GREEN}Contact${RESET}"
+    echo "  - If you have any concerns or questions, please contact us at letsbuidltogether@grandvalleys.com."
+
+    echo -e "${GREEN}Introduction${RESET}"
+    echo "  - Overview of Valley Of Story by Grand Valley"
+    echo "  - Key benefits for node runners"
+    echo "  - Brief on how it integrates with nodes and other systems"
+
+    echo -e "${GREEN}Getting Started${RESET}"
+    echo "  - Prerequisites (hardware, software, permissions)"
+    echo "  - Installation steps (with screenshots or code snippets where applicable)"
+    echo "  - Initial configuration to set up nodes"
+
+    echo -e "${GREEN}Core Functionalities${RESET}"
+    echo "  - Node health monitoring"
+    echo "  - Resource allocation and optimization"
+    echo "  - Scheduling and automated tasks"
+    echo "  - Alerts and notifications for potential issues"
+    echo "  - APIs or integrations provided by Story"
+
+    echo -e "${GREEN}Advanced Features${RESET}"
+    echo "  - Custom scripting or automation support"
+    echo "  - Metrics tracking and data visualization"
+    echo "  - Scalability options for multiple nodes"
+
+    echo -e "${GREEN}Troubleshooting and FAQs${RESET}"
+    echo "  - Common issues and step-by-step resolutions"
+    echo "  - Error codes and their meanings"
+    echo "  - Links to support or community forums"
+
+    echo -e "${GREEN}Best Practices${RESET}"
+    echo "  - Tips for maximizing performance and minimizing downtime"
+    echo "  - Security measures to protect nodes and data"
+    echo "  - Regular maintenance schedules"
+
+    echo -e "${GREEN}Future Updates and Version Control${RESET}"
+    echo "  - How to update the tool safely"
+    echo "  - Highlight upcoming features or improvements"
+
+    echo -e "${GREEN}Appendices${RESET}"
+    echo "  - Glossary of terms"
+    echo "  - Links to additional resources or documentation"
+    echo "  - Example configurations or templates"
+
+    echo -e "${GREEN}Main Menu Explanation${RESET}"
+    echo "  - Menu:"
+    echo "    1. Node Interactions:"
+    echo "      a. Deploy/re-Deploy Validator Node: Deploys and re-deploys the validator node."
+    echo "      b. Show Validator Node Status: Displays the status of the validator node."
+    echo "      c. Show Validator Node Logs: Displays the logs for the validator node."
+    echo "      d. Apply Snapshot: Applies a snapshot to the node."
+    echo "      e. Add Peers: Adds peers to the node."
+    echo "      f. Guidelines: Displays these guidelines."
+
+    echo "    2. Validator/Key Interactions:"
+    echo "      a. Create Validator: Creates a new validator."
+    echo "      b. Create Wallet: Creates a new wallet."
+    echo "      c. Restore Wallet: Restores a wallet from its seed phrase."
+    echo "      d. Query Balance: Queries the balance of a wallet."
+    echo "      e. Transfer (Transparent): Transfers tokens in a transparent manner."
+    echo "      f. Delegate NAM: Delegates NAM tokens to a validator."
+    echo "      g. Undelegate NAM: Undelegates NAM tokens from a validator."
+    echo "      h. Redelegate NAM: Redelegates NAM tokens to another validator."
+    echo "      i. Withdraw Unbonded NAM: Withdraws unbonded NAM tokens."
+    echo "      j. Claim Rewards: Claims rewards for staking."
+    echo "      k. Vote Proposal: Votes on a proposal."
+    echo "      l. Create Shielded Payment Address: Creates a shielded payment address."
+    echo "      m. Transfer (Shielding): Transfers tokens to a shielded wallet."
+    echo "      n. Transfer (Shielded to Shielded): Transfers tokens between shielded wallets."
+    echo "      o. Transfer (Unshielding): Transfers tokens from a shielded wallet to a transparent wallet."
+
+    echo "    3. Node Management:"
+    echo "      a. Restart Validator Node: Restarts the validator node."
+    echo "      b. Stop Validator Node: Stops the validator node."
+    echo "      c. Delete Validator Node: Deletes the validator node."
+
+    echo "    4. Install Namada App: Installs the Namada app for executing transactions without running the node."
+    echo "    5. Show Grand Valley's Endpoints: Displays the public endpoints provided by Grand Valley."
+    echo "    6. Exit: Exits the script."
+
+    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    read -r
+    menu
+}
+
 # Menu function
 function menu() {
     echo -e "${CYAN}Namada Validator Node${RESET}"
@@ -925,6 +1037,7 @@ function menu() {
     echo "   c. Show Validator Node Logs"
     echo "   d. Apply Snapshot"
     echo "   e. Add Peers"
+    echo "   f. Guidelines"
     echo -e "${GREEN}2. Validator/Key Interactions:${RESET}"
     echo "   a. Create Validator"
     echo "   b. Create Wallet"
@@ -947,17 +1060,18 @@ function menu() {
     echo "   c. Delete Validator Node"
     echo -e "${GREEN}4. Install Namada App${RESET}"
     echo -e "${GREEN}5. Show Grand Valley's Endpoints${RESET}"
-    echo -e "${RED}6. Exit${RESET}"
+    echo -e "${GREEN}6. Guidelines${RESET}"
+    echo -e "${RED}7. Exit${RESET}"
 
     echo -e "${GREEN}Let's Buidl Namada Together - Grand Valley${RESET}"
     read -p "Choose an option (e.g., 1a or 1 then a): " OPTION
 
-    if [[ $OPTION =~ ^[1-3][a-z]$ ]]; then
+    if [[ $OPTION =~ ^[1-7][a-z]$ ]]; then
         MAIN_OPTION=${OPTION:0:1}
         SUB_OPTION=${OPTION:1:1}
     else
         MAIN_OPTION=$OPTION
-        if [[ $MAIN_OPTION =~ ^[1-3]$ ]]; then
+        if [[ $MAIN_OPTION =~ ^[1-7]$ ]]; then
             read -p "Choose a sub-option: " SUB_OPTION
         fi
     fi
@@ -970,6 +1084,7 @@ function menu() {
                 c) show_validator_node_logs ;;
                 d) apply_snapshot ;;
                 e) add_peers ;;
+                f) show_guidelines ;;
                 *) echo "Invalid sub-option. Please try again." ;;
             esac
             ;;
@@ -1003,15 +1118,10 @@ function menu() {
             ;;
         4) install_namada_app ;;
         5) show_endpoints ;;
-        6) exit 0 ;;
+        6) show_guidelines ;;
+        7) exit 0 ;;
         *) echo "Invalid option. Please try again." ;;
     esac
-}
-
-# Function to show endpoints
-function show_endpoints() {
-    echo -e "$ENDPOINTS"
-    menu
 }
 
 # Start menu
