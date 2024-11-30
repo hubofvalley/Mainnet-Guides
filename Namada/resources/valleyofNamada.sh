@@ -994,7 +994,6 @@ function show_guidelines() {
     echo "      c. Show Validator Node Logs: Displays the logs for the validator node."
     echo "      d. Apply Snapshot: Applies a snapshot to the node."
     echo "      e. Add Peers: Adds peers to the node."
-    echo "      f. Guidelines: Displays these guidelines."
 
     echo "    2. Validator/Key Interactions:"
     echo "      a. Create Validator: Creates a new validator."
@@ -1037,7 +1036,6 @@ function menu() {
     echo "   c. Show Validator Node Logs"
     echo "   d. Apply Snapshot"
     echo "   e. Add Peers"
-    echo "   f. Guidelines"
     echo -e "${GREEN}2. Validator/Key Interactions:${RESET}"
     echo "   a. Create Validator"
     echo "   b. Create Wallet"
@@ -1084,7 +1082,6 @@ function menu() {
                 c) show_validator_node_logs ;;
                 d) apply_snapshot ;;
                 e) add_peers ;;
-                f) show_guidelines ;;
                 *) echo "Invalid sub-option. Please try again." ;;
             esac
             ;;
