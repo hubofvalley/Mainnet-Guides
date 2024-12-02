@@ -80,6 +80,7 @@ With Public Testnet, Namada's docs and code become public. Check them out below!
 - cosmos rpc: `https://lightnode-rpc-mainnet-namada.grandvalleys.com`
 - json-rpc: `https://lightnode-json-rpc-mainnet-namada.grandvalleys.com`
 - cosmos ws: `wss://lightnode-rpc-mainnet-namada.grandvalleys.com/websocket`
+- peer: `tcp://3879583b9c6b1ac29d38fefb5a14815dd79282d6@peer-mainnet-namada.grandvalleys.com:38656`
 
 ## Valley Of Namada: Namada Tools Created by Grand Valley
 
