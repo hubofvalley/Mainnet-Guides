@@ -76,8 +76,6 @@ echo 'export NAMADA_CHAIN_ID="namada.5f5de2dd1b88cba30586420"' >> $HOME/.bash_pr
 echo 'export NAMADA_PORT="$NAMADA_PORT"' >> $HOME/.bash_profile
 echo 'export BASE_DIR="$HOME/.local/share/namada"' >> $HOME/.bash_profile
 echo 'export NAMADA_NETWORK_CONFIGS_SERVER="https://github.com/anoma/namada-mainnet-genesis/releases/download/mainnet-genesis"' >> $HOME/.bash_profile
-export MONIKER=$MONIKER
-export MONIKER=$NAMADA_PORT
 export NAMADA_CHAIN_ID="namada.5f5de2dd1b88cba30586420"
 source $HOME/.bash_profile
 
