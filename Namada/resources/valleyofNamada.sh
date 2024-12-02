@@ -97,6 +97,7 @@ echo -e "\n${YELLOW}Press Enter to continue${RESET}"
 read -r
 echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin' >> ~/.bash_profile
 echo "export NAMADA_CHAIN_ID="namada.5f5de2dd1b88cba30586420"" >> $HOME/.bash_profile
+export NAMADA_CHAIN_ID="namada.5f5de2dd1b88cba30586420"
 source $HOME/.bash_profile
 
 # Validator Node Functions
