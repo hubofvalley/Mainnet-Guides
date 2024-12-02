@@ -9,16 +9,6 @@ LOGO="
 
 echo "$LOGO"
 
-# Stop and remove existing Namada node
-sudo systemctl daemon-reload
-sudo systemctl stop namadad
-sudo systemctl disable namadad
-sudo rm -rf /etc/systemd/system/namadad.service
-sudo rm -r namada
-sudo rm -rf $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac
-sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420
-sed -i "/NAMADA_/d" $HOME/.bash_profile
-
 # Prompt for MONIKER, NAMADA_PORT, and Indexer option
 read -p "Enter your moniker: " MONIKER
 read -p "Enter your preferred port number: (leave empty to use default: 26)" NAMADA_PORT
@@ -37,6 +27,16 @@ if [ "$PRE_GENESIS" = "yes" ]; then
     fi
     read -p "Enter your validator alias: " VALIDATOR_ALIAS
 fi
+
+# Stop and remove existing Namada node
+sudo systemctl daemon-reload
+sudo systemctl stop namadad
+sudo systemctl disable namadad
+sudo rm -rf /etc/systemd/system/namadad.service
+sudo rm -r namada
+sudo rm -rf $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac
+sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420
+sed -i "/NAMADA_/d" $HOME/.bash_profile
 
 # 1. Install dependencies for building from source
 sudo apt update -y && sudo apt upgrade -y
