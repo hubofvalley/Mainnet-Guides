@@ -70,10 +70,10 @@ sudo cp $HOME/cometbft/build/cometbft /usr/local/bin/
 cometbft version
 
 # 5. Set environment variables
-echo 'export MONIKER="$MONIKER"' >> $HOME/.bash_profile
-echo 'export WALLET_NAME="$WALLET_NAME"' >> $HOME/.bash_profile
+echo 'export MONIKER=$MONIKER' >> $HOME/.bash_profile
+echo 'export WALLET_NAME=$WALLET_NAME' >> $HOME/.bash_profile
 echo 'export NAMADA_CHAIN_ID="namada.5f5de2dd1b88cba30586420"' >> $HOME/.bash_profile
-echo 'export NAMADA_PORT="$NAMADA_PORT"' >> $HOME/.bash_profile
+echo 'export NAMADA_PORT=$NAMADA_PORT' >> $HOME/.bash_profile
 echo 'export BASE_DIR="$HOME/.local/share/namada"' >> $HOME/.bash_profile
 echo 'export NAMADA_NETWORK_CONFIGS_SERVER="https://github.com/anoma/namada-mainnet-genesis/releases/download/mainnet-genesis"' >> $HOME/.bash_profile
 source $HOME/.bash_profile
