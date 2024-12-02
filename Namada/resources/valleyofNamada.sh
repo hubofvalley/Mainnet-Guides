@@ -214,7 +214,6 @@ function create_wallet() {
 
 function restore_wallet() {
     read -p "Enter wallet name/alias: " WALLET_NAME
-    namada wallet derive --alias $WALLET_NAME --hd-path default
     namadaw derive --alias $WALLET_NAME --hd-path default
     namadaw derive --shielded --alias ${WALLET_NAME}-shielded
     echo -e "${GREEN}Wallet restoration completed successfully, including shielded wallet restoration.${RESET}"
