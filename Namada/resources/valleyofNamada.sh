@@ -40,7 +40,7 @@ ${YELLOW}| Category  | Requirements     |
 
 - validator node service file name: ${CYAN}namadad.service${RESET}
 - current chain: ${CYAN}namada.5f5de2dd1b88cba30586420${RESET}
-- current namada node version: ${CYAN}v0.45.1${RESET}
+- current namada node version: ${CYAN}v1.0.0${RESET}
 "
 
 PRIVACY_SAFETY_STATEMENT="
@@ -199,9 +199,9 @@ function show_validator_node_status() {
 
 function install_namada_app() {
     echo -e "${YELLOW}This option is only for those who want to execute the transactions without running the node.${RESET}"
-    wget https://github.com/anoma/namada/releases/download/v0.45.1/namada-v0.45.1-Linux-x86_64.tar.gz
-    tar -xvf namada-v0.45.1-Linux-x86_64.tar.gz
-    cd namada-v0.45.1-Linux-x86_64
+    wget https://github.com/anoma/namada/releases/download/v1.0.0/namada-v1.0.0-Linux-x86_64.tar.gz
+    tar -xvf namada-v1.0.0-Linux-x86_64.tar.gz
+    cd namada-v1.0.0-Linux-x86_64
     mv namad* /usr/local/bin/
     menu
 }
