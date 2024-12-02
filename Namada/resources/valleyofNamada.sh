@@ -232,7 +232,7 @@ function create_shielded_payment_address() {
 }
 
 function query_balance() {
-    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAMEis set elsewhere in your script
+    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
     while true; do
         read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
         if [ -z "$WALLET_NAME" ]; then
@@ -283,7 +283,7 @@ function query_balance() {
 }
 
 function transfer_transparent() {
-    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAMEis set elsewhere in your script
+    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
     while true; do
         read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
         if [ -z "$WALLET_NAME" ]; then
@@ -332,7 +332,7 @@ function transfer_transparent() {
 
 function stake_tokens() {
     sudo apt install bc
-    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAMEis set elsewhere in your script
+    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
     while true; do
         read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
         if [ -z "$WALLET_NAME" ]; then
@@ -432,7 +432,7 @@ function stake_tokens() {
 }
 
 function unstake_tokens() {
-    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAMEis set elsewhere in your script
+    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
     while true; do
         read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
         if [ -z "$WALLET_NAME" ]; then
@@ -489,7 +489,7 @@ function unstake_tokens() {
 
 function redelegate_tokens() {
     sudo apt install bc
-    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAMEis set elsewhere in your script
+    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
     while true; do
         read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
         if [ -z "$WALLET_NAME" ]; then
@@ -594,7 +594,7 @@ function redelegate_tokens() {
 }
 
 function withdraw_unbonded_tokens() {
-    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAMEis set elsewhere in your script
+    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
     while true; do
         read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
         if [ -z "$WALLET_NAME" ]; then
@@ -628,7 +628,7 @@ function withdraw_unbonded_tokens() {
 }
 
 function claim_rewards() {
-    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAMEis set elsewhere in your script
+    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
     while true; do
         read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
         if [ -z "$WALLET_NAME" ]; then
@@ -662,7 +662,7 @@ function claim_rewards() {
 }
 
 function transfer_shielding() {
-    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAMEis set elsewhere in your script
+    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
 
     # Show available wallets
     echo "Available wallets:"
@@ -735,7 +735,7 @@ function transfer_shielding() {
 }
 
 function transfer_shielded_to_shielded() {
-    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAMEis set elsewhere in your script
+    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
     while true; do
         read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
         if [ -z "$WALLET_NAME" ]; then
@@ -783,7 +783,7 @@ function transfer_shielded_to_shielded() {
 }
 
 function transfer_unshielding() {
-    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAMEis set elsewhere in your script
+    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
 
     # Show available shielded wallets
     echo "Available shielded wallets:"
@@ -856,7 +856,7 @@ function transfer_unshielding() {
 }
 
 function vote_proposal() {
-    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAMEis set elsewhere in your script
+    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
     while true; do
         read -p "Enter wallet name/alias to use as signing keys (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
         if [ -z "$WALLET_NAME" ]; then
