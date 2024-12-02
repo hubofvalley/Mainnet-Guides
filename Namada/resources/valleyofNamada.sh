@@ -28,7 +28,7 @@ LOGO="
 "
 
 INTRO="
-Valley Of Namada by Grand Valley
+Valley of Namada by Grand Valley
 
 ${GREEN}Namada Validator Node System Requirements${RESET}
 ${YELLOW}| Category  | Requirements     |
@@ -927,7 +927,7 @@ function show_endpoints() {
 }
 
 function show_guidelines() {
-    echo -e "${CYAN}Guidelines on How to Use the Valley Of Namada${RESET}"
+    echo -e "${CYAN}Guidelines on How to Use the Valley of Namada${RESET}"
     echo -e "${YELLOW}Privacy and Safety Statement${RESET}"
 
     echo -e "${GREEN}No User Data Stored Externally${RESET}"
@@ -949,7 +949,7 @@ function show_guidelines() {
     echo "  - If you have any concerns or questions, please contact us at letsbuidltogether@grandvalleys.com."
 
     echo -e "${GREEN}Introduction${RESET}"
-    echo "  - Overview of Valley Of Namada by Grand Valley"
+    echo "  - Overview of Valley of Namada by Grand Valley"
     echo "  - Key benefits for node runners"
     echo "  - Brief on how it integrates with nodes and other systems"
 
@@ -1032,7 +1032,7 @@ function show_guidelines() {
 # Menu function
 function menu() {
     echo -e "Show your support for Grand Valley by staking with us!: ${CYAN}tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6${RESET}"
-    echo -e "${CYAN}Valley Of Namada${RESET}"
+    echo -e "${CYAN}Valley of Namada${RESET}"
     echo "Main Menu:"
     echo -e "${GREEN}1. Node Interactions:${RESET}"
     echo "   a. Deploy/re-Deploy Validator Node"
