@@ -89,13 +89,13 @@ choose_itrocket_snapshot() {
 
 # Function to decompress Mandragora snapshots
 decompress_mandragora_snapshots() {
-    lz4 -c -d $DB_SNAPSHOT_FILE | tar -xv -C $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac
-    lz4 -c -d $DATA_SNAPSHOT_FILE | tar -xv -C $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/cometbft
+    lz4 -c -d $DB_SNAPSHOT_FILE | tar -xv -C $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420
+    lz4 -c -d $DATA_SNAPSHOT_FILE | tar -xv -C $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/cometbft
 }
 
 # Function to decompress ITRocket snapshot
 decompress_itrocket_snapshot() {
-    lz4 -c -d $SNAPSHOT_FILE | tar -xv -C $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac
+    lz4 -c -d $SNAPSHOT_FILE | tar -xv -C $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420
 }
 
 # Function to prompt user to back or continue
@@ -145,15 +145,15 @@ main_script() {
     sudo systemctl stop namadad
 
     # Back up your validator state
-    cp $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/cometbft/data/priv_validator_state.json $HOME/.local/share/namada/priv_validator_state.json.backup
+    cp $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/cometbft/data/priv_validator_state.json $HOME/.local/share/namada/priv_validator_state.json.backup
 
     # Delete previous namada data folders
     if [[ $provider_choice -eq 1 ]]; then
-        sudo rm -rf $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/db
-        sudo rm -rf $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/cometbft/data
+        sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/db
+        sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/cometbft/data
     elif [[ $provider_choice -eq 2 ]]; then
-        sudo rm -rf $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/cometbft/data
-        sudo rm -rf $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/db
+        sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/cometbft/data
+        sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/db
     fi
 
     # Download and decompress snapshots based on the provider
@@ -186,7 +186,7 @@ main_script() {
     fi
 
     # Restore your validator state
-    cp $HOME/.local/share/namada/priv_validator_state.json.backup $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/cometbft/data/priv_validator_state.json
+    cp $HOME/.local/share/namada/priv_validator_state.json.backup $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/cometbft/data/priv_validator_state.json
 
     # Start your namada node
     sudo systemctl restart namadad
