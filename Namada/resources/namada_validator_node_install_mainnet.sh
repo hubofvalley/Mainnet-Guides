@@ -122,7 +122,7 @@ After=network-online.target
 [Service]
 User=$USER
 WorkingDirectory=$HOME/.local/share/namada
-Environment=CMT_LOG_LEVEL=p2p:debug,pex:info
+Environment=CMT_LOG_LEVEL=p2p:none,pex:error
 Environment=NAMADA_CMT_STDOUT=true
 ExecStart=/usr/local/bin/namadan ledger run
 StandardOutput=journal
