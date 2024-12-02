@@ -923,6 +923,8 @@ function apply_snapshot() {
 # Function to show endpoints
 function show_endpoints() {
     echo -e "$ENDPOINTS"
+    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    read -r
     menu
 }
 
