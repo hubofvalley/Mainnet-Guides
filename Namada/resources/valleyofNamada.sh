@@ -927,14 +927,14 @@ function show_endpoints() {
 }
 
 function show_guidelines() {
-    echo -e "${CYAN}Guidelines on How to Use the Valley Of Story${RESET}"
+    echo -e "${CYAN}Guidelines on How to Use the Valley Of Namada${RESET}"
     echo -e "${YELLOW}Privacy and Safety Statement${RESET}"
 
     echo -e "${GREEN}No User Data Stored Externally${RESET}"
     echo "  - This script does not store any user data externally. All operations are performed locally on your machine."
 
     echo -e "${GREEN}No Phishing Links${RESET}"
-    echo "  - This script does not contain any phishing links. All URLs and commands are provided for legitimate purposes related to Story node operations."
+    echo "  - This script does not contain any phishing links. All URLs and commands are provided for legitimate purposes related to Namada node operations."
 
     echo -e "${GREEN}Security Best Practices${RESET}"
     echo "  - Always verify the integrity of the script and its source."
@@ -949,7 +949,7 @@ function show_guidelines() {
     echo "  - If you have any concerns or questions, please contact us at letsbuidltogether@grandvalleys.com."
 
     echo -e "${GREEN}Introduction${RESET}"
-    echo "  - Overview of Valley Of Story by Grand Valley"
+    echo "  - Overview of Valley Of Namada by Grand Valley"
     echo "  - Key benefits for node runners"
     echo "  - Brief on how it integrates with nodes and other systems"
 
@@ -963,7 +963,7 @@ function show_guidelines() {
     echo "  - Resource allocation and optimization"
     echo "  - Scheduling and automated tasks"
     echo "  - Alerts and notifications for potential issues"
-    echo "  - APIs or integrations provided by Story"
+    echo "  - APIs or integrations provided by Namada"
 
     echo -e "${GREEN}Advanced Features${RESET}"
     echo "  - Custom scripting or automation support"
