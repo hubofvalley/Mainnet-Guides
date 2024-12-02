@@ -117,21 +117,19 @@ fi
 sudo tee /etc/systemd/system/namadad.service > /dev/null <<EOF
 [Unit]
 Description=Namada Mainnet Node
-After=network.target
+After=network-online.target
 
 [Service]
 User=$USER
-Type=simple
 WorkingDirectory=$HOME/.local/share/namada
+Environment=CMT_LOG_LEVEL=p2p:debug,pex:info
+Environment=NAMADA_CMT_STDOUT=true
 ExecStart=/usr/local/bin/namadan ledger run
 StandardOutput=journal
 StandardError=journal
 Restart=on-failure
 RestartSec=10
-LimitNOFILE=65536
-LimitNPROC=65536
-Environment=CMT_LOG_LEVEL=p2p:none,pex:error
-Environment=NAMADA_CMT_STDOUT=true
+LimitNOFILE=65535
 
 [Install]
 WantedBy=multi-user.target
