@@ -277,7 +277,8 @@ function query_balance() {
             echo "Invalid choice. Please enter 1 or 2."
             ;;
     esac
-
+    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    read -r
     menu
 }
 
@@ -324,6 +325,8 @@ function transfer_transparent() {
     fi
 
     echo -e "${GREEN}Transfer from transparent address to another transparent address completed successfully.${RESET}"
+    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    read -r
     menu
 }
 
@@ -423,7 +426,8 @@ function stake_tokens() {
             echo "Invalid choice. Please enter 1, 2, or 3."
             ;;
     esac
-
+    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    read -r
     menu
 }
 
@@ -478,7 +482,8 @@ function unstake_tokens() {
             echo "Invalid choice. Please enter 1 or 2."
             ;;
     esac
-
+    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    read -r
     menu
 }
 
@@ -583,7 +588,8 @@ function redelegate_tokens() {
             echo "Invalid choice. Please enter 1, 2, or 3."
             ;;
     esac
-
+    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    read -r
     menu
 }
 
@@ -616,7 +622,8 @@ function withdraw_unbonded_tokens() {
     else
         namadac withdraw --source $WALLET_NAME --validator $VALIDATOR_ADDRESS
     fi
-
+    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    read -r
     menu
 }
 
@@ -649,7 +656,8 @@ function claim_rewards() {
     else
         namadac claim-rewards --source $WALLET_NAME --validator $VALIDATOR_ADDRESS
     fi
-
+    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    read -r
     menu
 }
 
@@ -721,6 +729,8 @@ function transfer_shielding() {
     fi
 
     echo -e "${GREEN}Transfer from transparent account to shielded account (shielding) completed successfully.${RESET}"
+    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    read -r
     menu
 }
 
@@ -767,6 +777,8 @@ function transfer_shielded_to_shielded() {
     fi
 
     echo -e "${GREEN}Transfer from shielded address to another shielded address completed successfully.${RESET}"
+    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    read -r
     menu
 }
 
@@ -838,6 +850,8 @@ function transfer_unshielding() {
     fi
 
     echo -e "${GREEN}Transfer from shielded account to transparent account (unshielding) completed successfully.${RESET}"
+    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    read -r
     menu
 }
 
@@ -910,7 +924,8 @@ function vote_proposal() {
             echo "Invalid choice. Please enter 1, 2, or 3."
             ;;
     esac
-
+    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    read -r
     menu
 }
 
