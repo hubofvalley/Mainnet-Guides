@@ -213,6 +213,7 @@ function install_namada_app() {
 function create_wallet() {
     read -p "Enter wallet name/alias: " WALLET_NAME
     namadaw gen --alias $WALLET_NAME
+    namadaw derive --shielded --alias ${WALLET_NAME}-shielded
     menu
 }
 
