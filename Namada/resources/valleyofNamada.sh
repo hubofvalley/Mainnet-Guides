@@ -1049,10 +1049,10 @@ function menu() {
     echo "   d. Apply Snapshot"
     echo "   e. Add Peers"
     echo -e "${GREEN}2. Validator/Key Interactions:${RESET}"
-    echo "   a. Create Validator"
-    echo "   b. Create Wallet"
-    echo "   c. Restore Wallet"
-    echo "   d. Query Balance"
+    echo "   a. Create Wallet"
+    echo "   b. Restore Wallet"
+    echo "   c. Query Balance"
+    echo "   d. Create Validator"
     echo "   e. Transfer (Transparent)"
     echo "   f. Delegate NAM"
     echo "   g. Undelegate NAM"
@@ -1102,10 +1102,10 @@ function menu() {
             ;;
         2)
             case $SUB_OPTION in
-                a) create_validator ;;
-                b) create_wallet ;;
-                c) restore_wallet ;;
-                d) query_balance ;;
+                a) create_wallet ;;
+                b) restore_wallet ;;
+                c) query_balance ;;
+                d) create_validator ;;
                 e) transfer_transparent ;;
                 f) stake_tokens ;;
                 g) unstake_tokens ;;
