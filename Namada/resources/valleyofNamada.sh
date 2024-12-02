@@ -372,9 +372,9 @@ function stake_tokens() {
             VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) | grep 'Found validator address' | awk -F'"' '{print $2}')
 
             # Ask if the user wants to support Grand Valley
-            read -p "Enjoying this? Support Grand Valley by delegating 2% of your stake! :) (y/n): " SUPPORT_GV
+            read -p "Enjoying this? Support Grand Valley by delegating 5% of your stake! :) (y/n): " SUPPORT_GV
             if [ "$SUPPORT_GV" == "y" ]; then
-                GV_AMOUNT=$(echo "$AMOUNT * 0.02" | bc)
+                GV_AMOUNT=$(echo "$AMOUNT * 0.05" | bc)
                 GV_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
                 AMOUNT=$(echo "$AMOUNT - $GV_AMOUNT" | bc)
             fi
@@ -398,9 +398,9 @@ function stake_tokens() {
             read -p "Enter validator address: " VALIDATOR_ADDRESS
 
             # Ask if the user wants to support Grand Valley
-            read -p "I hope you're enjoying this! Support Grand Valley by delegating 2% of your stake! :) (y/n): " SUPPORT_GV
+            read -p "I hope you're enjoying this! Support Grand Valley by delegating 5% of your stake! :) (y/n): " SUPPORT_GV
             if [ "$SUPPORT_GV" == "y" ]; then
-                GV_AMOUNT=$(echo "$AMOUNT * 0.02" | bc)
+                GV_AMOUNT=$(echo "$AMOUNT * 0.05" | bc)
                 GV_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
                 AMOUNT=$(echo "$AMOUNT - $GV_AMOUNT" | bc)
             fi
@@ -531,9 +531,9 @@ function redelegate_tokens() {
             read -p "Enter destination validator address: " TARGET_VALIDATOR_ADDRESS
 
             # Ask if the user wants to support Grand Valley
-            read -p "Glad this helped! Would you consider supporting me by redelegating 2% of your amount to Grand Valley? :) (y/n): " SUPPORT_GV
+            read -p "Glad this helped! Would you consider supporting me by redelegating 5% of your amount to Grand Valley? :) (y/n): " SUPPORT_GV
             if [ "$SUPPORT_GV" == "y" ]; then
-                GV_AMOUNT=$(echo "$AMOUNT * 0.02" | bc)
+                GV_AMOUNT=$(echo "$AMOUNT * 0.05" | bc)
                 GV_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
                 AMOUNT=$(echo "$AMOUNT - $GV_AMOUNT" | bc)
             fi
@@ -558,9 +558,9 @@ function redelegate_tokens() {
             read -p "Enter destination validator address: " TARGET_VALIDATOR_ADDRESS
 
             # Ask if the user wants to support Grand Valley
-            read -p "Glad this helped! Would you consider supporting me by redelegating 2% of your amount to Grand Valley? :) (y/n): " SUPPORT_GV
+            read -p "Glad this helped! Would you consider supporting me by redelegating 5% of your amount to Grand Valley? :) (y/n): " SUPPORT_GV
             if [ "$SUPPORT_GV" == "y" ]; then
-                GV_AMOUNT=$(echo "$AMOUNT * 0.02" | bc)
+                GV_AMOUNT=$(echo "$AMOUNT * 0.05" | bc)
                 GV_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
                 AMOUNT=$(echo "$AMOUNT - $GV_AMOUNT" | bc)
             fi
