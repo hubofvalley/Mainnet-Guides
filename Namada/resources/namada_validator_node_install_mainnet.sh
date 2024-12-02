@@ -122,11 +122,11 @@ After=network.target
 User=$USER
 Type=simple
 WorkingDirectory=$HOME/.local/share/namada
-ExecStart=namadan ledger run
+ExecStart=/usr/local/bin/namadan ledger run
 StandardOutput=journal
 StandardError=journal
 Restart=on-failure
-RestartSec=5
+RestartSec=10
 LimitNOFILE=65536
 LimitNPROC=65536
 Environment=CMT_LOG_LEVEL=p2p:none,pex:error
