@@ -19,7 +19,7 @@ read -p "Enter your wallet name: " WALLET
 read -p "Do you want to enable the indexer? (y/n): " ENABLE_INDEXER
 read -p "Do you want to join the network as a pre-genesis validator? (y/n): " PRE_GENESIS
 
-if [ "$PRE_GENESIS" = "yes" ]; then
+if [ "$PRE_GENESIS" = "y" ]; then
     read -p "Have you already put the validator-wallet.toml file into your pre-genesis directory? (y/n): " VALIDATOR_FILE_PLACED
     if [ "$VALIDATOR_FILE_PLACED" != "y" ]; then
         echo "Please place the validator-wallet.toml file into your pre-genesis directory and run the script again."
@@ -86,7 +86,7 @@ cd namada-v1.0.0-Linux-x86_64
 sudo mv namad* /usr/local/bin/
 
 # 7. Initialize the app
-if [ "$PRE_GENESIS" = "yes" ]; then
+if [ "$PRE_GENESIS" = "y" ]; then
     namadac utils join-network --chain-id $NAMADA_CHAIN_ID --genesis-validator $VALIDATOR_ALIAS
 else
     namadac utils join-network --chain-id $NAMADA_CHAIN_ID
