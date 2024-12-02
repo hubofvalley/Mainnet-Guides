@@ -39,7 +39,7 @@ ${YELLOW}| Category  | Requirements     |
 | Bandwidth | 100+ MBit/s      |${RESET}
 
 - validator node service file name: ${CYAN}namadad.service${RESET}
-- current chain: ${CYAN}namada-dryrun.abaaeaf7b78cb3ac${RESET}
+- current chain: ${CYAN}namada.5f5de2dd1b88cba30586420${RESET}
 - current namada node version: ${CYAN}v0.45.1${RESET}
 "
 
@@ -96,7 +96,7 @@ echo -e "$ENDPOINTS"
 echo -e "\n${YELLOW}Press Enter to continue${RESET}"
 read -r
 echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin' >> ~/.bash_profile
-echo "export NAMADA_CHAIN_ID="namada-dryrun.abaaeaf7b78cb3ac"" >> $HOME/.bash_profile
+echo "export NAMADA_CHAIN_ID="namada.5f5de2dd1b88cba30586420"" >> $HOME/.bash_profile
 source $HOME/.bash_profile
 
 # Validator Node Functions
@@ -131,7 +131,7 @@ function add_peers() {
             echo "You have entered the following peers: $peers"
             read -p "Do you want to proceed? (yes/no): " confirm
             if [[ $confirm == "yes" ]]; then
-                sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$peers\"|" $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml
+                sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$peers\"|" $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml
                 echo "Peers added manually."
             else
                 echo "Operation cancelled. Returning to menu."
@@ -143,7 +143,7 @@ function add_peers() {
             echo "Grand Valley's peers: $peers"
             read -p "Do you want to proceed? (yes/no): " confirm
             if [[ $confirm == "yes" ]]; then
-                sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$peers\"|" $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml
+                sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$peers\"|" $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml
                 echo "Grand Valley's peers added."
             else
                 echo "Operation cancelled. Returning to menu."
@@ -164,7 +164,7 @@ function delete_validator_node() {
     sudo systemctl disable namadad
     sudo rm -rf /etc/systemd/system/namadad.service
     sudo rm -rf $HOME/namada
-    sudo rm -rf $HOME/.local/share/namada
+    sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/
     sed -i "/NAMADA_/d" $HOME/.bash_profile
     echo -e "${RED}Namada Validator node deleted successfully.${RESET}"
     menu
@@ -190,7 +190,7 @@ function show_validator_node_logs() {
 }
 
 function show_validator_node_status() {
-    port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml")
+    port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml")
     curl -s http://127.0.0.1:$port/status | jq
     echo -e "\n${YELLOW}Press Enter to go back to main menu${RESET}"
     read -r
@@ -365,7 +365,7 @@ function stake_tokens() {
             ;;
         2)
             read -p "Enter amount to stake: " AMOUNT
-            port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml")
+            port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml")
             VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) | grep 'Found validator address' | awk -F'"' '{print $2}')
 
             # Ask if the user wants to support Grand Valley
@@ -454,7 +454,7 @@ function unstake_tokens() {
     case $CHOICE in
         1)
             read -p "Enter amount to unstake: " AMOUNT
-            port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml")
+            port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml")
             VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) --node https://lightnode-rpc-mainnet-namada.grandvalleys.com | grep 'Found validator address' | awk -F'"' '{print $2}')
             if [ "$RPC_CHOICE" == "grandvalley" ]; then
                 namadac unbond --source $WALLET_NAME --validator $VALIDATOR_ADDRESS --amount $AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
@@ -522,7 +522,7 @@ function redelegate_tokens() {
             ;;
         2)
             read -p "Enter amount to redelegate: " AMOUNT
-            port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml")
+            port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml")
             SOURCE_VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) --node https://lightnode-rpc-mainnet-namada.grandvalleys.com | grep 'Found validator address' | awk -F'"' '{print $2}')
 
             read -p "Enter destination validator address: " TARGET_VALIDATOR_ADDRESS
@@ -890,7 +890,7 @@ function vote_proposal() {
 
             if [ "$ADDRESS_TYPE" == "2" ]; then
                 # Query validator address
-                port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml")
+                port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml")
                 VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) | grep 'Found validator address' | awk -F'"' '{print $2}')
                 ADDRESS=$VALIDATOR_ADDRESS
             else
