@@ -119,7 +119,7 @@ bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main
 
 #### 3. Namada App Installation
 
-- Install the Namada app (v0.45.1) for command-line transactions and network interactions without running a full node.
+- Install the Namada app (v1.0.0) for command-line transactions and network interactions without running a full node.
 
 ### Usage
 
@@ -131,7 +131,7 @@ The script provides a menu-driven interface that allows users to select differen
 
 ### Conclusion
 
-**Valley of Namada** is a comprehensive tool designed to simplify the management and interaction with Namada validator nodes. It enables users to deploy, control, and monitor nodes, manage peers, access unified logs for troubleshooting, and apply snapshots for quick synchronization. The tool also facilitates validator setup, key management, staking and unstaking tokens, redelegation, unbonded token withdrawals, reward claims, and token transfers between transparent and shielded accounts. Additionally, it supports the installation of the Namada app (v0.45.1) for seamless command-line transactions and network interactions without requiring a full node. Featuring a user-friendly, menu-driven interface, **Valley of Namada** streamlines a wide range of tasks, making it an indispensable utility for both new and experienced Namada blockchain participants.
+**Valley of Namada** is a comprehensive tool designed to simplify the management and interaction with Namada validator nodes. It enables users to deploy, control, and monitor nodes, manage peers, access unified logs for troubleshooting, and apply snapshots for quick synchronization. The tool also facilitates validator setup, key management, staking and unstaking tokens, redelegation, unbonded token withdrawals, reward claims, and token transfers between transparent and shielded accounts. Additionally, it supports the installation of the Namada app (v1.0.0) for seamless command-line transactions and network interactions without requiring a full node. Featuring a user-friendly, menu-driven interface, **Valley of Namada** streamlines a wide range of tasks, making it an indispensable utility for both new and experienced Namada blockchain participants.
 
 ## Namada Validator Node Deployment Guide
 
@@ -144,9 +144,9 @@ The script provides a menu-driven interface that allows users to select differen
 | Storage   | 1+ TB NVMe SSD                 |
 | Bandwidth | 100 MBps for Download / Upload |
 
-- guide's current binaries version: `v0.45.1 will automatically update to the latest version`
+- guide's current binaries version: `v1.0.0 will automatically update to the latest version`
 - service file name: `namadad.service`
-- current chain : `namada-dryrun.abaaeaf7b78cb3ac`
+- current chain : `namada.5f5de2dd1b88cba30586420`
 
 ## Validator Node Manual installation
 
@@ -201,9 +201,9 @@ read -p "Enter your wallet name: " WALLET && echo "Current wallet name: $WALLET"
 
 echo "export WALLET="$WALLET"" >> $HOME/.bash_profile
 echo "export MONIKER="$ALIAS"" >> $HOME/.bash_profile
-echo "export NAMADA_CHAIN_ID="namada-dryrun.abaaeaf7b78cb3ac"" >> $HOME/.bash_profile
+echo "export NAMADA_CHAIN_ID="namada.5f5de2dd1b88cba30586420"" >> $HOME/.bash_profile
 echo "export NAMADA_PORT="${NAMADA_PORT:-26}"" >> $HOME/.bash_profile
-export NAMADA_NETWORK_CONFIGS_SERVER="https://testnet.namada-dryrun.tududes.com/configs"
+export NAMADA_NETWORK_CONFIGS_SERVER="https://github.com/anoma/namada-mainnet-genesis/releases/download/mainnet-genesis"
 source $HOME/.bash_profile
 ```
 
@@ -211,19 +211,32 @@ source $HOME/.bash_profile
 
 ```bash
 cd $HOME
-wget https://github.com/anoma/namada/releases/download/v0.45.1/namada-v0.45.1-Linux-x86_64.tar.gz
-tar -xvf namada-v0.45.1-Linux-x86_64.tar.gz
-cd namada-v0.45.1-Linux-x86_64
+wget https://github.com/anoma/namada/releases/download/v1.0.0/namada-v1.0.0-Linux-x86_64.tar.gz
+tar -xvf namada-v1.0.0-Linux-x86_64.tar.gz
+cd namada-v1.0.0-Linux-x86_64
 mv namad* /usr/local/bin/
 ```
 
-### 7. join the network as post-genesis validator
+### 7. join the network
+
+#### as post-genesis validator
 
 ```bash
 namadac utils join-network --chain-id $NAMADA_CHAIN_ID
-peers="tcp://05309c2cce2d163027a47c662066907e89cd6b99@74.50.93.254:14656,tcp://2bf5cdd25975c239e8feb68153d69c5eec004fdb@64.118.250.82:46656,tcp://abcf5f7802dffff5f146edb574f070ab684576a7@176.9.24.46:14656"
+peers="tcp://05309c2cce2d163027a47c662066907e89cd6b99@74.50.93.254:26656,tcp://2bf5cdd25975c239e8feb68153d69c5eec004fdb@64.118.250.82:46656"
 echo $peers
-sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$peers\"|" $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml
+sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$peers\"|" $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml
+```
+
+#### as pre-genesis validator
+
+##### input your validator alias
+
+```bash
+namadac utils join-network --chain-id $NAMADA_CHAIN_ID --genesis-validator <validator alias>
+peers="tcp://05309c2cce2d163027a47c662066907e89cd6b99@74.50.93.254:26656,tcp://2bf5cdd25975c239e8feb68153d69c5eec004fdb@64.118.250.82:46656"
+echo $peers
+sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$peers\"|" $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml
 ```
 
 ### 8. set custom ports in config.toml file
@@ -233,13 +246,13 @@ sed -i.bak -e "/^\[p2p\]/,/^$/ s%laddr = \"tcp://0.0.0.0:26656\"%laddr = \"tcp:/
 s%prometheus_listen_addr = \":26660\"%prometheus_listen_addr = \":${NAMADA_PORT}660\"%g;
 s%proxy_app = \"tcp://127.0.0.1:26658\"%proxy_app = \"tcp://127.0.0.1:${NAMADA_PORT}658\"%g;
 s%^laddr = \"tcp://127.0.0.1:26657\"%laddr = \"tcp://127.0.0.1:${NAMADA_PORT}657\"%g;
-s%^pprof_laddr = \"localhost:26060\"%pprof_laddr = \"localhost:${NAMADA_PORT}060\"%g" $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml
+s%^pprof_laddr = \"localhost:26060\"%pprof_laddr = \"localhost:${NAMADA_PORT}060\"%g" $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml
 ```
 
 ### 9. disable indexer (optional) (if u want to run a full node, skip this step)
 
 ```bash
-sed -i -e "s/^indexer *=.*/indexer = \"null\"/" $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac/config.toml
+sed -i -e "s/^indexer *=.*/indexer = \"null\"/" $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml
 ```
 
 ### 10. create service file
@@ -248,21 +261,19 @@ sed -i -e "s/^indexer *=.*/indexer = \"null\"/" $HOME/.local/share/namada/namada
 sudo tee /etc/systemd/system/namadad.service > /dev/null <<EOF
 [Unit]
 Description=Namada Mainnet Node
-After=network.target
+After=network-online.target
 
 [Service]
 User=$USER
-Type=simple
 WorkingDirectory=$HOME/.local/share/namada
-ExecStart=namadan ledger run
+Environment=CMT_LOG_LEVEL=p2p:none,pex:error
+Environment=NAMADA_CMT_STDOUT=true
+ExecStart=/usr/local/bin/namadan ledger run
 StandardOutput=journal
 StandardError=journal
 Restart=on-failure
-RestartSec=5
-LimitNOFILE=65536
-LimitNPROC=65536
-Environment=CMT_LOG_LEVEL=p2p:debug,pex:info
-Environment=NAMADA_CMT_STDOUT=true
+RestartSec=10
+LimitNOFILE=65535
 
 [Install]
 WantedBy=multi-user.target

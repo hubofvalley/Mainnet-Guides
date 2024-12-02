@@ -70,6 +70,7 @@ Grand Valley Namada mainnet public endpoints:${RESET}
 - cosmos-rpc: ${BLUE}https://lightnode-rpc-mainnet-namada.grandvalleys.com${RESET}
 - evm-rpc: ${BLUE}https://lightnode-json-rpc-mainnet-namada.grandvalleys.com${RESET}
 - cosmos ws: ${BLUE}wss://lightnode-rpc-mainnet-namada.grandvalleys.com/websocket${RESET}
+- peer: ${BLUE}tcp://3879583b9c6b1ac29d38fefb5a14815dd79282d6@peer-mainnet-namada.grandvalleys.com:38656${RESET}
 
 Grand Valley validator address: tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6
 
