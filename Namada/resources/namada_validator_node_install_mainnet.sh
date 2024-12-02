@@ -22,7 +22,7 @@ read -p "Do you want to join the network as a pre-genesis validator? (y/n): " PR
 if [ "$PRE_GENESIS" = "y" ]; then
     read -p "Have you already put the validator-wallet.toml file into your pre-genesis directory ($HOME/.local/share/bin/namada/pre-genesis/youralias/validator-wallet.toml) ? (y/n): " VALIDATOR_FILE_PLACED
     if [ "$VALIDATOR_FILE_PLACED" != "y" ]; then
-        echo "Please place the validator-wallet.toml file into your pre-genesis directory and run the script again."
+        echo "Please place the validator-wallet.toml file into your pre-genesis directory ($HOME/.local/share/bin/namada/pre-genesis/youralias/) and run the script again."
         exit 1
     fi
     read -p "Enter your validator alias: " VALIDATOR_ALIAS
