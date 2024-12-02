@@ -72,7 +72,7 @@ Grand Valley Namada mainnet public endpoints:${RESET}
 - cosmos ws: ${BLUE}wss://lightnode-rpc-mainnet-namada.grandvalleys.com/websocket${RESET}
 - peer: ${BLUE}tcp://3879583b9c6b1ac29d38fefb5a14815dd79282d6@peer-mainnet-namada.grandvalleys.com:38656${RESET}
 
-Grand Valley validator address: tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6
+Stake to Grand Valley : ${CYAN}tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6${RESET}
 
 ${GREEN}Connect with Namada:${RESET}
 - Official Website: ${BLUE}https://namada.net${RESET}
@@ -111,13 +111,15 @@ function deploy_validator_node() {
 function create_validator() {
     read -p "Enter the name for your validator: " NAME
 
-    read -p "Enter the commission rate: " COMMISION_RATE
+    read -p "Enter the commission rate: (e.g. 0.5) " COMMISION_RATE
 
-    read -p "Enter the max commission rate change: " MAX_COMMISION_RATE_CHANGE
+    read -p "Enter the max commission rate change: (e.g. 0.5) " MAX_COMMISION_RATE_CHANGE
 
     read -p "Enter the email for your validator security contact: " EMAIL
 
-    namadac init-validator --commission-rate "$COMMISION_RATE" --name "$NAME" --max-commission-rate-change "$MAX_COMMISION_RATE_CHANGE" --chain-id $NAMADA_CHAIN_ID
+    read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
+
+    namadac init-validator --commission-rate "$COMMISION_RATE" --name "$NAME" --max-commission-rate-change "$MAX_COMMISION_RATE_CHANGE" --account-keys $WALLET_NAME --chain-id $NAMADA_CHAIN_ID
     menu
 }
 
@@ -1029,8 +1031,9 @@ function show_guidelines() {
 
 # Menu function
 function menu() {
-    echo -e "${CYAN}Namada Validator Node${RESET}"
-    echo "Menu:"
+    echo -e "Show your support for Grand Valley by staking with us!: ${CYAN}tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6${RESET}"
+    echo -e "${CYAN}Valley Of Namada${RESET}"
+    echo "Main Menu:"
     echo -e "${GREEN}1. Node Interactions:${RESET}"
     echo "   a. Deploy/re-Deploy Validator Node"
     echo "   b. Show Validator Node Status"
