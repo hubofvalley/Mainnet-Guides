@@ -33,7 +33,7 @@ sudo systemctl daemon-reload
 sudo systemctl stop namadad
 sudo systemctl disable namadad
 sudo rm -rf /etc/systemd/system/namadad.service
-sudo rm -rf /usr/local/bin/namad*
+sudo rm /usr/local/bin/namad*
 sudo rm -r namada
 sudo rm -rf $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac
 sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420

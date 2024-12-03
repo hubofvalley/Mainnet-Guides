@@ -213,6 +213,7 @@ function delete_validator_node() {
     sudo rm -rf /etc/systemd/system/namadad.service
     sudo rm -rf $HOME/namada
     sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/
+    sudo rm /usr/local/bin/namad*
     sed -i "/NAMADA_/d" $HOME/.bash_profile
     echo -e "${RED}Namada Validator node deleted successfully.${RESET}"
     menu
@@ -251,6 +252,13 @@ function install_namada_app() {
     tar -xvf namada-v1.0.0-Linux-x86_64.tar.gz
     cd namada-v1.0.0-Linux-x86_64
     mv namad* /usr/local/bin/
+    export NAMADA_CHAIN_ID="namada.5f5de2dd1b88cba30586420"
+    export NAMADA_NETWORK_CONFIGS_SERVER="https://github.com/anoma/namada-mainnet-genesis/releases/download/mainnet-genesis/"
+    export BASE_DIR="$HOME/.local/share/namada"
+    echo 'export NAMADA_CHAIN_ID="namada.5f5de2dd1b88cba30586420"' >> $HOME/.bash_profile
+    echo 'export BASE_DIR="$HOME/.local/share/namada"' >> $HOME/.bash_profile
+    echo 'export NAMADA_NETWORK_CONFIGS_SERVER="https://github.com/anoma/namada-mainnet-genesis/releases/download/mainnet-genesis/"' >> $HOME/.bash_profile
+    namadac utils join-network --chain-id $NAMADA_CHAIN_ID
     menu
 }
 
