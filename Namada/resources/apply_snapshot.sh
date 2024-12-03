@@ -10,7 +10,7 @@ NC='\033[0m' # No Color
 # Snapshot URLs
 MAND_DB_SNAPSHOT_URL="https://snapshots2.mandragora.io/namada-full/db.lz4"
 MAND_DATA_SNAPSHOT_URL="https://snapshots2.mandragora.io/namada-full/data.lz4"
-MAND_API_URL="https://snapshots2.mandragora.io/namada/info.json"
+MAND_API_URL="https://snapshots2.mandragora.io/namada-full/info.json"
 
 ITR_API_URL="https://server-5.itrocket.net/mainnet/namada/.current_state.json"
 
