@@ -102,7 +102,7 @@ s%prometheus_listen_addr = \":26660\"%prometheus_listen_addr = \":${NAMADA_PORT}
 s%moniker = \""technodrome"\"%moniker = \""$MONIKER"\"%g;
 s%proxy_app = \"tcp://127.0.0.1:26658\"%proxy_app = \"tcp://127.0.0.1:${NAMADA_PORT}658\"%g;
 s%^laddr = \"tcp://127.0.0.1:26657\"%laddr = \"tcp://127.0.0.1:${NAMADA_PORT}657\"%g;
-s%^oracle_rpc_endpoint = \"http://127.0.0.1:8545\"%oracle_rpc_endpoint = \"http://127.0.0.1:${NAMADA_PORT}645\"%g;
+s%^oracle_rpc_endpoint = \"http://127.0.0.1:8545\"%oracle_rpc_endpoint = \"http://127.0.0.1:${NAMADA_PORT}545\"%g;
 s%^pprof_laddr = \"localhost:26060\"%pprof_laddr = \"localhost:${NAMADA_PORT}060\"%g" $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml
 
 # 9. Enable or disable indexer based on user input
