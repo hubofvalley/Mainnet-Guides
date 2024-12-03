@@ -8,8 +8,8 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Snapshot URLs
-MAND_DB_SNAPSHOT_URL="https://snapshots2.mandragora.io/namada/db.lz4"
-MAND_DATA_SNAPSHOT_URL="https://snapshots2.mandragora.io/namada/data.lz4"
+MAND_DB_SNAPSHOT_URL="https://snapshots2.mandragora.io/namada-full/db.lz4"
+MAND_DATA_SNAPSHOT_URL="https://snapshots2.mandragora.io/namada-full/data.lz4"
 MAND_API_URL="https://snapshots2.mandragora.io/namada/info.json"
 
 ITR_API_URL="https://server-5.itrocket.net/mainnet/namada/.current_state.json"
@@ -48,7 +48,7 @@ display_snapshot_details() {
     echo -e "${GREEN}Snapshot Height:${NC} $snapshot_height"
 
     # Get the real-time block height
-    realtime_block_height=$(curl -s -X POST "https://lightnode-json-rpc-mainnet-namada.grandvalleys.com" -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' | jq -r '.result' | xargs printf "%d\n")
+    realtime_block_height=$(curl -s https://lightnode-rpc-mainnet-namada.grandvalleys.com/status | jq -r '.result.sync_info.latest_block_height')
 
     # Calculate the difference
     block_difference=$((realtime_block_height - snapshot_height))
