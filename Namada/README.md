@@ -80,7 +80,7 @@ With Public Testnet, Namada's docs and code become public. Check them out below!
 - cosmos rpc: `https://lightnode-rpc-mainnet-namada.grandvalleys.com`
 - json-rpc: `https://lightnode-json-rpc-mainnet-namada.grandvalleys.com`
 - cosmos ws: `wss://lightnode-rpc-mainnet-namada.grandvalleys.com/websocket`
-- seed: `tcp://65882ea69f4146d8cc83564257252f4711d3e05e@seed-mainnet-namada2.grandvalleys.com:56656`
+- seed: `tcp://65882ea69f4146d8cc83564257252f4711d3e05e@seed-mainnet-namada.grandvalleys.com:56656`
 - peer: `tcp://3879583b9c6b1ac29d38fefb5a14815dd79282d6@peer-mainnet-namada.grandvalleys.com:38656`
 
 ### Stake to Grand Valley: tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6
