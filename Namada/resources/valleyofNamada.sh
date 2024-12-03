@@ -70,7 +70,10 @@ Grand Valley Namada mainnet public endpoints:${RESET}
 - cosmos-rpc: ${BLUE}https://lightnode-rpc-mainnet-namada.grandvalleys.com${RESET}
 - evm-rpc: ${BLUE}https://lightnode-json-rpc-mainnet-namada.grandvalleys.com${RESET}
 - cosmos ws: ${BLUE}wss://lightnode-rpc-mainnet-namada.grandvalleys.com/websocket${RESET}
-- peer: ${BLUE}tcp://3879583b9c6b1ac29d38fefb5a14815dd79282d6@peer-mainnet-namada.grandvalleys.com:38656,tcp://65882ea69f4146d8cc83564257252f4711d3e05e@peer-mainnet-namada2.grandvalleys.com:56656${RESET}
+- seed: ${BLUE}tcp://65882ea69f4146d8cc83564257252f4711d3e05e@seed-mainnet-namada2.grandvalleys.com:56656${RESET}
+- peer: ${BLUE}tcp://3879583b9c6b1ac29d38fefb5a14815dd79282d6@peer-mainnet-namada.grandvalleys.com:38656${RESET}
+
+tcp://65882ea69f4146d8cc83564257252f4711d3e05e@peer-mainnet-namada2.grandvalleys.com:56656
 
 Stake to Grand Valley: ${CYAN}tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6${RESET}
 
@@ -124,6 +127,46 @@ function create_validator() {
     menu
 }
 
+function add_seeds() {
+    echo "Select an option:"
+    echo "1. Add seeds manually"
+    echo "2. Use Grand Valley's seed"
+    read -p "Enter your choice (1 or 2): " choice
+
+    case $choice in
+        1)
+            read -p "Enter seeds (comma-separated): " seeds
+            echo "You have entered the following seeds: $seeds"
+            read -p "Do you want to proceed? (yes/no): " confirm
+            if [[ $confirm == "yes" ]]; then
+                sed -i -e "s|^seeds *=.*|seeds = \"$seeds\"|" $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml
+                echo "seeds added manually."
+            else
+                echo "Operation cancelled. Returning to menu."
+                menu
+            fi
+            ;;
+        2)
+            seeds="tcp://65882ea69f4146d8cc83564257252f4711d3e05e@seed-mainnet-namada2.grandvalleys.com:56656"
+            echo "Grand Valley's seeds: $seeds"
+            read -p "Do you want to proceed? (yes/no): " confirm
+            if [[ $confirm == "yes" ]]; then
+                sed -i -e "s|^seeds *=.*|seeds = \"$seeds\"|" $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml
+                echo "Grand Valley's seeds added."
+            else
+                echo "Operation cancelled. Returning to menu."
+                menu
+            fi
+            ;;
+        *)
+            echo "Invalid choice. Please enter 1 or 2."
+            menu
+            ;;
+    esac
+    echo "Now you can restart your Namada node"
+    menu
+}
+
 function add_peers() {
     echo "Select an option:"
     echo "1. Add peers manually"
@@ -163,6 +206,8 @@ function add_peers() {
     echo "Now you can restart your Namada node"
     menu
 }
+
+
 
 function delete_validator_node() {
     sudo systemctl stop namadad
@@ -1049,7 +1094,8 @@ function menu() {
     echo "   b. Show Validator Node Status"
     echo "   c. Show Validator Node Logs"
     echo "   d. Apply Snapshot"
-    echo "   e. Add Peers"
+    echo "   e. Add Seeds"
+    echo "   f. Add Peers"
     echo -e "${GREEN}2. Validator/Key Interactions:${RESET}"
     echo "   a. Create Wallet"
     echo "   b. Restore Wallet"
@@ -1098,7 +1144,8 @@ function menu() {
                 b) show_validator_node_status ;;
                 c) show_validator_node_logs ;;
                 d) apply_snapshot ;;
-                e) add_peers ;;
+                e) add_seeds ;;
+                f) add_peers ;;
                 *) echo "Invalid sub-option. Please try again." ;;
             esac
             ;;
