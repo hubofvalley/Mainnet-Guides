@@ -286,23 +286,37 @@ function create_shielded_payment_address() {
 
 function query_balance() {
     DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
-    while true; do
-        read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
-        if [ -z "$WALLET_NAME" ]; then
-            WALLET_NAME=$DEFAULT_WALLET
-        fi
 
-        # Get wallet address
-        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+    echo "Choose an option:"
+    echo "1. Query the balance of my wallet"
+    echo "2. Query the balance of another wallet address"
+    read -p "Enter your choice (1 or 2): " WALLET_CHOICE
 
-        if [ -n "$WALLET_ADDRESS" ]; then
-            break
-        else
-            echo "Wallet name not found. Please check the wallet name/alias and try again."
-        fi
-    done
+    if [ "$WALLET_CHOICE" == "1" ]; then
+        while true; do
+            read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
+            if [ -z "$WALLET_NAME" ]; then
+                WALLET_NAME=$DEFAULT_WALLET
+            fi
 
-    echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
+            # Get wallet address
+            WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+
+            if [ -n "$WALLET_ADDRESS" ]; then
+                break
+            else
+                echo "Wallet name not found. Please check the wallet name/alias and try again."
+            fi
+        done
+        echo "Querying the balance of wallet: $WALLET_NAME ($WALLET_ADDRESS)"
+    elif [ "$WALLET_CHOICE" == "2" ]; then
+        read -p "Enter the custom wallet address: " CUSTOM_WALLET_ADDRESS
+        WALLET_ADDRESS=$CUSTOM_WALLET_ADDRESS
+        echo "Querying the balance of custom wallet address: $WALLET_ADDRESS"
+    else
+        echo "Invalid choice. Please enter 1 or 2."
+        return
+    fi
 
     echo "Choose an option:"
     echo "1. Query balance from transparent address"
@@ -314,16 +328,24 @@ function query_balance() {
     case $CHOICE in
         1)
             if [ "$RPC_CHOICE" == "grandvalley" ]; then
-                namadac balance --owner $WALLET_NAME --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+                namadac balance --owner $WALLET_ADDRESS --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
             else
-                namadac balance --owner $WALLET_NAME --token NAM
+                namadac balance --owner $WALLET_ADDRESS --token NAM
             fi
             ;;
         2)
-            if [ "$RPC_CHOICE" == "grandvalley" ]; then
-                namadac balance --owner ${WALLET_NAME}-shielded --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+            if [ "$WALLET_CHOICE" == "1" ]; then
+                if [ "$RPC_CHOICE" == "grandvalley" ]; then
+                    namadac balance --owner ${WALLET_ADDRESS}-shielded --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+                else
+                    namadac balance --owner ${WALLET_ADDRESS}-shielded --token NAM
+                fi
             else
-                namadac balance --owner ${WALLET_NAME}-shielded --token NAM
+                if [ "$RPC_CHOICE" == "grandvalley" ]; then
+                    namadac balance --owner $WALLET_ADDRESS --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+                else
+                    namadac balance --owner $WALLET_ADDRESS --token NAM
+                fi
             fi
             ;;
         *)
