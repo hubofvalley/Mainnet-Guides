@@ -209,6 +209,7 @@ main_script() {
     delete_snapshot_files
 
     echo -e "${GREEN}Snapshot setup completed successfully.${NC}"
+    exit 0
 }
 
 main_script
