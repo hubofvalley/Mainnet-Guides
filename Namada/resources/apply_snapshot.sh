@@ -7,11 +7,17 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Snapshot URLs
-MAND_DB_SNAPSHOT_URL="https://snapshots2.mandragora.io/namada-full/db.lz4"
-MAND_DATA_SNAPSHOT_URL="https://snapshots2.mandragora.io/namada-full/data.lz4"
-MAND_API_URL="https://snapshots2.mandragora.io/namada-full/info.json"
+# Snapshot URLs for Mandragora Full Snapshot
+MAND_FULL_DB_SNAPSHOT_URL="https://snapshots2.mandragora.io/namada-full/db.lz4"
+MAND_FULL_DATA_SNAPSHOT_URL="https://snapshots2.mandragora.io/namada-full/data.lz4"
+MAND_FULL_API_URL="https://snapshots2.mandragora.io/namada-full/info.json"
 
+# Snapshot URLs for Mandragora Light Snapshot
+MAND_LIGHT_DB_SNAPSHOT_URL="https://snapshots2.mandragora.io/namada-light/db.lz4"
+MAND_LIGHT_DATA_SNAPSHOT_URL="https://snapshots2.mandragora.io/namada-light/data.lz4"
+MAND_LIGHT_API_URL="https://snapshots2.mandragora.io/namada-light/info.json"
+
+# Snapshot URL for ITRocket
 ITR_API_URL="https://server-5.itrocket.net/mainnet/namada/.current_state.json"
 
 # Function to display the menu
@@ -20,6 +26,14 @@ show_menu() {
     echo "1. Mandragora"
     echo "2. ITRocket"
     echo "3. Exit"
+}
+
+# Function to display the Mandragora snapshot type menu
+show_mandragora_menu() {
+    echo -e "${GREEN}Choose a Mandragora snapshot type:${NC}"
+    echo "1. Full Snapshot"
+    echo "2. Light Snapshot"
+    echo "3. Back to Snapshot main menu"
 }
 
 # Function to check if a URL is available
@@ -57,17 +71,33 @@ display_snapshot_details() {
     echo -e "${GREEN}Block Difference:${NC} $block_difference"
 }
 
-# Function to choose snapshot type for Mandragora
-choose_mandragora_snapshot() {
-    echo -e "${GREEN}Checking availability of Mandragora snapshots:${NC}"
+# Function to choose snapshot type for Mandragora Full
+choose_mandragora_full_snapshot() {
+    echo -e "${GREEN}Checking availability of Mandragora Full snapshots:${NC}"
     echo -n "DB Snapshot: "
-    check_url $MAND_DB_SNAPSHOT_URL
+    check_url $MAND_FULL_DB_SNAPSHOT_URL
     echo -n "Data Snapshot: "
-    check_url $MAND_DATA_SNAPSHOT_URL
+    check_url $MAND_FULL_DATA_SNAPSHOT_URL
 
     prompt_back_or_continue
 
-    display_snapshot_details $MAND_API_URL
+    display_snapshot_details $MAND_FULL_API_URL
+
+    DB_SNAPSHOT_FILE="db.lz4"
+    DATA_SNAPSHOT_FILE="data.lz4"
+}
+
+# Function to choose snapshot type for Mandragora Light
+choose_mandragora_light_snapshot() {
+    echo -e "${GREEN}Checking availability of Mandragora Light snapshots:${NC}"
+    echo -n "DB Snapshot: "
+    check_url $MAND_LIGHT_DB_SNAPSHOT_URL
+    echo -n "Data Snapshot: "
+    check_url $MAND_LIGHT_DATA_SNAPSHOT_URL
+
+    prompt_back_or_continue
+
+    display_snapshot_details $MAND_LIGHT_API_URL
 
     DB_SNAPSHOT_FILE="db.lz4"
     DATA_SNAPSHOT_FILE="data.lz4"
@@ -118,7 +148,6 @@ prompt_delete_snapshots() {
     fi
 }
 
-
 # Function to delete snapshot files
 delete_snapshot_files() {
     if [[ $delete_snapshots == true ]]; then
@@ -143,7 +172,24 @@ main_script() {
             provider_name="Mandragora"
             echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
 
-            choose_mandragora_snapshot
+            show_mandragora_menu
+            read -p "Enter your choice: " mandragora_choice
+
+            case $mandragora_choice in
+                1)
+                    choose_mandragora_full_snapshot
+                    ;;
+                2)
+                    choose_mandragora_light_snapshot
+                    ;;
+                3)
+                    main_script
+                    ;;
+                *)
+                    echo -e "${RED}Invalid choice. Exiting.${NC}"
+                    exit 1
+                    ;;
+            esac
             ;;
         2)
             provider_name="ITRocket"
@@ -186,9 +232,13 @@ main_script() {
     fi
 
     # Download and decompress snapshots based on the provider
-    if [[ $provider_choice -eq 1 ]]; then
-        wget -O $DB_SNAPSHOT_FILE $MAND_DB_SNAPSHOT_URL
-        wget -O $DATA_SNAPSHOT_FILE $MAND_DATA_SNAPSHOT_URL
+    if [[ $mandragora_choice -eq 1 ]]; then
+        wget -O $DB_SNAPSHOT_FILE $MAND_FULL_DB_SNAPSHOT_URL
+        wget -O $DATA_SNAPSHOT_FILE $MAND_FULL_DATA_SNAPSHOT_URL
+        decompress_mandragora_snapshots
+    elif [[ $mandragora_choice -eq 2 ]]; then
+        wget -O $DB_SNAPSHOT_FILE $MAND_LIGHT_DB_SNAPSHOT_URL
+        wget -O $DATA_SNAPSHOT_FILE $MAND_LIGHT_DATA_SNAPSHOT_URL
         decompress_mandragora_snapshots
     elif [[ $provider_choice -eq 2 ]]; then
         SNAPSHOT_FILE=$FILE_NAME
