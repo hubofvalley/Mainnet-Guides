@@ -106,6 +106,31 @@ prompt_back_or_continue() {
     fi
 }
 
+# Function to prompt user to delete snapshot files
+prompt_delete_snapshots() {
+    read -p "Do you want to delete the downloaded snapshot files after the process? (y/n): " -n 1 -r
+    echo    # move to a new line
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        delete_snapshots=true
+        echo -e "${GREEN}Downloaded snapshot files will be deleted after the process.${NC}"
+    else
+        delete_snapshots=false
+        echo -e "${GREEN}Downloaded snapshot files will be kept.${NC}"
+    fi
+}
+
+# Function to delete snapshot files
+delete_snapshot_files() {
+    if [[ $delete_snapshots == true ]]; then
+        if [[ $provider_choice -eq 1 ]]; then
+            sudo rm -v $DB_SNAPSHOT_FILE $DATA_SNAPSHOT_FILE
+        elif [[ $provider_choice -eq 2 ]]; then
+            sudo rm -v $SNAPSHOT_FILE
+        fi
+        echo -e "${GREEN}Downloaded snapshot files have been deleted.${NC}"
+    fi
+}
+
 # Main script
 main_script() {
     show_menu
@@ -135,6 +160,10 @@ main_script() {
             exit 1
             ;;
     esac
+
+    prompt_delete_snapshots
+
+    prompt_back_or_continue
 
     cd $HOME
 
@@ -170,26 +199,14 @@ main_script() {
     # Change ownership of the .local/share/namada directory
     sudo chown -R $USER:$USER $HOME/.local/share/namada
 
-    # Ask the user if they want to delete the downloaded snapshot files
-    read -p "Do you want to delete the downloaded snapshot files? (y/n): " delete_choice
-
-    if [[ $delete_choice == "y" || $delete_choice == "Y" ]]; then
-        # Delete downloaded snapshot files
-        if [[ $provider_choice -eq 1 ]]; then
-            sudo rm -v $DB_SNAPSHOT_FILE $DATA_SNAPSHOT_FILE
-        elif [[ $provider_choice -eq 2 ]]; then
-            sudo rm -v $SNAPSHOT_FILE
-        fi
-        echo -e "${GREEN}Downloaded snapshot files have been deleted.${NC}"
-    else
-        echo -e "${GREEN}Downloaded snapshot files have been kept.${NC}"
-    fi
-
     # Restore your validator state
     cp $HOME/.local/share/namada/priv_validator_state.json.backup $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/cometbft/data/priv_validator_state.json
 
     # Start your namada node
     sudo systemctl restart namadad
+
+    # Delete snapshot files if chosen
+    delete_snapshot_files
 
     echo -e "${GREEN}Snapshot setup completed successfully.${NC}"
 }
