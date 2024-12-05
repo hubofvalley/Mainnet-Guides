@@ -108,8 +108,7 @@ prompt_back_or_continue() {
 
 # Function to prompt user to delete snapshot files
 prompt_delete_snapshots() {
-    read -p "Do you want to delete the downloaded snapshot files after the process? (y/n): " -n 1 -r
-    echo    # move to a new line
+    read -p "Do you want to delete the downloaded snapshot files after the process? (y/n): " -r
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         delete_snapshots=true
         echo -e "${GREEN}Downloaded snapshot files will be deleted after the process.${NC}"
@@ -118,6 +117,7 @@ prompt_delete_snapshots() {
         echo -e "${GREEN}Downloaded snapshot files will be kept.${NC}"
     fi
 }
+
 
 # Function to delete snapshot files
 delete_snapshot_files() {
