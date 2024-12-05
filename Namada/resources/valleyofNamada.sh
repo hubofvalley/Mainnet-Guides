@@ -1122,7 +1122,7 @@ function menu() {
     echo "   a. Restart Validator Node"
     echo "   b. Stop Validator Node"
     echo "   c. Delete Validator Node"
-    echo -e "${GREEN}4. Install Namada App only${RESET}"
+    echo -e "${GREEN}4. Install the 0gchain App (v1.0.0) only to execute transactions without running a node${RESET}"
     echo -e "${GREEN}5. Show Grand Valley's Endpoints${RESET}"
     echo -e "${YELLOW}6. Show Guidelines${RESET}"
     echo -e "${RED}7. Exit${RESET}"
