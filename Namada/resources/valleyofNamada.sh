@@ -232,6 +232,12 @@ function restart_validator_node() {
     menu
 }
 
+function backup_validator_key() {
+    cp $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/cometbft/config/priv_validator_key.json $HOME/priv_validator_key.json
+    echo -e "\n${YELLOW}Your priv_vaidator_key.json file has been copied to $HOME${RESET}"
+    menu
+}
+
 function show_validator_node_logs() {
     echo "Displaying Namada Validator Node Logs:"
     sudo journalctl -u namadad -fn 100
@@ -1070,7 +1076,9 @@ function show_guidelines() {
     echo -e "${GREEN}Node Management:${RESET}"
     echo "   a. Restart Validator Node: Restarts the validator node."
     echo "   b. Stop Validator Node: Stops the validator node."
-    echo "   c. Delete Validator Node: Deletes the validator node."
+    echo "   c. Backup Validator Key (store it to $HOME directory)"
+    echo "   d. Delete Validator Node: Deletes the validator node. Ensure you backup your seeds phrase and priv_validator_key.json before doing this."
+    echo "      - Guide: Use this option to delete your validator node. Make sure to backup all important data before proceeding."
 
     echo -e "${GREEN}Install Namada App:${RESET}"
     echo "   - Just for those who want to interact with the namada chain without running a node."
@@ -1121,7 +1129,8 @@ function menu() {
     echo -e "${GREEN}3. Node Management:${RESET}"
     echo "   a. Restart Validator Node"
     echo "   b. Stop Validator Node"
-    echo "   c. Delete Validator Node"
+    echo "   c. Backup Validator Key (store it to $HOME directory)"
+    echo "   d. Delete Validator Node (BACKUP YOUR SEEDS PHRASE AND priv_validator_key.json BEFORE YOU DO THIS)"
     echo -e "${GREEN}4. Install the 0gchain App (v1.0.0) only to execute transactions without running a node${RESET}"
     echo -e "${GREEN}5. Show Grand Valley's Endpoints${RESET}"
     echo -e "${YELLOW}6. Show Guidelines${RESET}"
@@ -1179,7 +1188,8 @@ function menu() {
             case $SUB_OPTION in
                 a) restart_validator_node ;;
                 b) stop_validator_node ;;
-                c) delete_validator_node ;;
+                c) backup_validator_key ;;
+                d) delete_validator_node ;;
                 *) echo "Invalid sub-option. Please try again." ;;
             esac
             ;;
