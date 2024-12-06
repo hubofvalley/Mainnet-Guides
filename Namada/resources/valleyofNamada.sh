@@ -421,7 +421,7 @@ function query_balance() {
                 fi
                 ;;
             3)
-                echo "Returning to the main menu."
+                echo "Returning to the Valley of Namada main menu."
                 menu
                 ;;
             *)
@@ -577,6 +577,7 @@ function stake_tokens() {
             fi
             ;;
         4)
+            echo "Returning to the Valley of Namada main menu."
             menu
             ;;
         *)
@@ -637,6 +638,7 @@ function unstake_tokens() {
             fi
             ;;
         3)
+            echo "Returning to the Valley of Namada main menu."
             menu
             ;;
         *)
@@ -749,6 +751,7 @@ function redelegate_tokens() {
             fi
             ;;
         4)
+            echo "Returning to the Valley of Namada main menu."
             menu
             ;;
         *)
@@ -1090,6 +1093,7 @@ function vote_proposal() {
             fi
             ;;
         4)
+            echo "Returning to the Valley of Namada main menu."
             menu
             ;;
         *)
