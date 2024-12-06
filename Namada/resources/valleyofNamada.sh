@@ -363,9 +363,12 @@ function create_shielded_payment_address() {
 
 function show_wallet() {
     echo
+    namadaw list --keys --transparent
+    echo
+    echo "Implicit addresses:"
     namadaw list --addr | grep "Implicit"
     echo
-    namadaw list --keys
+    namadaw list --keys --shielded
     echo
     namadaw list --shielded --addr
     echo
