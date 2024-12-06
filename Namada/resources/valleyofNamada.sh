@@ -1441,7 +1441,7 @@ function menu() {
                 n) transfer_shielding ;;
                 o) transfer_shielded_to_shielded ;;
                 p) transfer_unshielding ;;
-                q) delete_stored_keys_or_addresses ;;  # Function linked here
+                q) delete_wallets ;;  # Function linked here
                 *) echo "Invalid sub-option. Please try again." ;;
             esac
             ;;
