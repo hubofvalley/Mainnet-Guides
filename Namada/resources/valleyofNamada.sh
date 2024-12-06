@@ -1100,7 +1100,7 @@ function vote_proposal() {
             menu
             ;;
         *)
-            echo "Invalid choice. Please enter 1, 2, or 3."
+            echo "Invalid choice. Please enter 1, 2, 3 or 4."
             ;;
     esac
     echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
