@@ -353,9 +353,21 @@ function create_shielded_payment_address() {
         echo -e "${RED}Failed to create payment address. Please try again.${RESET}"
     fi
 
+    namadaw list --shielded --addr
+
     echo -e "\n${YELLOW}Press Enter to go back to the main menu${RESET}"
     read -r
     menu
+}
+
+function show_wallet() {
+    namadaw list --addr | grep "Implicit"
+    echo
+    namadaw list --keys
+    echo
+    namadaw list --shielded
+
+    echo -e "\n${YELLOW}Press Enter to go back to the main menu${RESET}"
 }
 
 function query_balance() {
