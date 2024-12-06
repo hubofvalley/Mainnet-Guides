@@ -998,14 +998,29 @@ function transfer_shielded_to_shielded() {
         TOKEN="NAM"
     fi
 
-    # Get the implicit address for signing the transaction
-    SIGNING_KEY_ADDRESS=$(namadaw find --alias $DEFAULT_WALLET | grep -oP '(?<=Implicit: ).*')
+    # Prompt user to choose which implicit address to use as signing key
+    while true; do
+        # List the available implicit addresses (aliases or addresses)
+        echo "Available implicit addresses:"
+        namadaw list | grep Implicit
+
+        # Prompt user for signing key (implicit address)
+        read -p "Enter the implicit address/alias to use as signing key: " SIGNING_KEY
+
+        # Validate the input (check if it's an existing implicit address or alias)
+        if namadaw find --alias "$SIGNING_KEY" &>/dev/null || [[ "$SIGNING_KEY" =~ ^nam[0-9a-zA-Z]{40,}$ ]]; then
+            echo "Using signing key: $SIGNING_KEY"
+            break
+        else
+            echo "Invalid implicit address or alias. Please check and try again."
+        fi
+    done
 
     # Execute the shielded-to-shielded transfer transaction
     if [ "$RPC_CHOICE" == "grandvalley" ]; then
-        namadac transfer --source ${SOURCE_SHIELDED_KEY_NAME} --target $TARGET_SHIELDED_PAYMENT_ADDRESS --token $TOKEN --amount $AMOUNT --signing-keys $SIGNING_KEY_ADDRESS --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+        namadac transfer --source ${SOURCE_SHIELDED_KEY_NAME} --target $TARGET_SHIELDED_PAYMENT_ADDRESS --token $TOKEN --amount $AMOUNT --signing-keys $SIGNING_KEY --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
     else
-        namadac transfer --source ${SOURCE_SHIELDED_KEY_NAME} --target $TARGET_SHIELDED_PAYMENT_ADDRESS --token $TOKEN --amount $AMOUNT --signing-keys $SIGNING_KEY_ADDRESS
+        namadac transfer --source ${SOURCE_SHIELDED_KEY_NAME} --target $TARGET_SHIELDED_PAYMENT_ADDRESS --token $TOKEN --amount $AMOUNT --signing-keys $SIGNING_KEY
     fi
 
     echo -e "${GREEN}Transfer from shielded key to shielded payment address completed successfully.${RESET}"
