@@ -1459,10 +1459,9 @@ function show_guidelines() {
     echo "   - For any prompt that has choices, you only need to enter the numbering (1, 2, 3, etc.) or the letter (a, b, c, etc.)."
     echo "   - For yes/no prompts, enter 'yes' for yes and 'no' for no."
     echo "   - For y/n prompts, enter 'y' for yes and 'n' for no."
-    echo "   - For 'own / gv' prompts:"
+    echo "   - For 'own/gv' prompts:"
     echo "       * 'own': Use your own node's RPC. Make sure your node is fully synced and running."
     echo "       * 'gv': Use Grand Valley's RPC for quick and reliable transactions without needing your own node."
-
 
     echo -e "${GREEN}3. Running Commands${RESET}"
     echo "   - After selecting an option, the script will execute the corresponding commands."
@@ -1482,45 +1481,48 @@ function show_guidelines() {
     echo "   b. Show Validator Node Status: Displays the status of the validator node."
     echo "   c. Show Validator Node Logs: Displays the logs for the validator node."
     echo "   d. Apply Snapshot: Applies a snapshot to the node."
-    echo "   e. Add Peers: Adds peers to the node."
+    echo "   e. Add Seeds: Adds a list of seed nodes to your configuration."
+    echo "   f. Add Peers: Adds peers to the validator node for better network connectivity."
 
     echo -e "${GREEN}Validator/Key Interactions:${RESET}"
-    echo "   a. Create Wallet: Creates a new wallet."
-    echo "   b. Restore Wallet: Restores a wallet from its seed phrase."
-    echo "   c. Query Balance: Queries the balance of a wallet."
-    echo "   d. Create Validator: Creates a new validator."
-    echo "   e. Transfer (Transparent): Transfers tokens transparently."
-    echo "   f. Delegate NAM: Delegates NAM tokens to a validator."
-    echo "   g. Undelegate NAM: Undelegates NAM tokens from a validator."
-    echo "   h. Redelegate NAM: Redelegates NAM tokens to another validator."
-    echo "   i. Withdraw Unbonded NAM: Withdraws unbonded NAM tokens."
-    echo "   j. Claim Rewards: Claims rewards for staking."
-    echo "   k. Vote Proposal: Votes on a proposal."
+    echo "   a. Create Wallet: Creates a new wallet (Transparent Key, Shielded Key, Shielded Payment Address)."
+    echo "   b. Restore Wallet: Restores a wallet from its seed phrase (Transparent Key, Shielded Key, Shielded Payment Address)."
+    echo "   c. Show Wallet: Displays the details of a wallet (Transparent Key, Shielded Key, Shielded Payment Address)."
+    echo "   d. Query Balance: Queries the balance of a wallet."
+    echo "   e. Create Validator: Creates a new validator for staking NAM tokens."
+    echo "   f. Transfer (Transparent): Transfers tokens transparently."
+    echo "   g. Delegate NAM: Delegates NAM tokens to a validator."
+    echo "   h. Undelegate NAM: Undelegates NAM tokens from a validator."
+    echo "   i. Redelegate NAM: Redelegates NAM tokens to another validator."
+    echo "   j. Withdraw Unbonded NAM: Withdraws unbonded NAM tokens."
+    echo "   k. Claim Rewards: Claims staking rewards."
+    echo "   l. Vote Proposal: Votes on a governance proposal."
+    echo "   m. Create Another Shielded Payment Address: Creates a new shielded payment address."
+    echo "   n. Transfer (Shielding): Transfers tokens with shielding."
+    echo "   o. Transfer (Shielded to Shielded): Transfers tokens between shielded wallets."
+    echo "   p. Transfer (Unshielding): Unshields tokens from a shielded wallet."
+    echo "   q. Delete Wallet: Deletes a wallet (keys or addresses)."
 
     echo -e "${GREEN}Node Management:${RESET}"
     echo "   a. Restart Validator Node: Restarts the validator node."
     echo "   b. Stop Validator Node: Stops the validator node."
-    echo "   c. Backup Validator Key (store it to $HOME directory)"
-    echo "   d. Delete Validator Node: Deletes the validator node. Ensure you backup your seeds phrase and priv_validator_key.json before doing this."
-    echo "      - Guide: Use this option to delete your validator node. Make sure to backup all important data before proceeding."
+    echo "   c. Backup Validator Key: Backs up the validator key to your $HOME directory."
+    echo "   d. Delete Validator Node: Deletes the validator node. Ensure you backup your seed phrase and priv_validator_key.json before proceeding."
 
     echo -e "${GREEN}Install Namada App:${RESET}"
-    echo "   - Just for those who want to interact with the namada chain without running a node."
-    echo "   - Use this option to install the Namada App, which allows you to make transactions, view balances, and interact with the chain without the need for a validator or full node."
-    echo "   - This is a lightweight option for users who prefer not to run a node but still want to participate in the network's ecosystem."
+    echo "   - Use this option to install the Namada App, which allows you to execute transactions without running a node."
 
     echo -e "${GREEN}Show Grand Valley's Endpoints:${RESET}"
     echo "   - Displays Grand Valley's public endpoints."
-    echo "   - Guide: This option will show you the public endpoints provided by Grand Valley. These endpoints can be used for various operations."
 
     echo -e "${GREEN}Show Guidelines:${RESET}"
     echo "   - Displays these guidelines."
-    echo "   - Guide: Use this option to view the guidelines on how to use the tool effectively."
 
     echo -e "\n${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -r
     menu
 }
+
 
 # Menu function
 function menu() {
