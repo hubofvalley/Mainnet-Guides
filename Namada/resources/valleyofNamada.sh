@@ -392,15 +392,6 @@ function query_balance() {
             echo "Available Wallets:"
             namadaw list --addr | grep "Implicit"
             namadaw list --keys
-
-            # Prompt user for wallet alias
-            read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " USER_INPUT_WALLET_NAME
-            if [ -z "$USER_INPUT_WALLET_NAME" ]; then
-                WALLET_NAME=$DEFAULT_WALLET
-            else
-                WALLET_NAME=$USER_INPUT_WALLET_NAME
-            fi
-            echo "Selected wallet: $WALLET_NAME"
         elif [ "$WALLET_CHOICE" == "2" ]; then
             read -p "Enter the custom wallet address: " WALLET_ADDRESS
             echo "Querying the balance of custom wallet address: $WALLET_ADDRESS"
@@ -421,14 +412,22 @@ function query_balance() {
             return
         fi
 
+        if [ "$WALLET_CHOICE" == "1" ]; then
+            # Prompt for wallet alias after choosing address type
+            read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " USER_INPUT_WALLET_NAME
+            if [ -z "$USER_INPUT_WALLET_NAME" ]; then
+                WALLET_NAME=$DEFAULT_WALLET
+            else
+                WALLET_NAME=$USER_INPUT_WALLET_NAME
+            fi
+            WALLET_ADDRESS=$WALLET_NAME
+        fi
+
         # Prompt for RPC choice
         read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
         case $CHOICE in
             1)
-                if [ "$WALLET_CHOICE" == "1" ]; then
-                    WALLET_ADDRESS=$WALLET_NAME
-                fi
                 if [ "$RPC_CHOICE" == "grandvalley" ]; then
                     namadac balance --owner $WALLET_ADDRESS --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
                 else
@@ -436,9 +435,6 @@ function query_balance() {
                 fi
                 ;;
             2)
-                if [ "$WALLET_CHOICE" == "1" ]; then
-                    WALLET_ADDRESS=$WALLET_NAME
-                fi
                 if [ "$RPC_CHOICE" == "grandvalley" ]; then
                     namadac balance --owner ${WALLET_ADDRESS} --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
                 else
