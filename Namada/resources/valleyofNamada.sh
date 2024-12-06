@@ -1053,11 +1053,14 @@ function transfer_unshielding() {
         TOKEN="NAM"
     fi
 
+    # Get the implicit address for signing the transaction
+    SIGNING_KEY_ADDRESS=$(namadaw find --alias $TARGET_WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+
     # Execute the unshielding transaction to a transparent wallet (assuming source is shielded key)
     if [ "$RPC_CHOICE" == "grandvalley" ]; then
-        namadac unshield --source $SHIELDED_WALLET_NAME --target $TARGET_WALLET_NAME --token $TOKEN --amount $AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+        namadac unshield --source $SHIELDED_WALLET_NAME --target $TARGET_WALLET_NAME --token $TOKEN --amount $AMOUNT --signing-keys $SIGNING_KEY_ADDRESS --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
     else
-        namadac unshield --source $SHIELDED_WALLET_NAME --target $TARGET_WALLET_NAME --token $TOKEN --amount $AMOUNT
+        namadac unshield --source $SHIELDED_WALLET_NAME --target $TARGET_WALLET_NAME --token $TOKEN --amount $AMOUNT --signing-keys $SIGNING_KEY_ADDRESS
     fi
 
     echo -e "${GREEN}Unshielding transaction from shielded key to transparent account completed successfully.${RESET}"
