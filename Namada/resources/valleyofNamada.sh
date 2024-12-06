@@ -1185,7 +1185,7 @@ function transfer_shielded_to_shielded() {
     # Get target shielded payment address (destination shielded address)
     while true; do
         # Prompt for target shielded payment address
-        read -p "Enter target shielded payment address (starts with 'znam'): " TARGET_SHIELDED_PAYMENT_ADDRESS
+        read -p "Enter target shielded payment address (starts with 'znam' or u can enter the alias): " TARGET_SHIELDED_PAYMENT_ADDRESS
 
         # Validate target shielded payment address (must start with 'znam')
         if [[ ! "$TARGET_SHIELDED_PAYMENT_ADDRESS" =~ ^znam[0-9a-zA-Z]{40,}$ ]]; then
