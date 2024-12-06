@@ -1193,19 +1193,20 @@ function menu() {
     echo -e "${GREEN}2. Validator/Key Interactions:${RESET}"
     echo "   a. Create Wallet (Transparent Key, Shielded Key, Shielded Payment Address)"
     echo "   b. Restore Wallet (Transparent Key, Shielded Key, Shielded Payment Address)"
-    echo "   c. Query Balance"
-    echo "   d. Create Validator"
-    echo "   e. Transfer (Transparent)"
-    echo "   f. Delegate NAM"
-    echo "   g. Undelegate NAM"
-    echo "   h. Redelegate NAM"
-    echo "   i. Withdraw Unbonded NAM"
-    echo "   j. Claim Rewards"
-    echo "   k. Vote Proposal"
-    echo "   l. Create Another Shielded Payment Address"
-    echo "   m. Transfer (Shielding)"
-    echo "   n. Transfer (Shielded to Shielded)"
-    echo "   o. Transfer (Unshielding)"
+    echo "   c. Show Wallet (Transparent Key, Shielded Key, Shielded Payment Address)"
+    echo "   d. Query Balance"
+    echo "   e. Create Validator"
+    echo "   f. Transfer (Transparent)"
+    echo "   g. Delegate NAM"
+    echo "   h. Undelegate NAM"
+    echo "   i. Redelegate NAM"
+    echo "   j. Withdraw Unbonded NAM"
+    echo "   k. Claim Rewards"
+    echo "   l. Vote Proposal"
+    echo "   m. Create Another Shielded Payment Address"
+    echo "   n. Transfer (Shielding)"
+    echo "   o. Transfer (Shielded to Shielded)"
+    echo "   p. Transfer (Unshielding)"
     echo -e "${GREEN}3. Node Management:${RESET}"
     echo "   a. Restart Validator Node"
     echo "   b. Stop Validator Node"
@@ -1248,19 +1249,20 @@ function menu() {
             case $SUB_OPTION in
                 a) create_wallet ;;
                 b) restore_wallet ;;
-                c) query_balance ;;
-                d) create_validator ;;
-                e) transfer_transparent ;;
-                f) stake_tokens ;;
-                g) unstake_tokens ;;
-                h) redelegate_tokens ;;
-                i) withdraw_unbonded_tokens ;;
-                j) claim_rewards ;;
-                k) vote_proposal ;;
-                l) create_shielded_payment_address ;;
-                m) transfer_shielding ;;
-                n) transfer_shielded_to_shielded ;;
-                o) transfer_unshielding ;;
+                c) show_wallet ;;
+                d) query_balance ;;
+                e) create_validator ;;
+                f) transfer_transparent ;;
+                g) stake_tokens ;;
+                h) unstake_tokens ;;
+                i) redelegate_tokens ;;
+                j) withdraw_unbonded_tokens ;;
+                k) claim_rewards ;;
+                l) vote_proposal ;;
+                m) create_shielded_payment_address ;;
+                n) transfer_shielding ;;
+                o) transfer_shielded_to_shielded ;;
+                p) transfer_unshielding ;;
                 *) echo "Invalid sub-option. Please try again." ;;
             esac
             ;;
