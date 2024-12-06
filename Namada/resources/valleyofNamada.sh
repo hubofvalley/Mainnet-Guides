@@ -990,33 +990,35 @@ function transfer_shielded_to_shielded() {
 function transfer_unshielding() {
     DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
 
-    # Show available shielded wallets
-    echo "Available shielded wallets:"
-    namadaw list | grep shielded
-
     while true; do
-        read -p "Enter shielded wallet name/alias (leave empty to use default shielded wallet --> ${DEFAULT_WALLET}-shielded): " SHIELDED_WALLET_NAME
+        # Show available shielded wallets (stored addresses only)
+        echo "Available shielded wallets:"
+        namadaw list | grep shielded-addr
+
+        # Prompt for shielded wallet alias (must be stored address)
+        read -p "Enter shielded wallet name/alias (leave empty to use default shielded wallet --> ${DEFAULT_WALLET}-shielded-addr): " SHIELDED_WALLET_NAME
         if [ -z "$SHIELDED_WALLET_NAME" ]; then
-            SHIELDED_WALLET_NAME="${DEFAULT_WALLET}-shielded"
+            SHIELDED_WALLET_NAME="${DEFAULT_WALLET}-shielded-addr"
         fi
 
-        # Get shielded wallet address
+        # Check if the entered shielded wallet alias exists
         SHIELDED_WALLET_ADDRESS=$(namadaw find --alias $SHIELDED_WALLET_NAME | grep 'znam' | awk '{print $2}' | tr -d '"')
 
-        if [ -n "$SHIELDED_WALLET_ADDRESS" ]; then
-            break
-        else
-            echo "Shielded wallet name not found. Please check the wallet name/alias and try again."
+        if [ -z "$SHIELDED_WALLET_ADDRESS" ]; then
+            echo "Shielded wallet alias not found. Please check the input and try again."
+            continue
         fi
+
+        echo "Using shielded wallet: $SHIELDED_WALLET_NAME ($SHIELDED_WALLET_ADDRESS)"
+        break
     done
 
-    echo "Using shielded wallet: $SHIELDED_WALLET_NAME ($SHIELDED_WALLET_ADDRESS)"
-
-    # Show available wallets
-    echo "Available wallets:"
+    # Show available transparent wallets (Implicit addresses)
+    echo "Available wallets (for unshielding to transparent address):"
     namadaw list | grep Implicit | grep -vE 'consensus-key|tendermint-node-key'
 
     while true; do
+        # Prompt for target transparent wallet alias (must be a transparent wallet)
         read -p "Enter target wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " TARGET_WALLET_NAME
         if [ -z "$TARGET_WALLET_NAME" ]; then
             TARGET_WALLET_NAME=$DEFAULT_WALLET
@@ -1025,20 +1027,23 @@ function transfer_unshielding() {
         # Get target wallet address
         TARGET_WALLET_ADDRESS=$(namadaw find --alias $TARGET_WALLET_NAME | grep -oP '(?<=Implicit: ).*')
 
-        if [ -n "$TARGET_WALLET_ADDRESS" ]; then
-            break
-        else
-            echo "Target wallet name not found. Please check the wallet name/alias and try again."
+        if [ -z "$TARGET_WALLET_ADDRESS" ]; then
+            echo "Target wallet alias not found. Please check the input and try again."
+            continue
         fi
+
+        echo "Using target wallet: $TARGET_WALLET_NAME ($TARGET_WALLET_ADDRESS)"
+        break
     done
 
-    echo "Using target wallet: $TARGET_WALLET_NAME ($TARGET_WALLET_ADDRESS)"
-
+    # Prompt for amount to unshield
     read -p "Enter the amount to unshield: " AMOUNT
 
+    # Prompt for RPC choice
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
-    read -p "Which token do you want to interact with? (1: NAM, 2: OSMO): " TOKEN_CHOICE
+    # Prompt for token choice
+    read -p "Which token do you want to unshield? (1: NAM, 2: OSMO): " TOKEN_CHOICE
     if [ "$TOKEN_CHOICE" == "1" ]; then
         TOKEN="NAM"
     elif [ "$TOKEN_CHOICE" == "2" ]; then
@@ -1048,14 +1053,15 @@ function transfer_unshielding() {
         TOKEN="NAM"
     fi
 
+    # Execute the unshielding transaction to a transparent wallet (assuming source is shielded)
     if [ "$RPC_CHOICE" == "grandvalley" ]; then
         namadac unshield --source $SHIELDED_WALLET_NAME --target $TARGET_WALLET_NAME --token $TOKEN --amount $AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
     else
         namadac unshield --source $SHIELDED_WALLET_NAME --target $TARGET_WALLET_NAME --token $TOKEN --amount $AMOUNT
     fi
 
-    echo -e "${GREEN}Transfer from shielded account to transparent account (unshielding) completed successfully.${RESET}"
-    echo -e "${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
+    echo -e "${GREEN}Unshielding transaction from shielded to transparent account completed successfully.${RESET}"
+    echo -e "${YELLOW}Press Enter to go back to the Valley of Namada main menu${RESET}"
     read -r
     menu
 }
