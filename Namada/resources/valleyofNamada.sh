@@ -632,8 +632,10 @@ function stake_tokens() {
 
     # Prompt for wallet name/alias after selecting the delegate option
     echo "Available implicit wallets:"
+    echo
     namadaw list | grep Implicit
-    
+    echo
+
     while true; do
         read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
         if [ -z "$WALLET_NAME" ]; then
@@ -756,8 +758,10 @@ function unstake_tokens() {
 
     # Prompt for wallet name/alias after selecting undelegation choice
     echo "Available implicit wallets:"
+    echo
     namadaw list | grep Implicit
-    
+    echo
+
     while true; do
         read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
         if [ -z "$WALLET_NAME" ]; then
@@ -822,7 +826,8 @@ function redelegate_tokens() {
         1|2|3)
             # Show available wallets
             echo "Fetching available wallet aliases..."
-            namadaw list
+            echo
+            namadaw list | grep Implicit
 
             while true; do
                 read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
