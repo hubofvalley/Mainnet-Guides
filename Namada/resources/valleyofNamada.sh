@@ -525,50 +525,80 @@ function query_balance() {
 
 function transfer_transparent() {
     DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
+
     while true; do
-        read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
-        if [ -z "$WALLET_NAME" ]; then
-            WALLET_NAME=$DEFAULT_WALLET
+        echo "Choose an option:"
+        echo "1. Transfer tokens to a transparent address"
+        echo "2. Back"
+        read -p "Enter your choice (1 or 2): " CHOICE
+
+        if [ "$CHOICE" == "2" ]; then
+            echo "Returning to the Valley of Namada main menu."
+            menu
+            return
         fi
 
-        # Get wallet address
-        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+        if [ "$CHOICE" == "1" ]; then
+            echo "Available Wallets:"
+            echo
+            namadaw list | grep Implicit | grep -vE 'consensus-key|tendermint-node-key'
+            echo
 
-        if [ -n "$WALLET_ADDRESS" ]; then
-            break
+            # Prompt for source wallet alias (always default wallet for transparent transfer)
+            read -p "Enter source wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " SOURCE_WALLET_NAME
+            if [ -z "$SOURCE_WALLET_NAME" ]; then
+                SOURCE_WALLET_NAME=$DEFAULT_WALLET
+            fi
+            SOURCE_WALLET_ADDRESS=$(namadaw find --alias $SOURCE_WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+
+            if [ -z "$SOURCE_WALLET_ADDRESS" ]; then
+                echo "Source wallet name not found. Please check the wallet name/alias and try again."
+                continue
+            fi
+            echo "Using source wallet: $SOURCE_WALLET_NAME ($SOURCE_WALLET_ADDRESS)"
+
         else
-            echo "Wallet name not found. Please check the wallet name/alias and try again."
+            echo "Invalid choice. Please enter 1 or 2."
+            continue
         fi
+
+        # Prompt for target transparent wallet address
+        read -p "Enter the target transparent wallet address: " TARGET_TRANSPARENT_WALLET_ADDRESS
+        if [ -z "$TARGET_TRANSPARENT_WALLET_ADDRESS" ]; then
+            echo "Target transparent wallet address cannot be empty. Please try again."
+            continue
+        fi
+
+        # Prompt for amount to transfer
+        read -p "Enter the amount to transfer: " AMOUNT
+
+        # Prompt for RPC choice
+        read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
+
+        # Prompt for token choice
+        read -p "Which token do you want to interact with? (1: NAM, 2: OSMO): " TOKEN_CHOICE
+        if [ "$TOKEN_CHOICE" == "1" ]; then
+            TOKEN="NAM"
+        elif [ "$TOKEN_CHOICE" == "2" ]; then
+            TOKEN="tnam1p5z8ruwyu7ha8urhq2l0dhpk2f5dv3ts7uyf2n75"
+        else
+            echo "Invalid token choice. Defaulting to NAM."
+            TOKEN="NAM"
+        fi
+
+        # Execute the transparent transfer
+        if [ "$RPC_CHOICE" == "gv" ]; then
+            namadac transparent-transfer --source $SOURCE_WALLET_ADDRESS --target $TARGET_TRANSPARENT_WALLET_ADDRESS --token $TOKEN --amount $AMOUNT --signing-keys $SOURCE_WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+        else
+            namadac transparent-transfer --source $SOURCE_WALLET_ADDRESS --target $TARGET_TRANSPARENT_WALLET_ADDRESS --token $TOKEN --amount $AMOUNT --signing-keys $SOURCE_WALLET_NAME
+        fi
+
+        echo -e "${GREEN}Transparent transfer completed successfully.${RESET}"
+        echo -e "${YELLOW}Press Enter to go back to the Valley of Namada main menu${RESET}"
+        read -r
+        menu
+        return
     done
-
-    echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
-
-    read -p "Enter target transparent wallet address: " TARGET_TRANSPARENT_WALLET_ADDRESS
-
-    read -p "Enter the amount to transfer: " AMOUNT
-
-    read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
-
-    read -p "Which token do you want to interact with? (1: NAM, 2: OSMO): " TOKEN_CHOICE
-    if [ "$TOKEN_CHOICE" == "1" ]; then
-        TOKEN="NAM"
-    elif [ "$TOKEN_CHOICE" == "2" ]; then
-        TOKEN="tnam1p5z8ruwyu7ha8urhq2l0dhpk2f5dv3ts7uyf2n75"
-    else
-        echo "Invalid token choice. Defaulting to NAM."
-        TOKEN="NAM"
-    fi
-
-    if [ "$RPC_CHOICE" == "gv" ]; then
-        namadac transparent-transfer --source $WALLET_ADDRESS --target $TARGET_TRANSPARENT_WALLET_ADDRESS --token $TOKEN --amount $AMOUNT --signing-keys $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
-    else
-        namadac transparent-transfer --source $WALLET_ADDRESS --target $TARGET_TRANSPARENT_WALLET_ADDRESS --token $TOKEN --amount $AMOUNT --signing-keys $WALLET_NAME
-    fi
-
-    echo -e "${GREEN}Transfer from transparent address to another transparent address completed successfully.${RESET}"
-    echo -e "${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
-    read -r
-    menu
 }
 
 function stake_tokens() {
