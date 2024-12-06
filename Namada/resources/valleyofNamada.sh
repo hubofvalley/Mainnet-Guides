@@ -352,8 +352,9 @@ function create_shielded_payment_address() {
     else
         echo -e "${RED}Failed to create payment address. Please try again.${RESET}"
     fi
-
+    echo
     namadaw list --shielded --addr
+    echo
 
     echo -e "\n${YELLOW}Press Enter to go back to the main menu${RESET}"
     read -r
@@ -361,11 +362,13 @@ function create_shielded_payment_address() {
 }
 
 function show_wallet() {
+    echo
     namadaw list --addr | grep "Implicit"
     echo
     namadaw list --keys
     echo
     namadaw list --shielded --addr
+    echo
 
     echo -e "${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -r
@@ -390,6 +393,7 @@ function query_balance() {
 
         if [ "$WALLET_CHOICE" == "1" ]; then
             echo "Available Wallets:"
+            echo
             namadaw list --addr | grep "Implicit"
             echo
             namadaw list --keys
@@ -872,7 +876,8 @@ function transfer_shielding() {
         fi
 
         if [ "$CHOICE" == "1" ]; then
-            echo "Available wallets:"
+            echo "Available Wallets:"
+            echo
             namadaw list | grep Implicit | grep -vE 'consensus-key|tendermint-node-key'
             echo
 
@@ -896,6 +901,7 @@ function transfer_shielding() {
 
         # Show available shielded wallets (stored addresses only)
         echo "Available shielded wallets (stored addresses):"
+        echo
         namadaw list | grep shielded-addr
         echo
 
@@ -950,6 +956,7 @@ function transfer_shielded_to_shielded() {
     while true; do
         # Show available shielded keys
         echo "Available shielded keys:"
+        echo
         namadaw list --shielded --keys
         echo
 
@@ -1007,6 +1014,7 @@ function transfer_shielded_to_shielded() {
     while true; do
         # List the available implicit addresses (aliases or addresses)
         echo "Available implicit addresses:"
+        echo
         namadaw list | grep Implicit
         echo
 
@@ -1041,6 +1049,7 @@ function transfer_unshielding() {
     while true; do
         # Show available shielded wallets (stored shielded key addresses only)
         echo "Available shielded wallets:"
+        echo
         namadaw list --shielded --keys
         echo
 
@@ -1064,6 +1073,7 @@ function transfer_unshielding() {
 
     # Show available transparent wallets (Implicit addresses)
     echo "Available wallets (for unshielding to transparent address):"
+    echo
     namadaw list | grep Implicit | grep -vE 'consensus-key|tendermint-node-key'
     echo
 
