@@ -1123,6 +1123,7 @@ function transfer_shielding() {
         fi
 
         echo "Using target shielded wallet: $TARGET_WALLET_NAME ($TARGET_WALLET_ADDRESS)"
+        echo
 
         # Prompt for amount to shield
         read -p "Enter the amount to shield: " AMOUNT
@@ -1163,6 +1164,8 @@ function transfer_shielded_to_shielded() {
         echo
         namadaw list --shielded --keys
         echo
+        namadaw list --shielded --addr
+        echo
 
         # Prompt for source shielded key alias (must be a stored shielded key)
         read -p "Enter source shielded key name/alias (leave empty to use default shielded key --> ${DEFAULT_WALLET}-shielded): " SOURCE_SHIELDED_KEY_NAME
@@ -1179,6 +1182,7 @@ function transfer_shielded_to_shielded() {
             continue
         fi
         echo "Using source shielded key: $SOURCE_SHIELDED_KEY_NAME ($SOURCE_SHIELDED_KEY_ADDRESS)"
+        echo
         break
     done
 
@@ -1194,6 +1198,7 @@ function transfer_shielded_to_shielded() {
         fi
 
         echo "Using target shielded payment address: $TARGET_SHIELDED_PAYMENT_ADDRESS"
+        echo
         break
     done
 
@@ -1273,6 +1278,7 @@ function transfer_unshielding() {
         fi
 
         echo "Using shielded wallet: $SHIELDED_WALLET_NAME ($SHIELDED_WALLET_ADDRESS)"
+        echo
         break
     done
 
@@ -1298,6 +1304,7 @@ function transfer_unshielding() {
         fi
 
         echo "Using target wallet: $TARGET_WALLET_NAME ($TARGET_WALLET_ADDRESS)"
+        echo
         break
     done
 
