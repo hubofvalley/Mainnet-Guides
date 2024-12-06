@@ -488,7 +488,7 @@ function query_balance() {
         fi
 
         # Prompt for RPC choice
-        read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own / gv): " RPC_CHOICE
+        read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
 
         # Execute the query based on address type and flow
         case $CHOICE in
@@ -545,7 +545,7 @@ function transfer_transparent() {
 
     read -p "Enter the amount to transfer: " AMOUNT
 
-    read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own / gv): " RPC_CHOICE
+    read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
 
     read -p "Which token do you want to interact with? (1: NAM, 2: OSMO): " TOKEN_CHOICE
     if [ "$TOKEN_CHOICE" == "1" ]; then
@@ -599,7 +599,7 @@ function stake_tokens() {
 
     case $CHOICE in
         1)
-            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own / gv): " RPC_CHOICE
+            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
             read -p "Enter amount to stake: " AMOUNT
             VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
             if [ "$RPC_CHOICE" == "grandvalley" ]; then
@@ -609,7 +609,7 @@ function stake_tokens() {
             fi
             ;;
         2)
-            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own / gv): " RPC_CHOICE
+            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
             read -p "Enter amount to stake: " AMOUNT
             port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml")
             VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) | grep 'Found validator address' | awk -F'"' '{print $2}')
@@ -637,7 +637,7 @@ function stake_tokens() {
             fi
             ;;
         3)
-            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own / gv): " RPC_CHOICE
+            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
             read -p "Enter amount to stake: " AMOUNT
             read -p "Enter validator address: " VALIDATOR_ADDRESS
 
@@ -704,7 +704,7 @@ function unstake_tokens() {
 
     case $CHOICE in
         1)
-            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own / gv): " RPC_CHOICE
+            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
             read -p "Enter amount to unstake: " AMOUNT
             port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml")
             VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) --node https://lightnode-rpc-mainnet-namada.grandvalleys.com | grep 'Found validator address' | awk -F'"' '{print $2}')
@@ -715,7 +715,7 @@ function unstake_tokens() {
             fi
             ;;
         2)
-            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own / gv): " RPC_CHOICE
+            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
             read -p "Enter validator address: " VALIDATOR_ADDRESS
             read -p "Enter amount to unstake: " AMOUNT
             if [ "$RPC_CHOICE" == "grandvalley" ]; then
@@ -768,7 +768,7 @@ function redelegate_tokens() {
 
     case $CHOICE in
         1)
-            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own / gv): " RPC_CHOICE
+            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
             read -p "Enter amount to redelegate: " AMOUNT
             TARGET_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
             read -p "Enter source validator address: " SOURCE_VALIDATOR_ADDRESS
@@ -780,7 +780,7 @@ function redelegate_tokens() {
             fi
             ;;
         2)
-            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own / gv): " RPC_CHOICE
+            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
             read -p "Enter amount to redelegate: " AMOUNT
             port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml")
             SOURCE_VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) --node https://lightnode-rpc-mainnet-namada.grandvalleys.com | grep 'Found validator address' | awk -F'"' '{print $2}')
@@ -810,7 +810,7 @@ function redelegate_tokens() {
             fi
             ;;
         3)
-            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own / gv): " RPC_CHOICE
+            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
             read -p "Enter amount to redelegate: " AMOUNT
             read -p "Enter source validator address: " SOURCE_VALIDATOR_ADDRESS
             read -p "Enter destination validator address: " TARGET_VALIDATOR_ADDRESS
@@ -872,7 +872,7 @@ function withdraw_unbonded_tokens() {
 
     read -p "Enter validator address: " VALIDATOR_ADDRESS
 
-    read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own / gv): " RPC_CHOICE
+    read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
 
     if [ "$RPC_CHOICE" == "grandvalley" ]; then
         namadac withdraw --source $WALLET_NAME --validator $VALIDATOR_ADDRESS --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
@@ -906,7 +906,7 @@ function claim_rewards() {
 
     read -p "Enter validator address: " VALIDATOR_ADDRESS
 
-    read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own / gv): " RPC_CHOICE
+    read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
 
     if [ "$RPC_CHOICE" == "grandvalley" ]; then
         namadac claim-rewards --source $WALLET_NAME --validator $VALIDATOR_ADDRESS --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
@@ -983,7 +983,7 @@ function transfer_shielding() {
         read -p "Enter the amount to shield: " AMOUNT
 
         # Prompt for RPC choice
-        read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own / gv): " RPC_CHOICE
+        read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
 
         # Prompt for token choice
         read -p "Which token do you want to interact with? (1: NAM, 2: OSMO): " TOKEN_CHOICE
@@ -1055,7 +1055,7 @@ function transfer_shielded_to_shielded() {
     read -p "Enter the amount to transfer: " AMOUNT
 
     # Prompt for RPC choice
-    read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own / gv): " RPC_CHOICE
+    read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
 
     # Prompt for token choice
     read -p "Which token do you want to interact with? (1: NAM, 2: OSMO): " TOKEN_CHOICE
@@ -1158,7 +1158,7 @@ function transfer_unshielding() {
     read -p "Enter the amount to unshield: " AMOUNT
 
     # Prompt for RPC choice
-    read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own / gv): " RPC_CHOICE
+    read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
 
     # Prompt for token choice
     read -p "Which token do you want to unshield? (1: NAM, 2: OSMO): " TOKEN_CHOICE
@@ -1296,6 +1296,10 @@ function show_guidelines() {
     echo "   - For any prompt that has choices, you only need to enter the numbering (1, 2, 3, etc.) or the letter (a, b, c, etc.)."
     echo "   - For yes/no prompts, enter 'yes' for yes and 'no' for no."
     echo "   - For y/n prompts, enter 'y' for yes and 'n' for no."
+    echo "   - For 'own / gv' prompts:"
+    echo "       * 'own': Use your own node's RPC. Make sure your node is fully synced and running."
+    echo "       * 'gv': Use Grand Valley's RPC for quick and reliable transactions without needing your own node."
+
 
     echo -e "${GREEN}3. Running Commands${RESET}"
     echo "   - After selecting an option, the script will execute the corresponding commands."
