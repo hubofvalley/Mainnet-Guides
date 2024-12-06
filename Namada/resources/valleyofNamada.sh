@@ -1211,7 +1211,7 @@ function menu() {
     echo "   b. Stop Validator Node"
     echo "   c. Backup Validator Key (store it to $HOME directory)"
     echo "   d. Delete Validator Node (BACKUP YOUR SEEDS PHRASE AND priv_validator_key.json BEFORE YOU DO THIS)"
-    echo -e "${GREEN}4. Install the 0gchain App (v1.0.0) only to execute transactions without running a node${RESET}"
+    echo -e "${GREEN}4. Install the Namada App (v1.0.0) only to execute transactions without running a node${RESET}"
     echo -e "${GREEN}5. Show Grand Valley's Endpoints${RESET}"
     echo -e "${YELLOW}6. Show Guidelines${RESET}"
     echo -e "${RED}7. Exit${RESET}"
