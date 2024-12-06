@@ -365,7 +365,7 @@ function show_wallet() {
     echo
     namadaw list --keys
     echo
-    namadaw list --shielded
+    namadaw list --shielded --addr
 
     echo -e "\n${YELLOW}Press Enter to go back to the main menu${RESET}"
 }
