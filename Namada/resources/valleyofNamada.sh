@@ -684,7 +684,7 @@ function redelegate_tokens() {
     echo "2. Redelegate from your validator"
     echo "3. Redelegate from another validator"
     echo "4. Back"
-    read -p "Enter your choice (1, 2, or 3): " CHOICE
+    read -p "Enter your choice (1, 2, 3 or 4): " CHOICE
 
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
@@ -1055,7 +1055,7 @@ function vote_proposal() {
     echo "2. Query specific proposal"
     echo "3. Vote on a proposal"
     echo "4. Back"
-    read -p "Enter your choice (1, 2, or 3): " CHOICE
+    read -p "Enter your choice (1, 2, 3 or 4): " CHOICE
 
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (1 for own, 2 for Grand Valley): " RPC_CHOICE
 
