@@ -1189,18 +1189,26 @@ function transfer_shielded_to_shielded() {
 
     # Get target shielded payment address (destination shielded address)
     while true; do
-        # Prompt for target shielded payment address
-        read -p "Enter target shielded payment address (starts with 'znam' or u can enter the alias): " TARGET_SHIELDED_PAYMENT_ADDRESS
+        # Prompt for target shielded payment address or alias
+        read -p "Enter target shielded payment address (starts with 'znam') or alias: " TARGET_SHIELDED_PAYMENT_ADDRESS
 
-        # Validate target shielded payment address (must start with 'znam')
-        if [[ ! "$TARGET_SHIELDED_PAYMENT_ADDRESS" =~ ^znam[0-9a-zA-Z]{40,}$ ]]; then
-            echo "Invalid target shielded payment address. Please enter a valid shielded address that starts with 'znam'."
-            continue
+        # Check if the input is an alias
+        WALLET_ADDRESS=$(namadaw find --alias "$TARGET_SHIELDED_PAYMENT_ADDRESS" | grep -oP '(?<=: ).*' | grep -oP 'znam[0-9a-zA-Z]{40,}')
+
+        if [ -n "$WALLET_ADDRESS" ]; then
+            # If the input is an alias, use the wallet address associated with the alias
+            TARGET_SHIELDED_PAYMENT_ADDRESS="$WALLET_ADDRESS"
+            echo "Using alias: $TARGET_SHIELDED_PAYMENT_ADDRESS"
+            break
+        else
+            # Validate target shielded payment address (must start with 'znam')
+            if [[ "$TARGET_SHIELDED_PAYMENT_ADDRESS" =~ ^znam[0-9a-zA-Z]{40,}$ ]]; then
+                echo "Using target shielded payment address: $TARGET_SHIELDED_PAYMENT_ADDRESS"
+                break
+            else
+                echo "Invalid input. Please enter a valid shielded address starting with 'znam' or a valid alias."
+            fi
         fi
-
-        echo "Using target shielded payment address: $TARGET_SHIELDED_PAYMENT_ADDRESS"
-        echo
-        break
     done
 
     # Prompt for amount to transfer
