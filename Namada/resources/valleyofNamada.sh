@@ -941,30 +941,53 @@ function transfer_shielding() {
 
 function transfer_shielded_to_shielded() {
     DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
+
+    # Get source shielded key (from the stored shielded key)
     while true; do
-        read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
-        if [ -z "$WALLET_NAME" ]; then
-            WALLET_NAME=$DEFAULT_WALLET
+        # Show available shielded keys
+        echo "Available shielded keys:"
+        namadaw list --shielded --keys
+
+        # Prompt for source shielded key alias (must be a stored shielded key)
+        read -p "Enter source shielded key name/alias (leave empty to use default shielded key --> ${DEFAULT_WALLET}-shielded): " SOURCE_SHIELDED_KEY_NAME
+        if [ -z "$SOURCE_SHIELDED_KEY_NAME" ]; then
+            SOURCE_SHIELDED_KEY_NAME="${DEFAULT_WALLET}-shielded"
         fi
 
-        # Get wallet address
-        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+        # Check if the entered shielded key alias exists
+        SOURCE_SHIELDED_KEY_ADDRESS=$(namadaw find --alias $SOURCE_SHIELDED_KEY_NAME | grep -oP 'zvknam[0-9a-zA-Z]{40,}' | head -n 1)
 
-        if [ -n "$WALLET_ADDRESS" ]; then
-            break
-        else
-            echo "Wallet name not found. Please check the wallet name/alias and try again."
+        if [ -z "$SOURCE_SHIELDED_KEY_ADDRESS" ]; then
+            echo "Source shielded key alias not found. Please check the input and try again."
+            continue
         fi
+
+        echo "Using source shielded key: $SOURCE_SHIELDED_KEY_NAME ($SOURCE_SHIELDED_KEY_ADDRESS)"
+        break
     done
 
-    echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
+    # Get target shielded payment address (destination shielded address)
+    while true; do
+        # Prompt for target shielded payment address
+        read -p "Enter target shielded payment address (starts with 'znam'): " TARGET_SHIELDED_PAYMENT_ADDRESS
 
-    read -p "Enter target shielded wallet address: " TARGET_SHIELDED_WALLET_ADDRESS
+        # Validate target shielded payment address (must start with 'znam')
+        if [[ ! "$TARGET_SHIELDED_PAYMENT_ADDRESS" =~ ^znam[0-9a-zA-Z]{40,}$ ]]; then
+            echo "Invalid target shielded payment address. Please enter a valid shielded address that starts with 'znam'."
+            continue
+        fi
 
+        echo "Using target shielded payment address: $TARGET_SHIELDED_PAYMENT_ADDRESS"
+        break
+    done
+
+    # Prompt for amount to transfer
     read -p "Enter the amount to transfer: " AMOUNT
 
+    # Prompt for RPC choice
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
+    # Prompt for token choice
     read -p "Which token do you want to interact with? (1: NAM, 2: OSMO): " TOKEN_CHOICE
     if [ "$TOKEN_CHOICE" == "1" ]; then
         TOKEN="NAM"
@@ -975,13 +998,17 @@ function transfer_shielded_to_shielded() {
         TOKEN="NAM"
     fi
 
+    # Get the implicit address for signing the transaction
+    SIGNING_KEY_ADDRESS=$(namadaw find --alias $DEFAULT_WALLET | grep -oP '(?<=Implicit: ).*')
+
+    # Execute the shielded-to-shielded transfer transaction
     if [ "$RPC_CHOICE" == "grandvalley" ]; then
-        namadac transfer --source ${WALLET_NAME}-shielded --target $TARGET_SHIELDED_WALLET_ADDRESS --token $TOKEN --amount $AMOUNT --signing-keys $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+        namadac transfer --source ${SOURCE_SHIELDED_KEY_NAME} --target $TARGET_SHIELDED_PAYMENT_ADDRESS --token $TOKEN --amount $AMOUNT --signing-keys $SIGNING_KEY_ADDRESS --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
     else
-        namadac transfer --source ${WALLET_NAME}-shielded --target $TARGET_SHIELDED_WALLET_ADDRESS --token $TOKEN --amount $AMOUNT --signing-keys $WALLET_NAME
+        namadac transfer --source ${SOURCE_SHIELDED_KEY_NAME} --target $TARGET_SHIELDED_PAYMENT_ADDRESS --token $TOKEN --amount $AMOUNT --signing-keys $SIGNING_KEY_ADDRESS
     fi
 
-    echo -e "${GREEN}Transfer from shielded address to another shielded address completed successfully.${RESET}"
+    echo -e "${GREEN}Transfer from shielded key to shielded payment address completed successfully.${RESET}"
     echo -e "${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -r
     menu
