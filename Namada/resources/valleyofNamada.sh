@@ -494,10 +494,8 @@ function query_balance() {
         case $CHOICE in
             1)
                 if [ "$RPC_CHOICE" == "grandvalley" ]; then
-                    namadac shielded-sync --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
                     namadac balance --owner $WALLET_ADDRESS --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
                 else
-                    namadac shielded-sync --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
                     namadac balance --owner $WALLET_ADDRESS --token NAM
                 fi
                 ;;
