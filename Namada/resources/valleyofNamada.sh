@@ -459,7 +459,7 @@ function query_balance() {
 
             echo "Choose an address type to query:"
             echo "1. Transparent address"
-            echo "2. Shielded address (viewing key)"
+            echo "2. Shielded address"
             echo "3. Back"
             read -p "Enter your choice (1, 2, or 3): " CHOICE
 
