@@ -269,24 +269,78 @@ function install_namada_app() {
 }
 
 function create_wallet() {
-    read -p "Enter wallet name/alias: " WALLET_NAME
+    echo -e "${RED}Write down your mnemonic and store it securely -- this is the only time it will be shown. You can use your mnemonic to recover your account if you lose access (for example, if your laptop stops working or is stolen). If you are locked out of your account, and you haven't saved your mnemonic, your funds will be lost forever.
+    Also carefully note the encryption password you provided -- you will need to provide it any time you make a transaction.${RESET}"
+
+    echo -e "${YELLOW}Please provide only the prefix for the wallet name/alias.${RESET}"
+    echo -e "Aliases will be automatically generated as follows:"
+    echo -e "  - Transparent key: ${CYAN}<prefix>${RESET}"
+    echo -e "  - Shielded key: ${CYAN}<prefix>-shielded${RESET}"
+    echo -e "  - Shielded payment address: ${CYAN}<prefix>-shielded-addr${RESET}\n"
+
+    read -p "Enter wallet name/alias prefix: " WALLET_NAME
     namadaw gen --alias $WALLET_NAME
     namadaw derive --shielded --alias ${WALLET_NAME}-shielded
+    namadaw gen-payment-addr --key ${WALLET_NAME}-shielded --alias ${WALLET_NAME}-shielded-addr
+    namadaw find --alias $WALLET_NAME
+    namadaw find --alias $WALLET_NAME-shielded
+    namadaw find --alias $WALLET_NAME-shielded-addr
+    echo -e "${GREEN}Wallet creation completed successfully, including shielded wallet restoration.${RESET}"
+    echo -e "\n${YELLOW}Press Enter to go back to main menu${RESET}"
+    read -r
     menu
 }
 
 function restore_wallet() {
-    read -p "Enter wallet name/alias: " WALLET_NAME
+    echo -e "${YELLOW}Please provide only the prefix for the wallet name/alias.${RESET}"
+    echo -e "Aliases will be automatically generated as follows:"
+    echo -e "  - Transparent key: ${CYAN}<prefix>${RESET}"
+    echo -e "  - Shielded key: ${CYAN}<prefix>-shielded${RESET}"
+    echo -e "  - Shielded payment address: ${CYAN}<prefix>-shielded-addr${RESET}\n"
+
+    read -p "Enter wallet name/alias prefix: " WALLET_NAME
     namadaw derive --alias $WALLET_NAME --hd-path default
     namadaw derive --shielded --alias ${WALLET_NAME}-shielded
+    namadaw gen-payment-addr --key ${WALLET_NAME}-shielded --alias ${WALLET_NAME}-shielded-addr
+    namadaw find --alias $WALLET_NAME
+    namadaw find --alias $WALLET_NAME-shielded
+    namadaw find --alias $WALLET_NAME-shielded-addr
     echo -e "${GREEN}Wallet restoration completed successfully, including shielded wallet restoration.${RESET}"
+    echo -e "\n${YELLOW}Press Enter to go back to main menu${RESET}"
+    read -
     menu
 }
 
 function create_shielded_payment_address() {
-    read -p "Enter wallet name/alias: " WALLET_NAME
-    namadaw gen-payment-addr --key ${WALLET_NAME}-shielded --alias ${WALLET_NAME}-shielded-addr
-    echo -e "${GREEN}Payment address created successfully.${RESET}"
+
+    read -p "Enter your shielded key full alias: " SHIELDED_KEY_ALIAS
+    read -p "Enter your desired alias prefix for the payment address: " ALIAS_PREFIX
+
+    # Base alias format
+    NEXT_ALIAS=$ALIAS_PREFIX
+    i=0
+
+    # Check for existing aliases and find the next available one
+    while namadaw find --alias "${NEXT_ALIAS}-shielded-addr" 2>/dev/null | grep -q "^  \"${NEXT_ALIAS}-shielded-addr\""; do
+        ((i++))
+        NEXT_ALIAS="${ALIAS_PREFIX}${i}"
+    done
+
+    # Create the new alias
+    FULL_ALIAS="${NEXT_ALIAS}-shielded-addr"
+
+    # Generate the new payment address with the formatted alias
+    namadaw gen-payment-addr --key "$SHIELDED_KEY_ALIAS" --alias "$FULL_ALIAS"
+
+    # Verify the creation of the payment address
+    if namadaw find --alias "$FULL_ALIAS" 2>/dev/null | grep -q "^  \"$FULL_ALIAS\""; then
+        echo -e "${GREEN}Payment address created successfully: ${FULL_ALIAS}${RESET}"
+    else
+        echo -e "${RED}Failed to create payment address. Please try again.${RESET}"
+    fi
+
+    echo -e "\n${YELLOW}Press Enter to go back to main menu${RESET}"
+    read -r
     menu
 }
 
@@ -1111,8 +1165,8 @@ function menu() {
     echo "   e. Add Seeds"
     echo "   f. Add Peers"
     echo -e "${GREEN}2. Validator/Key Interactions:${RESET}"
-    echo "   a. Create Wallet"
-    echo "   b. Restore Wallet"
+    echo "   a. Create Wallet (Transparent Key, Shielded Key, Shielded Payment Address)"
+    echo "   b. Restore Wallet (Transparent Key, Shielded Key, Shielded Payment Address)"
     echo "   c. Query Balance"
     echo "   d. Create Validator"
     echo "   e. Transfer (Transparent)"
@@ -1122,7 +1176,7 @@ function menu() {
     echo "   i. Withdraw Unbonded NAM"
     echo "   j. Claim Rewards"
     echo "   k. Vote Proposal"
-    echo "   l. Create Shielded Payment Address"
+    echo "   l. Create Another Shielded Payment Address"
     echo "   m. Transfer (Shielding)"
     echo "   n. Transfer (Shielded to Shielded)"
     echo "   o. Transfer (Unshielding)"
