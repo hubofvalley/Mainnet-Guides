@@ -312,7 +312,7 @@ function restore_wallet() {
 }
 
 function create_shielded_payment_address() {
-
+    namadaw list --shielded --keys
     read -p "Enter your shielded key full alias: " SHIELDED_KEY_ALIAS
     read -p "Enter your desired alias prefix for the payment address: " ALIAS_PREFIX
 
