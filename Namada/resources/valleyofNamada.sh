@@ -378,6 +378,60 @@ function show_wallet() {
     menu
 }
 
+function delete_wallets() {
+    # Display all stored keys and addresses
+    echo -e "\nAvailable Keys and Addresses:"
+    echo
+    echo "Transparent Keys:"
+    namadaw list --keys --transparent
+    echo
+    echo "Implicit Addresses:"
+    namadaw list --addr | grep "Implicit"
+    echo
+    echo "Shielded Keys:"
+    namadaw list --keys --shielded
+    echo
+    echo "Shielded Addresses:"
+    namadaw list --shielded --addr
+    echo
+
+    # Prompt user for aliases to delete
+    read -p "Enter aliases to delete (comma-separated): " ALIASES
+
+    # Split the input into an array by commas
+    IFS=',' read -r -a ALIAS_ARRAY <<< "$ALIASES"
+
+    # Confirm deletion
+    echo -e "${YELLOW}The following aliases will be deleted:${RESET}"
+    for ALIAS in "${ALIAS_ARRAY[@]}"; do
+        echo " - $ALIAS"
+    done
+    read -p "Are you sure you want to delete these aliases? (yes/no): " CONFIRM
+
+    if [[ "$CONFIRM" != "yes" ]]; then
+        echo -e "${RED}Deletion canceled.${RESET}"
+        return
+    fi
+
+    # Loop through each alias and execute the delete command
+    for ALIAS in "${ALIAS_ARRAY[@]}"; do
+        ALIAS_TRIMMED=$(echo "$ALIAS" | xargs) # Trim whitespace
+        echo "Deleting alias: $ALIAS_TRIMMED..."
+        namadaw remove --alias "$ALIAS_TRIMMED" --do-it
+
+        if [ $? -eq 0 ]; then
+            echo -e "${GREEN}Successfully deleted $ALIAS_TRIMMED.${RESET}"
+        else
+            echo -e "${RED}Failed to delete $ALIAS_TRIMMED. Please check the alias and try again.${RESET}"
+        fi
+    done
+
+    echo -e "${YELLOW}Deletion process completed.${RESET}"
+    echo -e "${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
+    read -r
+    menu
+}
+
 function query_balance() {
     DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
 
@@ -1330,6 +1384,7 @@ function menu() {
     echo "   n. Transfer (Shielding)"
     echo "   o. Transfer (Shielded to Shielded)"
     echo "   p. Transfer (Unshielding)"
+    echo "   q. Delete Wallet (Keys or Addresses)"  # New option added
     echo -e "${GREEN}3. Node Management:${RESET}"
     echo "   a. Restart Validator Node"
     echo "   b. Stop Validator Node"
@@ -1386,6 +1441,7 @@ function menu() {
                 n) transfer_shielding ;;
                 o) transfer_shielded_to_shielded ;;
                 p) transfer_unshielding ;;
+                q) delete_stored_keys_or_addresses ;;  # Function linked here
                 *) echo "Invalid sub-option. Please try again." ;;
             esac
             ;;
