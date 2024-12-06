@@ -392,28 +392,20 @@ function query_balance() {
             echo "Available Wallets:"
             namadaw list --addr | grep "Implicit"
             namadaw list --keys
-        elif [ "$WALLET_CHOICE" == "2" ]; then
-            read -p "Enter the custom wallet address: " WALLET_ADDRESS
-            echo "Querying the balance of custom wallet address: $WALLET_ADDRESS"
-        else
-            echo "Invalid choice. Please enter 1, 2, or 3."
-            continue
-        fi
 
-        echo "Choose an address type to query:"
-        echo "1. Transparent address"
-        echo "2. Shielded address (viewing key)"
-        echo "3. Back"
-        read -p "Enter your choice (1, 2, or 3): " CHOICE
+            echo "Choose an address type to query:"
+            echo "1. Transparent address"
+            echo "2. Shielded address (viewing key)"
+            echo "3. Back"
+            read -p "Enter your choice (1, 2, or 3): " CHOICE
 
-        if [ "$CHOICE" == "3" ]; then
-            echo "Returning to the Valley of Namada main menu."
-            menu
-            return
-        fi
+            if [ "$CHOICE" == "3" ]; then
+                echo "Returning to the Valley of Namada main menu."
+                menu
+                return
+            fi
 
-        if [ "$WALLET_CHOICE" == "1" ]; then
-            # Prompt for wallet alias after choosing address type
+            # Prompt for wallet alias after selecting address type
             read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " USER_INPUT_WALLET_NAME
             if [ -z "$USER_INPUT_WALLET_NAME" ]; then
                 WALLET_NAME=$DEFAULT_WALLET
@@ -421,11 +413,20 @@ function query_balance() {
                 WALLET_NAME=$USER_INPUT_WALLET_NAME
             fi
             WALLET_ADDRESS=$WALLET_NAME
+
+        elif [ "$WALLET_CHOICE" == "2" ]; then
+            echo "Custom wallet address query only supports transparent addresses."
+            read -p "Enter the custom wallet address: " WALLET_ADDRESS
+            CHOICE=1 # Force transparent query for custom wallet address
+        else
+            echo "Invalid choice. Please enter 1, 2, or 3."
+            continue
         fi
 
         # Prompt for RPC choice
         read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
+        # Execute the query based on address type and flow
         case $CHOICE in
             1)
                 if [ "$RPC_CHOICE" == "grandvalley" ]; then
@@ -435,10 +436,14 @@ function query_balance() {
                 fi
                 ;;
             2)
-                if [ "$RPC_CHOICE" == "grandvalley" ]; then
-                    namadac balance --owner ${WALLET_ADDRESS} --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+                if [ "$WALLET_CHOICE" == "1" ]; then
+                    if [ "$RPC_CHOICE" == "grandvalley" ]; then
+                        namadac balance --owner ${WALLET_ADDRESS} --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+                    else
+                        namadac balance --owner ${WALLET_ADDRESS} --token NAM
+                    fi
                 else
-                    namadac balance --owner ${WALLET_ADDRESS} --token NAM
+                    echo "Shielded address query is not supported for custom wallet addresses."
                 fi
                 ;;
             *)
