@@ -424,7 +424,7 @@ function query_balance() {
         fi
 
         # Prompt for RPC choice
-        read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
+        read -p "Do you want to use your own RPC or Grand Valley's RPC? (own / grandvalley): " RPC_CHOICE
 
         # Execute the query based on address type and flow
         case $CHOICE in
@@ -481,7 +481,7 @@ function transfer_transparent() {
 
     read -p "Enter the amount to transfer: " AMOUNT
 
-    read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
+    read -p "Do you want to use your own RPC or Grand Valley's RPC? (own / grandvalley): " RPC_CHOICE
 
     read -p "Which token do you want to interact with? (1: NAM, 2: OSMO): " TOKEN_CHOICE
     if [ "$TOKEN_CHOICE" == "1" ]; then
@@ -535,7 +535,7 @@ function stake_tokens() {
 
     case $CHOICE in
         1)
-            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
+            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own / grandvalley): " RPC_CHOICE
             read -p "Enter amount to stake: " AMOUNT
             VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
             if [ "$RPC_CHOICE" == "grandvalley" ]; then
@@ -545,7 +545,7 @@ function stake_tokens() {
             fi
             ;;
         2)
-            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
+            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own / grandvalley): " RPC_CHOICE
             read -p "Enter amount to stake: " AMOUNT
             port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml")
             VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) | grep 'Found validator address' | awk -F'"' '{print $2}')
@@ -573,7 +573,7 @@ function stake_tokens() {
             fi
             ;;
         3)
-            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
+            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own / grandvalley): " RPC_CHOICE
             read -p "Enter amount to stake: " AMOUNT
             read -p "Enter validator address: " VALIDATOR_ADDRESS
 
@@ -640,7 +640,7 @@ function unstake_tokens() {
 
     case $CHOICE in
         1)
-            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
+            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own / grandvalley): " RPC_CHOICE
             read -p "Enter amount to unstake: " AMOUNT
             port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml")
             VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) --node https://lightnode-rpc-mainnet-namada.grandvalleys.com | grep 'Found validator address' | awk -F'"' '{print $2}')
@@ -651,7 +651,7 @@ function unstake_tokens() {
             fi
             ;;
         2)
-            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
+            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own / grandvalley): " RPC_CHOICE
             read -p "Enter validator address: " VALIDATOR_ADDRESS
             read -p "Enter amount to unstake: " AMOUNT
             if [ "$RPC_CHOICE" == "grandvalley" ]; then
@@ -704,7 +704,7 @@ function redelegate_tokens() {
 
     case $CHOICE in
         1)
-            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
+            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own / grandvalley): " RPC_CHOICE
             read -p "Enter amount to redelegate: " AMOUNT
             TARGET_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
             read -p "Enter source validator address: " SOURCE_VALIDATOR_ADDRESS
@@ -716,7 +716,7 @@ function redelegate_tokens() {
             fi
             ;;
         2)
-            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
+            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own / grandvalley): " RPC_CHOICE
             read -p "Enter amount to redelegate: " AMOUNT
             port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml")
             SOURCE_VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) --node https://lightnode-rpc-mainnet-namada.grandvalleys.com | grep 'Found validator address' | awk -F'"' '{print $2}')
@@ -746,7 +746,7 @@ function redelegate_tokens() {
             fi
             ;;
         3)
-            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
+            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own / grandvalley): " RPC_CHOICE
             read -p "Enter amount to redelegate: " AMOUNT
             read -p "Enter source validator address: " SOURCE_VALIDATOR_ADDRESS
             read -p "Enter destination validator address: " TARGET_VALIDATOR_ADDRESS
@@ -808,7 +808,7 @@ function withdraw_unbonded_tokens() {
 
     read -p "Enter validator address: " VALIDATOR_ADDRESS
 
-    read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
+    read -p "Do you want to use your own RPC or Grand Valley's RPC? (own / grandvalley): " RPC_CHOICE
 
     if [ "$RPC_CHOICE" == "grandvalley" ]; then
         namadac withdraw --source $WALLET_NAME --validator $VALIDATOR_ADDRESS --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
@@ -842,7 +842,7 @@ function claim_rewards() {
 
     read -p "Enter validator address: " VALIDATOR_ADDRESS
 
-    read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
+    read -p "Do you want to use your own RPC or Grand Valley's RPC? (own / grandvalley): " RPC_CHOICE
 
     if [ "$RPC_CHOICE" == "grandvalley" ]; then
         namadac claim-rewards --source $WALLET_NAME --validator $VALIDATOR_ADDRESS --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
@@ -872,6 +872,7 @@ function transfer_shielding() {
         if [ "$CHOICE" == "1" ]; then
             echo "Available wallets:"
             namadaw list | grep Implicit | grep -vE 'consensus-key|tendermint-node-key'
+            echo
 
             # Prompt for source wallet alias (always default wallet for shielding)
             read -p "Enter source wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " SOURCE_WALLET_NAME
@@ -894,6 +895,7 @@ function transfer_shielding() {
         # Show available shielded wallets (stored addresses only)
         echo "Available shielded wallets (stored addresses):"
         namadaw list | grep shielded-addr
+        echo
 
         # Prompt for target shielded wallet alias (must be stored address)
         read -p "Enter target shielded wallet name/alias (leave empty to use default shielded wallet --> ${SOURCE_WALLET_NAME}-shielded-addr): " TARGET_WALLET_NAME
@@ -915,7 +917,7 @@ function transfer_shielding() {
         read -p "Enter the amount to shield: " AMOUNT
 
         # Prompt for RPC choice
-        read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
+        read -p "Do you want to use your own RPC or Grand Valley's RPC? (own / grandvalley): " RPC_CHOICE
 
         # Prompt for token choice
         read -p "Which token do you want to interact with? (1: NAM, 2: OSMO): " TOKEN_CHOICE
@@ -947,12 +949,14 @@ function transfer_shielded_to_shielded() {
         # Show available shielded keys
         echo "Available shielded keys:"
         namadaw list --shielded --keys
+        echo
 
         # Prompt for source shielded key alias (must be a stored shielded key)
         read -p "Enter source shielded key name/alias (leave empty to use default shielded key --> ${DEFAULT_WALLET}-shielded): " SOURCE_SHIELDED_KEY_NAME
         if [ -z "$SOURCE_SHIELDED_KEY_NAME" ]; then
             SOURCE_SHIELDED_KEY_NAME="${DEFAULT_WALLET}-shielded"
         fi
+        echo
 
         # Check if the entered shielded key alias exists
         SOURCE_SHIELDED_KEY_ADDRESS=$(namadaw find --alias $SOURCE_SHIELDED_KEY_NAME | grep -oP 'zvknam[0-9a-zA-Z]{40,}' | head -n 1)
@@ -961,7 +965,6 @@ function transfer_shielded_to_shielded() {
             echo "Source shielded key alias not found. Please check the input and try again."
             continue
         fi
-
         echo "Using source shielded key: $SOURCE_SHIELDED_KEY_NAME ($SOURCE_SHIELDED_KEY_ADDRESS)"
         break
     done
@@ -985,7 +988,7 @@ function transfer_shielded_to_shielded() {
     read -p "Enter the amount to transfer: " AMOUNT
 
     # Prompt for RPC choice
-    read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
+    read -p "Do you want to use your own RPC or Grand Valley's RPC? (own / grandvalley): " RPC_CHOICE
 
     # Prompt for token choice
     read -p "Which token do you want to interact with? (1: NAM, 2: OSMO): " TOKEN_CHOICE
@@ -1003,6 +1006,7 @@ function transfer_shielded_to_shielded() {
         # List the available implicit addresses (aliases or addresses)
         echo "Available implicit addresses:"
         namadaw list | grep Implicit
+        echo
 
         # Prompt user for signing key (implicit address)
         read -p "Enter the implicit address/alias to use as signing key: " SIGNING_KEY
@@ -1036,6 +1040,7 @@ function transfer_unshielding() {
         # Show available shielded wallets (stored shielded key addresses only)
         echo "Available shielded wallets:"
         namadaw list --shielded --keys
+        echo
 
         # Prompt for shielded wallet alias (must be stored shielded key)
         read -p "Enter shielded wallet name/alias (leave empty to use default shielded wallet --> ${DEFAULT_WALLET}-shielded): " SHIELDED_WALLET_NAME
@@ -1058,6 +1063,7 @@ function transfer_unshielding() {
     # Show available transparent wallets (Implicit addresses)
     echo "Available wallets (for unshielding to transparent address):"
     namadaw list | grep Implicit | grep -vE 'consensus-key|tendermint-node-key'
+    echo
 
     while true; do
         # Prompt for target transparent wallet alias (must be a transparent wallet)
@@ -1082,7 +1088,7 @@ function transfer_unshielding() {
     read -p "Enter the amount to unshield: " AMOUNT
 
     # Prompt for RPC choice
-    read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
+    read -p "Do you want to use your own RPC or Grand Valley's RPC? (own / grandvalley): " RPC_CHOICE
 
     # Prompt for token choice
     read -p "Which token do you want to unshield? (1: NAM, 2: OSMO): " TOKEN_CHOICE
