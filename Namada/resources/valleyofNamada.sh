@@ -619,8 +619,8 @@ function unstake_tokens() {
     echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
 
     echo "Choose an option:"
-    echo "1. Self-delegate"
-    echo "2. Delegate to another validator"
+    echo "1. Self-undelegate"
+    echo "2. Undelegate to another validator"
     echo "3. Back"
     read -p "Enter your choice (1 or 2): " CHOICE
 
