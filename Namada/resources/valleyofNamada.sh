@@ -397,6 +397,7 @@ function query_balance() {
         if [ "$WALLET_CHOICE" == "1" ]; then
             echo "Available Wallets:"
             echo
+            echo "Implicit addresses:"
             namadaw list --addr | grep "Implicit"
             echo
             namadaw list --keys
