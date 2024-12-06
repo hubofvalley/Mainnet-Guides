@@ -1096,6 +1096,7 @@ function transfer_shielding() {
                 continue
             fi
             echo "Using source wallet: $SOURCE_WALLET_NAME ($SOURCE_WALLET_ADDRESS)"
+            echo
 
         else
             echo "Invalid choice. Please enter 1 or 2."
