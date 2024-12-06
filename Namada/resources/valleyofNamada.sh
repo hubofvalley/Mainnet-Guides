@@ -828,6 +828,7 @@ function redelegate_tokens() {
             echo "Fetching available wallet aliases..."
             echo
             namadaw list | grep Implicit
+            echo
 
             while true; do
                 read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
@@ -932,33 +933,59 @@ function redelegate_tokens() {
 
 function withdraw_unbonded_tokens() {
     DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
-    while true; do
-        read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
-        if [ -z "$WALLET_NAME" ]; then
-            WALLET_NAME=$DEFAULT_WALLET
-        fi
 
-        # Get wallet address
-        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+    # Display choices prompt first
+    echo "Choose an option:"
+    echo "1. Withdraw unbonded tokens from your validator"
+    echo "2. Withdraw from another validator"
+    echo "3. Back"
+    read -p "Enter your choice (1, 2, or 3): " CHOICE
 
-        if [ -n "$WALLET_ADDRESS" ]; then
-            break
-        else
-            echo "Wallet name not found. Please check the wallet name/alias and try again."
-        fi
-    done
+    case $CHOICE in
+        1|2)
+            # Show available wallets
+            echo "Fetching available wallet aliases..."
+            echo
+            namadaw list | grep Implicit
+            echo
 
-    echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
+            while true; do
+                read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
+                if [ -z "$WALLET_NAME" ]; then
+                    WALLET_NAME=$DEFAULT_WALLET
+                fi
 
-    read -p "Enter validator address: " VALIDATOR_ADDRESS
+                # Get wallet address
+                WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
 
-    read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
+                if [ -n "$WALLET_ADDRESS" ]; then
+                    break
+                else
+                    echo "Wallet name not found. Please check the wallet name/alias and try again."
+                fi
+            done
 
-    if [ "$RPC_CHOICE" == "gv" ]; then
-        namadac withdraw --source $WALLET_NAME --validator $VALIDATOR_ADDRESS --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
-    else
-        namadac withdraw --source $WALLET_NAME --validator $VALIDATOR_ADDRESS
-    fi
+            echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
+
+            read -p "Enter validator address: " VALIDATOR_ADDRESS
+
+            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
+
+            if [ "$RPC_CHOICE" == "gv" ]; then
+                namadac withdraw --source $WALLET_NAME --validator $VALIDATOR_ADDRESS --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+            else
+                namadac withdraw --source $WALLET_NAME --validator $VALIDATOR_ADDRESS
+            fi
+            ;;
+        3)
+            echo "Returning to the Valley of Namada main menu."
+            menu
+            ;;
+        *)
+            echo "Invalid choice. Please enter 1, 2 or 3."
+            ;;
+    esac
+
     echo -e "${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -r
     menu
@@ -966,33 +993,71 @@ function withdraw_unbonded_tokens() {
 
 function claim_rewards() {
     DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
-    while true; do
-        read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
-        if [ -z "$WALLET_NAME" ]; then
-            WALLET_NAME=$DEFAULT_WALLET
-        fi
 
-        # Get wallet address
-        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+    # Display choices prompt first
+    echo "Choose an option:"
+    echo "1. Claim rewards from your validator"
+    echo "2. Claim rewards from another validator"
+    echo "3. Back"
+    read -p "Enter your choice (1, 2, or 3): " CHOICE
 
-        if [ -n "$WALLET_ADDRESS" ]; then
-            break
-        else
-            echo "Wallet name not found. Please check the wallet name/alias and try again."
-        fi
-    done
+    case $CHOICE in
+        1|2)
+            # Show available wallets
+            echo "Fetching available wallet aliases..."
+            echo
+            namadaw list | grep Implicit
+            echo
 
-    echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
+            while true; do
+                read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
+                if [ -z "$WALLET_NAME" ]; then
+                    WALLET_NAME=$DEFAULT_WALLET
+                fi
 
-    read -p "Enter validator address: " VALIDATOR_ADDRESS
+                # Get wallet address
+                WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
 
-    read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
+                if [ -n "$WALLET_ADDRESS" ]; then
+                    break
+                else
+                    echo "Wallet name not found. Please check the wallet name/alias and try again."
+                fi
+            done
 
-    if [ "$RPC_CHOICE" == "gv" ]; then
-        namadac claim-rewards --source $WALLET_NAME --validator $VALIDATOR_ADDRESS --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
-    else
-        namadac claim-rewards --source $WALLET_NAME --validator $VALIDATOR_ADDRESS
-    fi
+            echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
+
+            read -p "Enter validator address: " VALIDATOR_ADDRESS
+
+            # Fetch pending rewards
+            echo "Fetching pending rewards for validator $VALIDATOR_ADDRESS..."
+            REWARDS=$(namadac rewards --source $WALLET_NAME --validator $VALIDATOR_ADDRESS)
+            echo "Pending rewards: $REWARDS"
+
+            read -p "Are you sure you want to claim the rewards? (yes/no): " CONFIRM
+
+            if [ "$CONFIRM" == "yes" ]; then
+                read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
+
+                if [ "$RPC_CHOICE" == "gv" ]; then
+                    namadac claim-rewards --source $WALLET_NAME --validator $VALIDATOR_ADDRESS --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+                else
+                    namadac claim-rewards --source $WALLET_NAME --validator $VALIDATOR_ADDRESS
+                fi
+                echo "Rewards claimed successfully."
+            else
+                echo "Rewards claim cancelled."
+            fi
+            ;;
+        3)
+            echo "Returning to the Valley of Namada main menu."
+            menu
+            ;;
+        *)
+            echo "Invalid choice. Please enter 1, 2 or 3."
+            ;;
+    esac
+
     echo -e "${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -r
     menu
