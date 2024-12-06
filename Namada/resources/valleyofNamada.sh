@@ -857,74 +857,96 @@ function claim_rewards() {
 function transfer_shielding() {
     DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
 
-    # Show available wallets
-    echo "Available wallets:"
-    namadaw list | grep Implicit | grep -vE 'consensus-key|tendermint-node-key'
-
     while true; do
-        read -p "Enter source wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " SOURCE_WALLET_NAME
-        if [ -z "$SOURCE_WALLET_NAME" ]; then
-            SOURCE_WALLET_NAME=$DEFAULT_WALLET
+        echo "Choose an option:"
+        echo "1. Shield tokens from my wallet"
+        echo "2. Back"
+        read -p "Enter your choice (1 or 2): " CHOICE
+
+        if [ "$CHOICE" == "2" ]; then
+            echo "Returning to the Valley of Namada main menu."
+            menu
+            return
         fi
 
-        # Get source wallet address
-        SOURCE_WALLET_ADDRESS=$(namadaw find --alias $SOURCE_WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+        if [ "$CHOICE" == "1" ]; then
+            echo "Available wallets:"
+            namadaw list | grep Implicit | grep -vE 'consensus-key|tendermint-node-key'
 
-        if [ -n "$SOURCE_WALLET_ADDRESS" ]; then
-            break
+            # Prompt for source wallet alias (always default wallet for shielding)
+            read -p "Enter source wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " SOURCE_WALLET_NAME
+            if [ -z "$SOURCE_WALLET_NAME" ]; then
+                SOURCE_WALLET_NAME=$DEFAULT_WALLET
+            fi
+            SOURCE_WALLET_ADDRESS=$(namadaw find --alias $SOURCE_WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+
+            if [ -z "$SOURCE_WALLET_ADDRESS" ]; then
+                echo "Source wallet name not found. Please check the wallet name/alias and try again."
+                continue
+            fi
+            echo "Using source wallet: $SOURCE_WALLET_NAME ($SOURCE_WALLET_ADDRESS)"
+
         else
-            echo "Source wallet name not found. Please check the wallet name/alias and try again."
+            echo "Invalid choice. Please enter 1 or 2."
+            continue
         fi
-    done
 
-    echo "Using source wallet: $SOURCE_WALLET_NAME ($SOURCE_WALLET_ADDRESS)"
+        # Show available shielded wallets (both stored and external can be used)
+        echo "You can either enter a stored shielded wallet alias or any external ZNAM address."
+        echo "Available shielded wallet aliases:"
+        namadaw list | grep shielded-addr
 
-    # Show available shielded wallets
-    echo "Available shielded wallets:"
-    namadaw list | grep shielded-addr
-
-    while true; do
-        read -p "Enter target shielded wallet name/alias (leave empty to use default shielded wallet --> ${SOURCE_WALLET_NAME}-shielded-addr): " TARGET_WALLET_NAME
+        # Prompt for target shielded wallet alias or ZNAM address (can be external or stored)
+        read -p "Enter target shielded wallet name/alias or ZNAM address (leave empty to use default shielded wallet --> ${SOURCE_WALLET_NAME}-shielded-addr): " TARGET_WALLET_NAME
         if [ -z "$TARGET_WALLET_NAME" ]; then
             TARGET_WALLET_NAME="${SOURCE_WALLET_NAME}-shielded-addr"
         fi
 
-        # Get target shielded wallet address
+        # Check if the entered target wallet alias exists
         TARGET_WALLET_ADDRESS=$(namadaw find --alias $TARGET_WALLET_NAME | grep 'znam' | awk '{print $2}' | tr -d '"')
 
-        if [ -n "$TARGET_WALLET_ADDRESS" ]; then
-            break
-        else
-            echo "Target shielded wallet name not found. Please check the wallet name/alias and try again."
+        # If no alias is found, treat it as a ZNAM address (external)
+        if [ -z "$TARGET_WALLET_ADDRESS" ]; then
+            if [[ "$TARGET_WALLET_NAME" =~ ^znam1 ]]; then
+                TARGET_WALLET_ADDRESS=$TARGET_WALLET_NAME
+            else
+                echo "Target shielded wallet alias or ZNAM address not found. Please check the input and try again."
+                continue
+            fi
         fi
+
+        echo "Using target shielded wallet: $TARGET_WALLET_NAME ($TARGET_WALLET_ADDRESS)"
+
+        # Prompt for amount to shield
+        read -p "Enter the amount to shield: " AMOUNT
+
+        # Prompt for RPC choice
+        read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
+
+        # Prompt for token choice
+        read -p "Which token do you want to interact with? (1: NAM, 2: OSMO): " TOKEN_CHOICE
+        if [ "$TOKEN_CHOICE" == "1" ]; then
+            TOKEN="NAM"
+        elif [ "$TOKEN_CHOICE" == "2" ]; then
+            TOKEN="tnam1p5z8ruwyu7ha8urhq2l0dhpk2f5dv3ts7uyf2n75"
+        else
+            echo "Invalid token choice. Defaulting to NAM."
+            TOKEN="NAM"
+        fi
+
+        # Execute the shielding transaction
+        if [ "$RPC_CHOICE" == "grandvalley" ]; then
+            namadac shield --source $SOURCE_WALLET_NAME --target $TARGET_WALLET_NAME --token $TOKEN --amount $AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+        else
+            namadac shield --source $SOURCE_WALLET_NAME --target $TARGET_WALLET_NAME --token $TOKEN --amount $AMOUNT
+        fi
+
+        echo -e "${GREEN}Shielding transaction completed successfully.${RESET}"
+        echo -e "${YELLOW}Press Enter to go back to the Valley of Namada main menu${RESET}"
+        read -r
+        menu
+        return
     done
-
-    echo "Using target shielded wallet: $TARGET_WALLET_NAME ($TARGET_WALLET_ADDRESS)"
-
-    read -p "Enter the amount to shield: " AMOUNT
-
-    read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
-
-    read -p "Which token do you want to interact with? (1: NAM, 2: OSMO): " TOKEN_CHOICE
-    if [ "$TOKEN_CHOICE" == "1" ]; then
-        TOKEN="NAM"
-    elif [ "$TOKEN_CHOICE" == "2" ]; then
-        TOKEN="tnam1p5z8ruwyu7ha8urhq2l0dhpk2f5dv3ts7uyf2n75"
-    else
-        echo "Invalid token choice. Defaulting to NAM."
-        TOKEN="NAM"
-    fi
-
-    if [ "$RPC_CHOICE" == "grandvalley" ]; then
-        namadac shield --source $SOURCE_WALLET_NAME --target $TARGET_WALLET_NAME --token $TOKEN --amount $AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
-    else
-        namadac shield --source $SOURCE_WALLET_NAME --target $TARGET_WALLET_NAME --token $TOKEN --amount $AMOUNT
-    fi
-
-    echo -e "${GREEN}Transfer from transparent account to shielded account (shielding) completed successfully.${RESET}"
-    echo -e "${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
-    read -r
-    menu
 }
 
 function transfer_shielded_to_shielded() {
