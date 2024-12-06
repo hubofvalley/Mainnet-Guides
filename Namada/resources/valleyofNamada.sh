@@ -422,7 +422,7 @@ function query_balance() {
                 ;;
             3)
                 echo "Returning to the main menu."
-                return
+                menu
                 ;;
             *)
                 echo "Invalid choice. Please enter 1, 2, or 3."
