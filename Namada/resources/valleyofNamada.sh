@@ -312,7 +312,21 @@ function restore_wallet() {
 }
 
 function create_shielded_payment_address() {
-    namadaw list --shielded --keys
+    # List existing shielded keys
+    SHIELDED_KEYS=$(namadaw list --shielded --keys)
+
+    # Check if there are no shielded keys
+    if [[ "$SHIELDED_KEYS" =~ "No known keys" ]]; then
+        echo -e "${RED}No shielded keys found. Please create a shielded key first.${RESET}"
+        echo -e "\n${YELLOW}Press Enter to go back to the main menu.${RESET}"
+        read -r
+        menu
+        return
+    fi
+
+    # Prompt user to select a shielded key and provide alias prefix
+    echo -e "${GREEN}Available Shielded Keys:${RESET}"
+    echo "$SHIELDED_KEYS"
     read -p "Enter your shielded key full alias: " SHIELDED_KEY_ALIAS
     read -p "Enter your desired alias prefix for the payment address: " ALIAS_PREFIX
 
@@ -339,7 +353,7 @@ function create_shielded_payment_address() {
         echo -e "${RED}Failed to create payment address. Please try again.${RESET}"
     fi
 
-    echo -e "\n${YELLOW}Press Enter to go back to main menu${RESET}"
+    echo -e "\n${YELLOW}Press Enter to go back to the main menu${RESET}"
     read -r
     menu
 }
