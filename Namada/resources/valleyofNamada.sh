@@ -390,6 +390,8 @@ function query_balance() {
 
         if [ "$WALLET_CHOICE" == "1" ]; then
             while true; do
+                namadaw list --addr | grep "Implicit"
+                namadaw list --keys
                 read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
                 if [ -z "$WALLET_NAME" ]; then
                     WALLET_NAME=$DEFAULT_WALLET
@@ -416,7 +418,7 @@ function query_balance() {
 
         echo "Choose an option:"
         echo "1. Query balance from transparent address"
-        echo "2. Query balance from shielded address"
+        echo "2. Query balance from shielded address (viewing key)"
         echo "3. Back"
         read -p "Enter your choice (1, 2, or 3): " CHOICE
 
@@ -439,9 +441,9 @@ function query_balance() {
             2)
                 if [ "$WALLET_CHOICE" == "1" ]; then
                     if [ "$RPC_CHOICE" == "grandvalley" ]; then
-                        namadac balance --owner ${WALLET_ADDRESS}-shielded --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+                        namadac balance --owner ${WALLET_ADDRESS} --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
                     else
-                        namadac balance --owner ${WALLET_ADDRESS}-shielded --token NAM
+                        namadac balance --owner ${WALLET_ADDRESS} --token NAM
                     fi
                 else
                     if [ "$RPC_CHOICE" == "grandvalley" ]; then
