@@ -367,7 +367,9 @@ function show_wallet() {
     echo
     namadaw list --shielded --addr
 
-    echo -e "\n${YELLOW}Press Enter to go back to the main menu${RESET}"
+    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    read -r
+    menu
 }
 
 function query_balance() {
@@ -516,7 +518,8 @@ function stake_tokens() {
     echo "1. Delegate to Grand Valley"
     echo "2. Self-delegate"
     echo "3. Delegate to another validator"
-    read -p "Enter your choice (1, 2, or 3): " CHOICE
+    echo "4. Back"
+    read -p "Enter your choice (1, 2, 3 or 4): " CHOICE
 
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
@@ -583,8 +586,11 @@ function stake_tokens() {
                 fi
             fi
             ;;
+        4)
+            menu
+            ;;
         *)
-            echo "Invalid choice. Please enter 1, 2, or 3."
+            echo "Invalid choice. Please enter 1, 2, 3 or 4"
             ;;
     esac
     echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
@@ -615,6 +621,7 @@ function unstake_tokens() {
     echo "Choose an option:"
     echo "1. Self-delegate"
     echo "2. Delegate to another validator"
+    echo "3. Back"
     read -p "Enter your choice (1 or 2): " CHOICE
 
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
@@ -638,6 +645,9 @@ function unstake_tokens() {
             else
                 namadac unbond --source $WALLET_NAME --validator $VALIDATOR_ADDRESS --amount $AMOUNT
             fi
+            ;;
+        3)
+            menu
             ;;
         *)
             echo "Invalid choice. Please enter 1 or 2."
@@ -673,6 +683,7 @@ function redelegate_tokens() {
     echo "1. Redelegate to Grand Valley"
     echo "2. Redelegate from your validator"
     echo "3. Redelegate from another validator"
+    echo "4. Back"
     read -p "Enter your choice (1, 2, or 3): " CHOICE
 
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
@@ -744,6 +755,9 @@ function redelegate_tokens() {
                     namadac redelegate --source-validator $SOURCE_VALIDATOR_ADDRESS --destination-validator $GV_VALIDATOR_ADDRESS --owner $WALLET_NAME --amount $GV_AMOUNT
                 fi
             fi
+            ;;
+        4)
+            menu
             ;;
         *)
             echo "Invalid choice. Please enter 1, 2, or 3."
@@ -1040,6 +1054,7 @@ function vote_proposal() {
     echo "1. Query all proposal list"
     echo "2. Query specific proposal"
     echo "3. Vote on a proposal"
+    echo "4. Back"
     read -p "Enter your choice (1, 2, or 3): " CHOICE
 
     read -p "Do you want to use your own RPC or Grand Valley's RPC? (1 for own, 2 for Grand Valley): " RPC_CHOICE
@@ -1080,6 +1095,9 @@ function vote_proposal() {
             else
                 namadac vote-proposal --proposal-id $PROPOSAL_ID --vote $VOTE --address $ADDRESS --signing-keys $WALLET_NAME
             fi
+            ;;
+        4)
+            menu
             ;;
         *)
             echo "Invalid choice. Please enter 1, 2, or 3."
