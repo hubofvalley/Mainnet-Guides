@@ -396,7 +396,7 @@ function query_balance() {
                 fi
 
                 # Get wallet address
-                WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+                WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME)
 
                 if [ -n "$WALLET_ADDRESS" ]; then
                     break
