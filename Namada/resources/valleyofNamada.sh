@@ -375,74 +375,63 @@ function show_wallet() {
 function query_balance() {
     DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
 
-    echo "Choose an option:"
-    echo "1. Query the balance of my wallet"
-    echo "2. Query the balance of another wallet address"
-    read -p "Enter your choice (1 or 2): " WALLET_CHOICE
+    while true; do
+        echo "Choose an option:"
+        echo "1. Query balance from transparent address"
+        echo "2. Query balance from shielded address"
+        echo "3. Back"
+        read -p "Enter your choice (1, 2 or 3): " CHOICE
 
-    if [ "$WALLET_CHOICE" == "1" ]; then
-        while true; do
-            read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
-            if [ -z "$WALLET_NAME" ]; then
-                WALLET_NAME=$DEFAULT_WALLET
-            fi
+        case $CHOICE in
+            1|2)
+                if [ "$CHOICE" == "1" ]; then
+                    while true; do
+                        read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
+                        if [ -z "$WALLET_NAME" ]; then
+                            WALLET_NAME=$DEFAULT_WALLET
+                        fi
 
-            # Get wallet address
-            WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+                        # Get wallet address
+                        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
 
-            if [ -n "$WALLET_ADDRESS" ]; then
-                break
-            else
-                echo "Wallet name not found. Please check the wallet name/alias and try again."
-            fi
-        done
-        echo "Querying the balance of wallet: $WALLET_NAME ($WALLET_ADDRESS)"
-    elif [ "$WALLET_CHOICE" == "2" ]; then
-        read -p "Enter the custom wallet address: " CUSTOM_WALLET_ADDRESS
-        WALLET_ADDRESS=$CUSTOM_WALLET_ADDRESS
-        echo "Querying the balance of custom wallet address: $WALLET_ADDRESS"
-    else
-        echo "Invalid choice. Please enter 1 or 2."
-        return
-    fi
-
-    echo "Choose an option:"
-    echo "1. Query balance from transparent address"
-    echo "2. Query balance from shielded address"
-    read -p "Enter your choice (1 or 2): " CHOICE
-
-    read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
-
-    case $CHOICE in
-        1)
-            if [ "$RPC_CHOICE" == "grandvalley" ]; then
-                namadac balance --owner $WALLET_ADDRESS --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
-            else
-                namadac balance --owner $WALLET_ADDRESS --token NAM
-            fi
-            ;;
-        2)
-            if [ "$WALLET_CHOICE" == "1" ]; then
-                if [ "$RPC_CHOICE" == "grandvalley" ]; then
-                    namadac balance --owner ${WALLET_ADDRESS}-shielded --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
-                else
-                    namadac balance --owner ${WALLET_ADDRESS}-shielded --token NAM
+                        if [ -n "$WALLET_ADDRESS" ]; then
+                            break
+                        else
+                            echo "Wallet name not found. Please check the wallet name/alias and try again."
+                        fi
+                    done
+                    echo "Querying the balance of wallet: $WALLET_NAME ($WALLET_ADDRESS)"
+                elif [ "$CHOICE" == "2" ]; then
+                    read -p "Enter the custom wallet address: " CUSTOM_WALLET_ADDRESS
+                    WALLET_ADDRESS=$CUSTOM_WALLET_ADDRESS
+                    echo "Querying the balance of custom wallet address: $WALLET_ADDRESS"
                 fi
-            else
+
+                read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
                 if [ "$RPC_CHOICE" == "grandvalley" ]; then
-                    namadac balance --owner $WALLET_ADDRESS --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+                    RPC_NODE="--node https://lightnode-rpc-mainnet-namada.grandvalleys.com"
                 else
-                    namadac balance --owner $WALLET_ADDRESS --token NAM
+                    RPC_NODE=""
                 fi
-            fi
-            ;;
-        *)
-            echo "Invalid choice. Please enter 1 or 2."
-            ;;
-    esac
-    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
-    read -r
-    menu
+
+                if [ "$CHOICE" == "1" ]; then
+                    namadac balance --owner $WALLET_ADDRESS --token NAM $RPC_NODE
+                else
+                    namadac balance --owner ${WALLET_ADDRESS}-shielded --token NAM $RPC_NODE
+                fi
+                ;;
+            3)
+                echo "Returning to the main menu."
+                return
+                ;;
+            *)
+                echo "Invalid choice. Please enter 1, 2, or 3."
+                ;;
+        esac
+
+        echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+        read -r
+    done
 }
 
 function transfer_transparent() {
@@ -521,10 +510,9 @@ function stake_tokens() {
     echo "4. Back"
     read -p "Enter your choice (1, 2, 3 or 4): " CHOICE
 
-    read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
-
     case $CHOICE in
         1)
+            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
             read -p "Enter amount to stake: " AMOUNT
             VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
             if [ "$RPC_CHOICE" == "grandvalley" ]; then
@@ -534,6 +522,7 @@ function stake_tokens() {
             fi
             ;;
         2)
+            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
             read -p "Enter amount to stake: " AMOUNT
             port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml")
             VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) | grep 'Found validator address' | awk -F'"' '{print $2}')
@@ -561,6 +550,7 @@ function stake_tokens() {
             fi
             ;;
         3)
+            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
             read -p "Enter amount to stake: " AMOUNT
             read -p "Enter validator address: " VALIDATOR_ADDRESS
 
@@ -624,10 +614,9 @@ function unstake_tokens() {
     echo "3. Back"
     read -p "Enter your choice (1 or 2): " CHOICE
 
-    read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
-
     case $CHOICE in
         1)
+            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
             read -p "Enter amount to unstake: " AMOUNT
             port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml")
             VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) --node https://lightnode-rpc-mainnet-namada.grandvalleys.com | grep 'Found validator address' | awk -F'"' '{print $2}')
@@ -638,6 +627,7 @@ function unstake_tokens() {
             fi
             ;;
         2)
+            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
             read -p "Enter validator address: " VALIDATOR_ADDRESS
             read -p "Enter amount to unstake: " AMOUNT
             if [ "$RPC_CHOICE" == "grandvalley" ]; then
@@ -686,10 +676,10 @@ function redelegate_tokens() {
     echo "4. Back"
     read -p "Enter your choice (1, 2, 3 or 4): " CHOICE
 
-    read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
     case $CHOICE in
         1)
+            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
             read -p "Enter amount to redelegate: " AMOUNT
             TARGET_VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
             read -p "Enter source validator address: " SOURCE_VALIDATOR_ADDRESS
@@ -701,6 +691,7 @@ function redelegate_tokens() {
             fi
             ;;
         2)
+            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
             read -p "Enter amount to redelegate: " AMOUNT
             port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml")
             SOURCE_VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) --node https://lightnode-rpc-mainnet-namada.grandvalleys.com | grep 'Found validator address' | awk -F'"' '{print $2}')
@@ -730,6 +721,7 @@ function redelegate_tokens() {
             fi
             ;;
         3)
+            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
             read -p "Enter amount to redelegate: " AMOUNT
             read -p "Enter source validator address: " SOURCE_VALIDATOR_ADDRESS
             read -p "Enter destination validator address: " TARGET_VALIDATOR_ADDRESS
@@ -1057,10 +1049,9 @@ function vote_proposal() {
     echo "4. Back"
     read -p "Enter your choice (1, 2, 3 or 4): " CHOICE
 
-    read -p "Do you want to use your own RPC or Grand Valley's RPC? (1 for own, 2 for Grand Valley): " RPC_CHOICE
-
     case $CHOICE in
         1)
+            read -p "Do you want to use your own RPC or Grand Valley's RPC? (1 for own, 2 for Grand Valley): " RPC_CHOICE
             if [ "$RPC_CHOICE" == "2" ]; then
                 namadac query-proposal --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
             else
@@ -1068,6 +1059,7 @@ function vote_proposal() {
             fi
             ;;
         2)
+            read -p "Do you want to use your own RPC or Grand Valley's RPC? (1 for own, 2 for Grand Valley): " RPC_CHOICE
             read -p "Enter proposal ID: " PROPOSAL_ID
             if [ "$RPC_CHOICE" == "2" ]; then
                 namadac query-proposal --proposal-id $PROPOSAL_ID --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
@@ -1076,6 +1068,7 @@ function vote_proposal() {
             fi
             ;;
         3)
+            read -p "Do you want to use your own RPC or Grand Valley's RPC? (1 for own, 2 for Grand Valley): " RPC_CHOICE
             read -p "Enter proposal ID: " PROPOSAL_ID
             read -p "Enter your vote (yay/nay): " VOTE
 
