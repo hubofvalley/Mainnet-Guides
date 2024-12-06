@@ -991,18 +991,18 @@ function transfer_unshielding() {
     DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
 
     while true; do
-        # Show available shielded wallets (stored addresses only)
+        # Show available shielded wallets (stored shielded key addresses only)
         echo "Available shielded wallets:"
-        namadaw list | grep shielded-addr
+        namadaw list --shielded --keys
 
-        # Prompt for shielded wallet alias (must be stored address)
-        read -p "Enter shielded wallet name/alias (leave empty to use default shielded wallet --> ${DEFAULT_WALLET}-shielded-addr): " SHIELDED_WALLET_NAME
+        # Prompt for shielded wallet alias (must be stored shielded key)
+        read -p "Enter shielded wallet name/alias (leave empty to use default shielded wallet --> ${DEFAULT_WALLET}-shielded): " SHIELDED_WALLET_NAME
         if [ -z "$SHIELDED_WALLET_NAME" ]; then
-            SHIELDED_WALLET_NAME="${DEFAULT_WALLET}-shielded-addr"
+            SHIELDED_WALLET_NAME="${DEFAULT_WALLET}-shielded"
         fi
 
-        # Check if the entered shielded wallet alias exists
-        SHIELDED_WALLET_ADDRESS=$(namadaw find --alias $SHIELDED_WALLET_NAME | grep 'znam' | awk '{print $2}' | tr -d '"')
+        # Check if the entered shielded wallet alias exists (must use the shielded key)
+        SHIELDED_WALLET_ADDRESS=$(namadaw find --alias $SHIELDED_WALLET_NAME | grep -oP 'zvknam[0-9a-zA-Z]{40,}' | head -n 1)
 
         if [ -z "$SHIELDED_WALLET_ADDRESS" ]; then
             echo "Shielded wallet alias not found. Please check the input and try again."
@@ -1053,14 +1053,14 @@ function transfer_unshielding() {
         TOKEN="NAM"
     fi
 
-    # Execute the unshielding transaction to a transparent wallet (assuming source is shielded)
+    # Execute the unshielding transaction to a transparent wallet (assuming source is shielded key)
     if [ "$RPC_CHOICE" == "grandvalley" ]; then
         namadac unshield --source $SHIELDED_WALLET_NAME --target $TARGET_WALLET_NAME --token $TOKEN --amount $AMOUNT --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
     else
         namadac unshield --source $SHIELDED_WALLET_NAME --target $TARGET_WALLET_NAME --token $TOKEN --amount $AMOUNT
     fi
 
-    echo -e "${GREEN}Unshielding transaction from shielded to transparent account completed successfully.${RESET}"
+    echo -e "${GREEN}Unshielding transaction from shielded key to transparent account completed successfully.${RESET}"
     echo -e "${YELLOW}Press Enter to go back to the Valley of Namada main menu${RESET}"
     read -r
     menu
