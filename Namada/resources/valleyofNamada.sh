@@ -247,7 +247,7 @@ function show_validator_node_logs() {
 function show_validator_node_status() {
     port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml")
     curl -s http://127.0.0.1:$port/status | jq
-    echo -e "\n${YELLOW}Press Enter to go back to main menu${RESET}"
+    echo -e "\n${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -r
     menu
 }
@@ -286,7 +286,7 @@ function create_wallet() {
     namadaw find --alias $WALLET_NAME-shielded
     namadaw find --alias $WALLET_NAME-shielded-addr
     echo -e "${GREEN}Wallet creation completed successfully, including shielded wallet restoration.${RESET}"
-    echo -e "\n${YELLOW}Press Enter to go back to main menu${RESET}"
+    echo -e "\n${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -r
     menu
 }
@@ -306,7 +306,7 @@ function restore_wallet() {
     namadaw find --alias $WALLET_NAME-shielded
     namadaw find --alias $WALLET_NAME-shielded-addr
     echo -e "${GREEN}Wallet restoration completed successfully, including shielded wallet restoration.${RESET}"
-    echo -e "\n${YELLOW}Press Enter to go back to main menu${RESET}"
+    echo -e "\n${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -
     menu
 }
@@ -367,7 +367,7 @@ function show_wallet() {
     echo
     namadaw list --shielded --addr
 
-    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    echo -e "${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -r
     menu
 }
@@ -377,60 +377,87 @@ function query_balance() {
 
     while true; do
         echo "Choose an option:"
+        echo "1. Query the balance of my wallet"
+        echo "2. Query the balance of another wallet address"
+        echo "3. Back"
+        read -p "Enter your choice (1, 2, or 3): " WALLET_CHOICE
+
+        if [ "$WALLET_CHOICE" == "3" ]; then
+            echo "Returning to the Valley of Namada main menu."
+            menu
+            return
+        fi
+
+        if [ "$WALLET_CHOICE" == "1" ]; then
+            while true; do
+                read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
+                if [ -z "$WALLET_NAME" ]; then
+                    WALLET_NAME=$DEFAULT_WALLET
+                fi
+
+                # Get wallet address
+                WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+
+                if [ -n "$WALLET_ADDRESS" ]; then
+                    break
+                else
+                    echo "Wallet name not found. Please check the wallet name/alias and try again."
+                fi
+            done
+            echo "Querying the balance of wallet: $WALLET_NAME ($WALLET_ADDRESS)"
+        elif [ "$WALLET_CHOICE" == "2" ]; then
+            read -p "Enter the custom wallet address: " CUSTOM_WALLET_ADDRESS
+            WALLET_ADDRESS=$CUSTOM_WALLET_ADDRESS
+            echo "Querying the balance of custom wallet address: $WALLET_ADDRESS"
+        else
+            echo "Invalid choice. Please enter 1, 2, or 3."
+            continue
+        fi
+
+        echo "Choose an option:"
         echo "1. Query balance from transparent address"
         echo "2. Query balance from shielded address"
         echo "3. Back"
-        read -p "Enter your choice (1, 2 or 3): " CHOICE
+        read -p "Enter your choice (1, 2, or 3): " CHOICE
+
+        if [ "$CHOICE" == "3" ]; then
+            echo "Returning to the Valley of Namada main menu."
+            menu
+            return
+        fi
+
+        read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
         case $CHOICE in
-            1|2)
-                if [ "$CHOICE" == "1" ]; then
-                    while true; do
-                        read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
-                        if [ -z "$WALLET_NAME" ]; then
-                            WALLET_NAME=$DEFAULT_WALLET
-                        fi
-
-                        # Get wallet address
-                        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
-
-                        if [ -n "$WALLET_ADDRESS" ]; then
-                            break
-                        else
-                            echo "Wallet name not found. Please check the wallet name/alias and try again."
-                        fi
-                    done
-                    echo "Querying the balance of wallet: $WALLET_NAME ($WALLET_ADDRESS)"
-                elif [ "$CHOICE" == "2" ]; then
-                    read -p "Enter the custom wallet address: " CUSTOM_WALLET_ADDRESS
-                    WALLET_ADDRESS=$CUSTOM_WALLET_ADDRESS
-                    echo "Querying the balance of custom wallet address: $WALLET_ADDRESS"
-                fi
-
-                read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
+            1)
                 if [ "$RPC_CHOICE" == "grandvalley" ]; then
-                    RPC_NODE="--node https://lightnode-rpc-mainnet-namada.grandvalleys.com"
+                    namadac balance --owner $WALLET_ADDRESS --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
                 else
-                    RPC_NODE=""
-                fi
-
-                if [ "$CHOICE" == "1" ]; then
-                    namadac balance --owner $WALLET_ADDRESS --token NAM $RPC_NODE
-                else
-                    namadac balance --owner ${WALLET_ADDRESS}-shielded --token NAM $RPC_NODE
+                    namadac balance --owner $WALLET_ADDRESS --token NAM
                 fi
                 ;;
-            3)
-                echo "Returning to the Valley of Namada main menu."
-                menu
+            2)
+                if [ "$WALLET_CHOICE" == "1" ]; then
+                    if [ "$RPC_CHOICE" == "grandvalley" ]; then
+                        namadac balance --owner ${WALLET_ADDRESS}-shielded --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+                    else
+                        namadac balance --owner ${WALLET_ADDRESS}-shielded --token NAM
+                    fi
+                else
+                    if [ "$RPC_CHOICE" == "grandvalley" ]; then
+                        namadac balance --owner $WALLET_ADDRESS --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+                    else
+                        namadac balance --owner $WALLET_ADDRESS --token NAM
+                    fi
+                fi
                 ;;
             *)
-                echo "Invalid choice. Please enter 1, 2, or 3."
+                echo "Invalid choice. Please enter 1 or 2."
                 ;;
         esac
-
-        echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+        echo -e "${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
         read -r
+        menu
     done
 }
 
@@ -477,7 +504,7 @@ function transfer_transparent() {
     fi
 
     echo -e "${GREEN}Transfer from transparent address to another transparent address completed successfully.${RESET}"
-    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    echo -e "${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -r
     menu
 }
@@ -584,7 +611,7 @@ function stake_tokens() {
             echo "Invalid choice. Please enter 1, 2, 3 or 4"
             ;;
     esac
-    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    echo -e "${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -r
     menu
 }
@@ -645,7 +672,7 @@ function unstake_tokens() {
             echo "Invalid choice. Please enter 1, 2 or 3."
             ;;
     esac
-    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    echo -e "${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -r
     menu
 }
@@ -758,7 +785,7 @@ function redelegate_tokens() {
             echo "Invalid choice. Please enter 1, 2, 3 or 4."
             ;;
     esac
-    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    echo -e "${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -r
     menu
 }
@@ -792,7 +819,7 @@ function withdraw_unbonded_tokens() {
     else
         namadac withdraw --source $WALLET_NAME --validator $VALIDATOR_ADDRESS
     fi
-    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    echo -e "${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -r
     menu
 }
@@ -826,7 +853,7 @@ function claim_rewards() {
     else
         namadac claim-rewards --source $WALLET_NAME --validator $VALIDATOR_ADDRESS
     fi
-    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    echo -e "${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -r
     menu
 }
@@ -899,7 +926,7 @@ function transfer_shielding() {
     fi
 
     echo -e "${GREEN}Transfer from transparent account to shielded account (shielding) completed successfully.${RESET}"
-    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    echo -e "${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -r
     menu
 }
@@ -947,7 +974,7 @@ function transfer_shielded_to_shielded() {
     fi
 
     echo -e "${GREEN}Transfer from shielded address to another shielded address completed successfully.${RESET}"
-    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    echo -e "${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -r
     menu
 }
@@ -1020,7 +1047,7 @@ function transfer_unshielding() {
     fi
 
     echo -e "${GREEN}Transfer from shielded account to transparent account (unshielding) completed successfully.${RESET}"
-    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    echo -e "${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -r
     menu
 }
@@ -1100,7 +1127,7 @@ function vote_proposal() {
             echo "Invalid choice. Please enter 1, 2, 3 or 4."
             ;;
     esac
-    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    echo -e "${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -r
     menu
 }
@@ -1114,7 +1141,7 @@ function apply_snapshot() {
 # Function to show endpoints
 function show_endpoints() {
     echo -e "$ENDPOINTS"
-    echo -e "${YELLOW}Press Enter to go back to main menu${RESET}"
+    echo -e "${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -r
     menu
 }
@@ -1188,7 +1215,7 @@ function show_guidelines() {
     echo "   - Displays these guidelines."
     echo "   - Guide: Use this option to view the guidelines on how to use the tool effectively."
 
-    echo -e "\n${YELLOW}Press Enter to go back to main menu${RESET}"
+    echo -e "\n${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -r
     menu
 }
