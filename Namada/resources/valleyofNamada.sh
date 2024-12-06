@@ -389,7 +389,21 @@ function query_balance() {
         fi
 
         if [ "$WALLET_CHOICE" == "1" ]; then
+            # Use default wallet or prompt for wallet name
             while true; do
+                echo "Choose an address type:"
+                echo "1. Transparent address"
+                echo "2. Shielded address (viewing key)"
+                echo "3. Back"
+                read -p "Enter your choice (1, 2, or 3): " ADDRESS_TYPE
+
+                if [ "$ADDRESS_TYPE" == "3" ]; then
+                    echo "Returning to the Valley of Namada main menu."
+                    menu
+                    return
+                fi
+
+                # Prompt for wallet name or use default
                 namadaw list --addr | grep "Implicit"
                 namadaw list --keys
                 read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
@@ -406,57 +420,51 @@ function query_balance() {
                     echo "Wallet name not found. Please check the wallet name/alias and try again."
                 fi
             done
-            echo "Querying the balance of wallet: $WALLET_NAME ($WALLET_ADDRESS)"
         elif [ "$WALLET_CHOICE" == "2" ]; then
+            # Custom wallet address
+            echo "Choose an address type:"
+            echo "1. Transparent address"
+            echo "2. Shielded address (viewing key)"
+            echo "3. Back"
+            read -p "Enter your choice (1, 2, or 3): " ADDRESS_TYPE
+
+            if [ "$ADDRESS_TYPE" == "3" ]; then
+                echo "Returning to the Valley of Namada main menu."
+                menu
+                return
+            fi
+
             read -p "Enter the custom wallet address: " CUSTOM_WALLET_ADDRESS
             WALLET_ADDRESS=$CUSTOM_WALLET_ADDRESS
-            echo "Querying the balance of custom wallet address: $WALLET_ADDRESS"
         else
             echo "Invalid choice. Please enter 1, 2, or 3."
             continue
         fi
 
-        echo "Choose an option:"
-        echo "1. Query balance from transparent address"
-        echo "2. Query balance from shielded address (viewing key)"
-        echo "3. Back"
-        read -p "Enter your choice (1, 2, or 3): " CHOICE
-
-        if [ "$CHOICE" == "3" ]; then
-            echo "Returning to the Valley of Namada main menu."
-            menu
-            return
-        fi
-
+        # Ask about RPC preference
         read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/grandvalley): " RPC_CHOICE
 
-        case $CHOICE in
-            1)
+        # Query balance based on address type
+        case $ADDRESS_TYPE in
+            1) # Transparent address
                 if [ "$RPC_CHOICE" == "grandvalley" ]; then
                     namadac balance --owner $WALLET_ADDRESS --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
                 else
                     namadac balance --owner $WALLET_ADDRESS --token NAM
                 fi
                 ;;
-            2)
-                if [ "$WALLET_CHOICE" == "1" ]; then
-                    if [ "$RPC_CHOICE" == "grandvalley" ]; then
-                        namadac balance --owner ${WALLET_ADDRESS} --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
-                    else
-                        namadac balance --owner ${WALLET_ADDRESS} --token NAM
-                    fi
+            2) # Shielded address
+                if [ "$RPC_CHOICE" == "grandvalley" ]; then
+                    namadac balance --owner ${WALLET_ADDRESS} --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
                 else
-                    if [ "$RPC_CHOICE" == "grandvalley" ]; then
-                        namadac balance --owner $WALLET_ADDRESS --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
-                    else
-                        namadac balance --owner $WALLET_ADDRESS --token NAM
-                    fi
+                    namadac balance --owner ${WALLET_ADDRESS} --token NAM
                 fi
                 ;;
             *)
                 echo "Invalid choice. Please enter 1 or 2."
                 ;;
         esac
+
         echo -e "${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
         read -r
         menu
