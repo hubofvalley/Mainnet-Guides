@@ -388,24 +388,28 @@ function query_balance() {
             return
         fi
 
+        # Show wallet list if the user wants to query their own wallet
         if [ "$WALLET_CHOICE" == "1" ]; then
-            # Use default wallet or prompt for wallet name
+            echo "Available Wallets:"
+            namadaw list --addr | grep "Implicit"
+            namadaw list --keys
+        fi
+
+        echo "Choose an address type to query:"
+        echo "1. Transparent address"
+        echo "2. Shielded address (viewing key)"
+        echo "3. Back"
+        read -p "Enter your choice (1, 2, or 3): " ADDRESS_TYPE
+
+        if [ "$ADDRESS_TYPE" == "3" ]; then
+            echo "Returning to the Valley of Namada main menu."
+            menu
+            return
+        fi
+
+        # Handle wallet name/alias or custom wallet address input
+        if [ "$WALLET_CHOICE" == "1" ]; then
             while true; do
-                echo "Choose an address type:"
-                echo "1. Transparent address"
-                echo "2. Shielded address (viewing key)"
-                echo "3. Back"
-                read -p "Enter your choice (1, 2, or 3): " ADDRESS_TYPE
-
-                if [ "$ADDRESS_TYPE" == "3" ]; then
-                    echo "Returning to the Valley of Namada main menu."
-                    menu
-                    return
-                fi
-
-                # Prompt for wallet name or use default
-                namadaw list --addr | grep "Implicit"
-                namadaw list --keys
                 read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
                 if [ -z "$WALLET_NAME" ]; then
                     WALLET_NAME=$DEFAULT_WALLET
@@ -415,25 +419,13 @@ function query_balance() {
                 WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME)
 
                 if [ -n "$WALLET_ADDRESS" ]; then
+                    echo "Selected wallet: $WALLET_NAME ($WALLET_ADDRESS)"
                     break
                 else
                     echo "Wallet name not found. Please check the wallet name/alias and try again."
                 fi
             done
         elif [ "$WALLET_CHOICE" == "2" ]; then
-            # Custom wallet address
-            echo "Choose an address type:"
-            echo "1. Transparent address"
-            echo "2. Shielded address (viewing key)"
-            echo "3. Back"
-            read -p "Enter your choice (1, 2, or 3): " ADDRESS_TYPE
-
-            if [ "$ADDRESS_TYPE" == "3" ]; then
-                echo "Returning to the Valley of Namada main menu."
-                menu
-                return
-            fi
-
             read -p "Enter the custom wallet address: " CUSTOM_WALLET_ADDRESS
             WALLET_ADDRESS=$CUSTOM_WALLET_ADDRESS
         else
