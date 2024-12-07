@@ -88,7 +88,7 @@ With Public Testnet, Namada's docs and code become public. Check them out below!
 ## Valley Of Namada: Namada Tools Created by Grand Valley
 
 ![VON](resources/image.png)
-![image](https://github.com/user-attachments/assets/0cccad02-a96e-4c97-a821-c12a41b86424)
+![image](https://github.com/user-attachments/assets/454bbe57-4c28-474f-b175-a28350f87ec7)
 
 **Valley of Namada** by Grand Valley is an all-in-one infrastructure solution providing powerful tools for efficient node management and validator interactions within the **Namada** network. Designed for node runners in the **Namada** ecosystem, **Valley of Namada** offers an accessible, streamlined interface to manage nodes, maintain network participation, and perform validator functions effectively.
 
