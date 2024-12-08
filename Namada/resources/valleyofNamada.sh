@@ -72,8 +72,6 @@ Grand Valley Namada mainnet public endpoints:${RESET}
 - cosmos ws: ${BLUE}wss://lightnode-rpc-mainnet-namada.grandvalleys.com/websocket${RESET}
 - seed: ${BLUE}tcp://65882ea69f4146d8cc83564257252f4711d3e05e@seed-mainnet-namada.grandvalleys.com:56656${RESET}
 - peer: ${BLUE}tcp://3879583b9c6b1ac29d38fefb5a14815dd79282d6@peer-mainnet-namada.grandvalleys.com:38656${RESET}
-- indexer: ${BLUE}https://indexer-mainnet-namada.grandvalleys.com${RESET}
-- masp-indexer: ${BLUE}https://masp-indexer-mainnet-namada.grandvalleys.com${RESET}
 
 Stake to Grand Valley: ${CYAN}tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6${RESET}
 
