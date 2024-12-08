@@ -82,6 +82,8 @@ With Public Testnet, Namada's docs and code become public. Check them out below!
 - cosmos ws: `wss://lightnode-rpc-mainnet-namada.grandvalleys.com/websocket`
 - seed: `tcp://65882ea69f4146d8cc83564257252f4711d3e05e@seed-mainnet-namada.grandvalleys.com:56656`
 - peer: `tcp://3879583b9c6b1ac29d38fefb5a14815dd79282d6@peer-mainnet-namada.grandvalleys.com:38656`
+- indexer: `https://indexer-mainnet-namada.grandvalleys.com`
+- masp-indexer: `https://masp-indexer-mainnet-namada.grandvalleys.com`
 
 ### Stake to Grand Valley: tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6
 
@@ -310,4 +312,11 @@ namada --version
 peers=$(curl -sS https://lightnode-rpc-mainnet-namada.grandvalleys.com/net_info | jq -r '.result.peers[] | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr)"' | awk -F ':' '{print $1":"$(NF)}' | paste -sd, -)
 echo "Grand Valley's peers: $peers"
 sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$peers\"|" $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml
+```
+
+### update seeds
+
+```bash
+peers=tcp://65882ea69f4146d8cc83564257252f4711d3e05e@seed-mainnet-namada.grandvalleys.com:56656
+sed -i -e "s|^seeds *=.*|seeds = \"$seeds\"|" $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml
 ```
