@@ -1385,7 +1385,7 @@ function vote_proposal() {
                 # Show available wallets (Implicit addresses and grandvalley-validator address)
                 echo "Available wallets:"
                 echo
-                namadaw list | grep -E 'Implicit|grandvalley-validator'
+                namadaw list | grep -E 'Implicit'
                 echo
 
                 # Prompt for wallet alias
