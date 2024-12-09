@@ -1385,7 +1385,7 @@ function vote_proposal() {
                 # Show available wallets (Implicit addresses and grandvalley-validator address)
                 echo "Available wallets:"
                 echo
-                namadaw list | grep -E 'Implicit'
+                namadaw list | grep -E 'Implicit|grandvalley-validator'
                 echo
 
                 # Prompt for wallet alias
@@ -1408,8 +1408,25 @@ function vote_proposal() {
             done
 
             read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/gv): " RPC_CHOICE
-            read -p "Enter proposal ID: " PROPOSAL_ID
-            read -p "Enter your vote (yay/nay): " VOTE
+
+            # Query all proposals
+            if [ "$RPC_CHOICE" == "gv" ]; then
+                PROPOSALS=$(namadac query-proposal --node https://lightnode-rpc-mainnet-namada.grandvalleys.com)
+            else
+                PROPOSALS=$(namadac query-proposal)
+            fi
+
+            echo "Available proposals:"
+            echo "$PROPOSALS"
+
+            read -p "Enter the proposal ID you want to vote on: " PROPOSAL_ID
+
+            # Query the specific proposal
+            if [ "$RPC_CHOICE" == "gv" ]; then
+                namadac query-proposal --proposal-id $PROPOSAL_ID --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+            else
+                namadac query-proposal --proposal-id $PROPOSAL_ID
+            fi
 
             read -p "Do you want to vote through your implicit address or your validator address? (implicit/validator): " ADDRESS_TYPE
 
@@ -1421,6 +1438,8 @@ function vote_proposal() {
             else
                 ADDRESS=$WALLET_ADDRESS
             fi
+
+            read -p "Enter your vote (yay/nay): " VOTE
 
             if [ "$RPC_CHOICE" == "gv" ]; then
                 namadac vote-proposal --proposal-id $PROPOSAL_ID --vote $VOTE --address $ADDRESS --signing-keys $WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
