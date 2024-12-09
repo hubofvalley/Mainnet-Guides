@@ -20,12 +20,17 @@ MAND_LIGHT_API_URL="https://snapshots2.mandragora.io/namada-light/info.json"
 # Snapshot URL for ITRocket
 ITR_API_URL="https://server-5.itrocket.net/mainnet/namada/.current_state.json"
 
+# Snapshot URL for CroutonDigital
+CRD_API_URL="https://storage.crouton.digital/mainnet/namada/snapshots/block_status.json"
+CRD_SNAPSHOT_URL="https://storage.crouton.digital/mainnet/namada/snapshots/namada_latest.tar.lz4"
+
 # Function to display the menu
 show_menu() {
     echo -e "${GREEN}Choose a snapshot provider:${NC}"
     echo "1. Mandragora"
     echo "2. ITRocket"
-    echo "3. Exit"
+    echo "3. CroutonDigital"
+    echo "4. Exit"
 }
 
 # Function to display the Mandragora snapshot type menu
@@ -55,6 +60,8 @@ display_snapshot_details() {
 
     if [[ $api_url == *"mandragora"* ]]; then
         snapshot_height=$(echo "$snapshot_info" | grep -oP '"snapshot_height":\s*\K\d+')
+    elif [[ $api_url == *"crouton"* ]]; then
+        snapshot_height=$(echo "$snapshot_info" | jq -r '.latest_block_height')
     else
         snapshot_height=$(echo "$snapshot_info" | jq -r '.snapshot_height')
     fi
@@ -117,6 +124,19 @@ choose_itrocket_snapshot() {
     SNAPSHOT_URL="https://server-5.itrocket.net/mainnet/namada/$FILE_NAME"
 }
 
+# Function to choose snapshot type for CroutonDigital
+choose_croutondigital_snapshot() {
+    echo -e "${GREEN}Checking availability of CroutonDigital snapshot:${NC}"
+    echo -n "Snapshot: "
+    check_url $CRD_SNAPSHOT_URL
+
+    display_snapshot_details $CRD_API_URL
+
+    prompt_back_or_continue
+
+    SNAPSHOT_FILE="namada_latest.tar.lz4"
+}
+
 # Function to decompress Mandragora snapshots
 decompress_mandragora_snapshots() {
     lz4 -c -d $DB_SNAPSHOT_FILE | tar -xv -C $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420
@@ -125,6 +145,11 @@ decompress_mandragora_snapshots() {
 
 # Function to decompress ITRocket snapshot
 decompress_itrocket_snapshot() {
+    lz4 -c -d $SNAPSHOT_FILE | tar -xv -C $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420
+}
+
+# Function to decompress CroutonDigital snapshot
+decompress_croutondigital_snapshot() {
     lz4 -c -d $SNAPSHOT_FILE | tar -xv -C $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420
 }
 
@@ -154,6 +179,8 @@ delete_snapshot_files() {
         if [[ $provider_choice -eq 1 ]]; then
             sudo rm -v $DB_SNAPSHOT_FILE $DATA_SNAPSHOT_FILE
         elif [[ $provider_choice -eq 2 ]]; then
+            sudo rm -v $SNAPSHOT_FILE
+        elif [[ $provider_choice -eq 3 ]]; then
             sudo rm -v $SNAPSHOT_FILE
         fi
         echo -e "${GREEN}Downloaded snapshot files have been deleted.${NC}"
@@ -198,6 +225,12 @@ main_script() {
             choose_itrocket_snapshot
             ;;
         3)
+            provider_name="CroutonDigital"
+            echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
+
+            choose_croutondigital_snapshot
+            ;;
+        4)
             echo -e "${GREEN}Exiting.${NC}"
             exit 0
             ;;
@@ -228,7 +261,10 @@ main_script() {
         sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/cometbft/data
     elif [[ $provider_choice -eq 2 ]]; then
         sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/cometbft/data
-        sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/db
+        sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/{db,wasm}
+    elif [[ $provider_choice -eq 3 ]]; then
+        sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/cometbft/data
+        sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/{db,wasm}
     fi
 
     # Download and decompress snapshots based on the provider
@@ -244,6 +280,9 @@ main_script() {
         SNAPSHOT_FILE=$FILE_NAME
         wget -O $SNAPSHOT_FILE $SNAPSHOT_URL
         decompress_itrocket_snapshot
+    elif [[ $provider_choice -eq 3 ]]; then
+        wget -O $SNAPSHOT_FILE $CRD_SNAPSHOT_URL
+        decompress_croutondigital_snapshot
     fi
 
     # Change ownership of the .local/share/namada directory
