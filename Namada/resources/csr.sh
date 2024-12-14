@@ -212,7 +212,7 @@ while true; do
     echo "Choose an option:"
     echo "1. View All Validators' CSR (Paginated, Descending by Voting Power)"
     echo "2. Manual CSR Calculation"
-    echo "3. Exit"
+    echo "3. Back to Valley of Namada Main Menu"
     read -p "Enter your choice (1, 2, or 3): " choice
 
     # Install dependencies
