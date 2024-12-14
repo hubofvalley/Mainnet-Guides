@@ -1572,8 +1572,7 @@ function show_guidelines() {
     echo "   - For y/n prompts, enter 'y' for yes and 'n' for no."
     echo "   - For 'own/gv' prompts:"
     echo "       * 'own': Use your own node's RPC. Make sure your node is fully synced and running."
-    echo "       * 'gv': Use Grand Valley's RPC for quick and reliable transactions without needing your own node."
-
+    echo "       * 'gv': Use Grand Valley's RPC for quick and reliable transactions without needing your own node. u can also leave empty input to simply use Grand Valley's RPC"
     echo -e "${GREEN}3. Running Commands${RESET}"
     echo "   - After selecting an option, the script will execute the corresponding commands."
     echo "   - Ensure you have the necessary permissions and dependencies installed for the commands to run successfully."
