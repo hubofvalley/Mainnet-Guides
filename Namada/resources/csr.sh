@@ -18,7 +18,6 @@ install_dependencies() {
 # Function to display the simplified explanation of Cubic Slashing
 display_explanation() {
     echo -e "\033[1;32m------------------------------------\033[0m"
-    echo -e "\033[1;32m------------------------------------\033[0m"
     echo -e "\033[1;34mHow Does Namada Slashing Work?\033[0m"
     echo -e "\033[1;32m------------------------------------\033[0m"
     echo -e "\033[1;33m1. \033[0mThink of \033[1;31mslashing\033[0m like a penalty in a game. If a player (validator) breaks the rules (goes offline), they get a penalty (slashed) that is based on how many marbles (stake) they control."
@@ -29,6 +28,7 @@ display_explanation() {
     echo -e "\033[1;32m------------------------------------\033[0m"
     echo ""
 
+    echo -e "\033[1;32m------------------------------------\033[0m"
     echo -e "\033[1;34mWhy Stake with Small Validators?\033[0m"
     echo -e "\033[1;32m------------------------------------\033[0m"
     echo -e "\033[1;33m1. \033[0mImagine a big jar where everyone places their marbles (staking). If one person fills up the jar, and they drop their marbles, everyone else loses more because their stake is concentrated in one place. That's the risk when too many people stake with big validators!"
