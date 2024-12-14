@@ -48,10 +48,11 @@ calc_cubic_slash_rate() {
     local fractional_voting_power
     local sum_fractional_voting_power=0
 
-    # Calculate the fractional voting power
+    # Calculate the fractional voting power of the validator
     fractional_voting_power=$(echo "scale=10; $validator_voting_power / $total_voting_power" | bc)
 
     # Sum the fractional voting powers over the window width
+    # The window width can be positive or negative to simulate a sliding window
     for ((i = -window_width; i <= window_width; i++)); do
         sum_fractional_voting_power=$(echo "scale=10; $sum_fractional_voting_power + $fractional_voting_power" | bc)
     done
