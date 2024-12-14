@@ -128,8 +128,13 @@ fetch_and_display_paginated_data() {
         done
 
         echo "-----------------------------------------------------------------------------------------------------"
+        echo "Notes:"
         echo ""
-        echo "Commands: [n] Next Page, [p] Previous Page, [q] Quit, [j] Jump to Page, [b] Back to Main Menu"
+        echo -e "\e[33mCSR Growth with Voting Power (VP):\e[0m The CSR grows proportionally with the validator's voting power, ensuring larger validators face higher penalties for misbehavior, thereby enhancing network security and resilience."
+        echo ""
+        echo -e "\e[33mFor example, a validator with a CSR of 50%\e[0m will lose 50% of its staked tokens as a penalty, indicating more serious misbehavior (e.g., losing 500 out of 1000 tokens)."
+        echo ""
+        echo -e "Commands: [\e[32mn\e[0m] Next Page, [\e[32mp\e[0m] Previous Page, [\e[32mq\e[0m] Quit, [\e[32mj\e[0m] Jump to Page, [\e[32mb\e[0m] Back to Main Menu"
         read -p "Enter command: " command
 
         case $command in
