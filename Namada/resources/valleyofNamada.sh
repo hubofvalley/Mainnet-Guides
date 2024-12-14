@@ -271,6 +271,11 @@ function install_namada_app() {
     menu
 }
 
+function cubic_slashing() {
+    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Namada/resources/csr.sh)
+    menu
+}
+
 function create_wallet() {
     echo -e "${RED}Write down your mnemonic and store it securely -- this is the only time it will be shown. You can use your mnemonic to recover your account if you lose access (for example, if your laptop stops working or is stolen). If you are locked out of your account, and you haven't saved your mnemonic, your funds will be lost forever.
     Also carefully note the encryption password you provided -- you will need to provide it any time you make a transaction.${RESET}"
@@ -1670,9 +1675,10 @@ function menu() {
     echo "   c. Backup Validator Key (store it to $HOME directory)"
     echo "   d. Delete Validator Node (BACKUP YOUR SEEDS PHRASE AND priv_validator_key.json BEFORE YOU DO THIS)"
     echo -e "${GREEN}4. Install the Namada App (v1.0.0) only to execute transactions without running a node${RESET}"
-    echo -e "${GREEN}5. Show Grand Valley's Endpoints${RESET}"
-    echo -e "${YELLOW}6. Show Guidelines${RESET}"
-    echo -e "${RED}7. Exit${RESET}"
+    echo -e "${GREEN}5. Open Cubic Slashing Rate (CSR) Monitoring Tool${RESET}"
+    echo -e "${GREEN}6. Show Grand Valley's Endpoints${RESET}"
+    echo -e "${YELLOW}7. Show Guidelines${RESET}"
+    echo -e "${RED}8. Exit${RESET}"
 
     echo -e "\n${YELLOW}Please run the following command to apply the changes after exiting the script:${RESET}"
     echo -e "${GREEN}source ~/.bash_profile${RESET}"
@@ -1734,9 +1740,10 @@ function menu() {
             esac
             ;;
         4) install_namada_app ;;
-        5) show_endpoints ;;
-        6) show_guidelines ;;
-        7) exit 0 ;;
+        5) cubic_slashing ;;
+        6) show_endpoints ;;
+        7) show_guidelines ;;
+        8) exit 0 ;;
         *) echo "Invalid option. Please try again." ;;
     esac
 }
