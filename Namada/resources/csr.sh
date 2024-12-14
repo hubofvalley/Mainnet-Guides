@@ -206,7 +206,7 @@ manual_calculation() {
     echo "-----------------------------"
     printf "%-20s | %-17s | %-16s | %-17s | %-7s\n" "Voting Power (NAM)" "Voting Power (%)" "CSR (NAM)" "CSR (%)"
     echo "-------------------------------------------------------------------------------------"
-    printf "%-20s | %-17s | %-16s | %-17s | %-7s\n" "$voting_power" "$voting_power_percentage%" "$cubic_slash_rate_nam" "$cubic_slash_rate_percentage"
+    printf "%-20s | %-17s | %-16s | %-17s | %-7s\n" "$voting_power NAM" "$voting_power_percentage%" "$cubic_slash_rate_nam NAM" "$cubic_slash_rate_percentage%"
     echo "-------------------------------------------------------------------------------------"
     echo ""
 }
