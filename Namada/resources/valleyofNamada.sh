@@ -1430,7 +1430,12 @@ function vote_proposal() {
 
     case $CHOICE in
         1)
-            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/gv): " RPC_CHOICE
+            read -p "Use your own RPC or Grand Valley's? (own/gv, leave empty for gv): " RPC_CHOICE
+
+        # Default to Grand Valley's RPC if empty
+        if [ -z "$RPC_CHOICE" ]; then
+            RPC_CHOICE="gv"
+        fi
             if [ "$RPC_CHOICE" == "gv" ]; then
                 namadac query-proposal --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
             else
@@ -1438,7 +1443,12 @@ function vote_proposal() {
             fi
             ;;
         2)
-            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/gv): " RPC_CHOICE
+            read -p "Use your own RPC or Grand Valley's? (own/gv, leave empty for gv): " RPC_CHOICE
+
+        # Default to Grand Valley's RPC if empty
+        if [ -z "$RPC_CHOICE" ]; then
+            RPC_CHOICE="gv"
+        fi
             read -p "Enter proposal ID: " PROPOSAL_ID
             if [ "$RPC_CHOICE" == "gv" ]; then
                 namadac query-proposal --proposal-id $PROPOSAL_ID --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
@@ -1473,7 +1483,12 @@ function vote_proposal() {
                 break
             done
 
-            read -p "Do you want to use your own RPC or Grand Valley's RPC? (own/gv): " RPC_CHOICE
+            read -p "Use your own RPC or Grand Valley's? (own/gv, leave empty for gv): " RPC_CHOICE
+
+        # Default to Grand Valley's RPC if empty
+        if [ -z "$RPC_CHOICE" ]; then
+            RPC_CHOICE="gv"
+        fi
 
             # Query all proposals
             if [ "$RPC_CHOICE" == "gv" ]; then
