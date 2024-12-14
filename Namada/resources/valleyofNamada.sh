@@ -491,7 +491,12 @@ function query_balance() {
         fi
 
         # Prompt for RPC choice
-        read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
+        read -p "Use your own RPC or Grand Valley's? (own/gv, leave empty for gv): " RPC_CHOICE
+
+        # Default to Grand Valley's RPC if empty
+        if [ -z "$RPC_CHOICE" ]; then
+            RPC_CHOICE="gv"
+        fi
 
         # Execute the query based on address type and flow
         case $CHOICE in
@@ -576,7 +581,12 @@ function transfer_transparent() {
         read -p "Enter the amount to transfer: " AMOUNT
 
         # Prompt for RPC choice
-        read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
+        read -p "Use your own RPC or Grand Valley's? (own/gv, leave empty for gv): " RPC_CHOICE
+
+        # Default to Grand Valley's RPC if empty
+        if [ -z "$RPC_CHOICE" ]; then
+            RPC_CHOICE="gv"
+        fi
 
         # Prompt for token choice
         read -p "Which token do you want to interact with? (1: NAM, 2: OSMO): " TOKEN_CHOICE
@@ -659,7 +669,12 @@ function stake_tokens() {
 
     case $STAKE_TYPE in
         "Grand Valley")
-            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
+            read -p "Use your own RPC or Grand Valley's? (own/gv, leave empty for gv): " RPC_CHOICE
+
+        # Default to Grand Valley's RPC if empty
+        if [ -z "$RPC_CHOICE" ]; then
+            RPC_CHOICE="gv"
+        fi
             read -p "Enter amount to stake: " AMOUNT
             VALIDATOR_ADDRESS="tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6"
             if [ "$RPC_CHOICE" == "gv" ]; then
@@ -669,7 +684,12 @@ function stake_tokens() {
             fi
             ;;
         "Self-delegate")
-            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
+            read -p "Use your own RPC or Grand Valley's? (own/gv, leave empty for gv): " RPC_CHOICE
+
+        # Default to Grand Valley's RPC if empty
+        if [ -z "$RPC_CHOICE" ]; then
+            RPC_CHOICE="gv"
+        fi
             read -p "Enter amount to stake: " AMOUNT
             port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml")
             VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) | grep 'Found validator address' | awk -F'"' '{print $2}')
@@ -697,7 +717,12 @@ function stake_tokens() {
             fi
             ;;
         "Another validator")
-            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
+            read -p "Use your own RPC or Grand Valley's? (own/gv, leave empty for gv): " RPC_CHOICE
+
+        # Default to Grand Valley's RPC if empty
+        if [ -z "$RPC_CHOICE" ]; then
+            RPC_CHOICE="gv"
+        fi
             read -p "Enter amount to stake: " AMOUNT
             read -p "Enter validator address: " VALIDATOR_ADDRESS
 
@@ -785,7 +810,12 @@ function unstake_tokens() {
 
     case $STAKE_TYPE in
         "Self-undelegate")
-            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
+            read -p "Use your own RPC or Grand Valley's? (own/gv, leave empty for gv): " RPC_CHOICE
+
+        # Default to Grand Valley's RPC if empty
+        if [ -z "$RPC_CHOICE" ]; then
+            RPC_CHOICE="gv"
+        fi
             read -p "Enter amount to unstake: " AMOUNT
             port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml")
             VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address) --node https://lightnode-rpc-mainnet-namada.grandvalleys.com | grep 'Found validator address' | awk -F'"' '{print $2}')
@@ -796,7 +826,12 @@ function unstake_tokens() {
             fi
             ;;
         "Undelegate from another validator")
-            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
+            read -p "Use your own RPC or Grand Valley's? (own/gv, leave empty for gv): " RPC_CHOICE
+
+        # Default to Grand Valley's RPC if empty
+        if [ -z "$RPC_CHOICE" ]; then
+            RPC_CHOICE="gv"
+        fi
             read -p "Enter validator address: " VALIDATOR_ADDRESS
             read -p "Enter amount to unstake: " AMOUNT
             if [ "$RPC_CHOICE" == "gv" ]; then
@@ -851,7 +886,12 @@ function redelegate_tokens() {
 
             echo "Using wallet: $WALLET_NAME ($WALLET_ADDRESS)"
 
-            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
+            read -p "Use your own RPC or Grand Valley's? (own/gv, leave empty for gv): " RPC_CHOICE
+
+        # Default to Grand Valley's RPC if empty
+        if [ -z "$RPC_CHOICE" ]; then
+            RPC_CHOICE="gv"
+        fi
             read -p "Enter amount to redelegate: " AMOUNT
 
             case $CHOICE in
@@ -972,7 +1012,12 @@ function withdraw_unbonded_tokens() {
 
             read -p "Enter validator address: " VALIDATOR_ADDRESS
 
-            read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
+            read -p "Use your own RPC or Grand Valley's? (own/gv, leave empty for gv): " RPC_CHOICE
+
+        # Default to Grand Valley's RPC if empty
+        if [ -z "$RPC_CHOICE" ]; then
+            RPC_CHOICE="gv"
+        fi
 
             if [ "$RPC_CHOICE" == "gv" ]; then
                 namadac withdraw --source $WALLET_NAME --validator $VALIDATOR_ADDRESS --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
@@ -1040,7 +1085,12 @@ function claim_rewards() {
             read -p "Are you sure you want to claim the rewards? (yes/no): " CONFIRM
 
             if [ "$CONFIRM" == "yes" ]; then
-                read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
+                read -p "Use your own RPC or Grand Valley's? (own/gv, leave empty for gv): " RPC_CHOICE
+
+        # Default to Grand Valley's RPC if empty
+        if [ -z "$RPC_CHOICE" ]; then
+            RPC_CHOICE="gv"
+        fi
 
                 if [ "$RPC_CHOICE" == "gv" ]; then
                     namadac claim-rewards --source $WALLET_NAME --validator $VALIDATOR_ADDRESS --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
@@ -1133,7 +1183,12 @@ function transfer_shielding() {
         read -p "Enter the amount to shield: " AMOUNT
 
         # Prompt for RPC choice
-        read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
+        read -p "Use your own RPC or Grand Valley's? (own/gv, leave empty for gv): " RPC_CHOICE
+
+        # Default to Grand Valley's RPC if empty
+        if [ -z "$RPC_CHOICE" ]; then
+            RPC_CHOICE="gv"
+        fi
 
         # Prompt for token choice
         read -p "Which token do you want to interact with? (1: NAM, 2: OSMO): " TOKEN_CHOICE
@@ -1218,7 +1273,12 @@ function transfer_shielded_to_shielded() {
     read -p "Enter the amount to transfer: " AMOUNT
 
     # Prompt for RPC choice
-    read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
+    read -p "Use your own RPC or Grand Valley's? (own/gv, leave empty for gv): " RPC_CHOICE
+
+        # Default to Grand Valley's RPC if empty
+        if [ -z "$RPC_CHOICE" ]; then
+            RPC_CHOICE="gv"
+        fi
 
     # Prompt for token choice
     read -p "Which token do you want to interact with? (1: NAM, 2: OSMO): " TOKEN_CHOICE
@@ -1324,7 +1384,12 @@ function transfer_unshielding() {
     read -p "Enter the amount to unshield: " AMOUNT
 
     # Prompt for RPC choice
-    read -p "Do you want to use your own RPC or Grand Valley's RPC (gv)? (own/gv): " RPC_CHOICE
+    read -p "Use your own RPC or Grand Valley's? (own/gv, leave empty for gv): " RPC_CHOICE
+
+        # Default to Grand Valley's RPC if empty
+        if [ -z "$RPC_CHOICE" ]; then
+            RPC_CHOICE="gv"
+        fi
 
     # Prompt for token choice
     read -p "Which token do you want to unshield? (1: NAM, 2: OSMO): " TOKEN_CHOICE
