@@ -124,7 +124,7 @@ fetch_and_display_paginated_data() {
             voting_power_percentage=$(echo "$voting_power / $total_voting_power * 100" | bc -l | awk '{printf "%.2f", $1}')
 
             # Display compact validator data with adjusted column width
-            printf "%-35s | %-17s | %-16s | %-17s | %-8s\n" "$name" "$voting_power" "$voting_power_percentage%" "$cubic_slash_rate_nam NAM" "$cubic_slash_rate_percentage%"
+            printf "%-35s | %-17s | %-16s | %-17s | %-8s\n" "$name" "$voting_power NAM" "$voting_power_percentage%" "$cubic_slash_rate_nam NAM" "$cubic_slash_rate_percentage%"
         done
 
         echo "-----------------------------------------------------------------------------------------------------"
