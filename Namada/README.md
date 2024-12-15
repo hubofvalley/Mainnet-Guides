@@ -162,7 +162,7 @@ The script provides a menu-driven interface that allows users to select differen
 | Storage   | 1+ TB NVMe SSD                 |
 | Bandwidth | 100 MBps for Download / Upload |
 
-- guide's current binaries version: `v1.0.0 will update to the latest version`
+- guide's current binaries version: `v1.0.0`
 - service file name: `namadad.service`
 - current chain : `namada.5f5de2dd1b88cba30586420`
 
