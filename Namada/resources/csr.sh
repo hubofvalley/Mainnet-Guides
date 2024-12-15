@@ -1,15 +1,23 @@
 #!/bin/bash
 
+# Define color variables
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+YELLOW='\033[0;33m'
+RESET='\033[0m'
+
 # Function to check and install dependencies
 install_dependencies() {
     if ! command -v curl &> /dev/null; then
-        echo "curl could not be found. Installing curl..."
+        echo -e "${RED}curl could not be found. Installing curl...${RESET}"
         sudo apt-get update
         sudo apt-get install -y curl
     fi
 
     if ! command -v jq &> /dev/null; then
-        echo "jq could not be found. Installing jq..."
+        echo -e "${RED}jq could not be found. Installing jq...${RESET}"
         sudo apt-get update
         sudo apt-get install -y jq
     fi
@@ -17,26 +25,38 @@ install_dependencies() {
 
 # Function to display the simplified explanation of Cubic Slashing
 display_explanation() {
-    echo -e "\033[1;32m------------------------------------\033[0m"
-    echo -e "\033[1;34mHow Does Namada Slashing Work?\033[0m"
-    echo -e "\033[1;32m------------------------------------\033[0m"
-    echo -e "\033[1;33m1. \033[0mThink of \033[1;31mslashing\033[0m like a penalty in a game. If a player (validator) breaks the rules (goes offline), they get a penalty (slashed) that is based on how many marbles (stake) they control."
-    echo -e "\033[1;33m2. \033[0mWhen misbehavior is detected, the validator is frozen – like they’re sitting out for the next few rounds. No one can withdraw their marbles from that validator until the issue is resolved."
-    echo -e "\033[1;33m3. \033[0mAfter a few rounds, the penalty is finalized. The validator’s penalty increases if they control too many marbles, which can hurt the network more if they're slashed. This encourages fair play."
-    echo -e "\033[1;33m4. \033[0mThe penalty doesn’t happen instantly, but after some time. It gives other validators time to notice and react."
-    echo -e "\033[1;33m5. \033[0mOnce a validator’s penalty is processed, they might be allowed to play again – but only after proving they’re ready to follow the rules."
-    echo -e "\033[1;32m------------------------------------\033[0m"
+    echo ""
+    echo -e "${GREEN}--------------------------------------------${RESET}"
+    echo -e "${BLUE}Purpose of This Tool:${RESET}"
+    echo -e "${GREEN}--------------------------------------------${RESET}"
+    echo -e "${WHITE}This tool helps stakers understand Namada's unique ${YELLOW}Cubic Slashing${RESET} system, which penalizes validators based on their ${YELLOW}voting power.${RESET}"
+    echo -e "${WHITE}It helps you assess ${YELLOW}risks${RESET}, ${GREEN}rewards${RESET}, and encourages ${WHITE}decentralized staking${RESET} by spreading your stake across smaller validators.${RESET}"
+    echo -e "${GREEN}--------------------------------------------${RESET}"
+    echo ""
+      
+    echo -e "${GREEN}------------------------------------${RESET}"
+    echo -e "${BLUE}How Does Namada Slashing Work?${RESET}"
+    echo -e "${GREEN}------------------------------------${RESET}"
+    echo -e "${WHITE}1. Think of ${RED}slashing${RESET} as a penalty: the more ${MAGENTA}marbles (stake)${RESET} a validator controls, the harsher the penalty if they misbehave.${RESET}"
+    echo -e "${WHITE}2. When misbehavior happens, the validator is ${WHITE}frozen${RESET} – no one can withdraw their ${MAGENTA}marbles${RESET} until it's resolved.${RESET}"
+    echo -e "${WHITE}3. The penalty ${RED}increases${RESET} if the validator controls more ${MAGENTA}marbles${RESET}, encouraging ${RED}fair play${RESET}.${RESET}"
+    echo -e "${WHITE}4. The penalty is ${WHITE}delayed${RESET}, giving others time to ${YELLOW}react${RESET} and protect their stake.${RESET}"
+    echo -e "${WHITE}5. Validators can ${WHITE}return${RESET} after proving they’re ready to follow the ${RED}rules${RESET} again.${RESET}"
+    echo -e "${GREEN}------------------------------------${RESET}"
     echo ""
 
-    echo -e "\033[1;32m------------------------------------\033[0m"
-    echo -e "\033[1;34mWhy Stake with Small Validators?\033[0m"
-    echo -e "\033[1;32m------------------------------------\033[0m"
-    echo -e "\033[1;33m1. \033[0mImagine a big jar where everyone places their marbles (staking). If one person fills up the jar, and they drop their marbles, everyone else loses more because their stake is concentrated in one place. That's the risk when too many people stake with big validators!"
-    echo -e "\033[1;33m2. \033[0mBy spreading your marbles (stake) across smaller jars (validators), you make the system more stable. If one jar falls over, not all the marbles are lost!"
-    echo -e "\033[1;33m3. \033[0mThis helps protect the network and makes it stronger. \033[1;36mDecentralization\033[0m (many small validators) is key to keeping things secure and balanced."
-    echo -e "\033[1;33m4. \033[0mValidators like \033[1;36mGrand Valley\033[0m are committed to making sure this happens. Supporting smaller validators like these helps the whole system!"
-    echo -e "\033[1;33m5. \033[0mRemember, don’t put all your marbles in one jar – spread them out and keep things safe!\033[0m"
-    echo -e "\033[1;32m------------------------------------\033[0m"
+    echo -e "${GREEN}------------------------------------${RESET}"
+    echo -e "${BLUE}Why Stake with Small Validators?${RESET}"
+    echo -e "${GREEN}------------------------------------${RESET}"
+    echo -e "${WHITE}1. Think of a ${MAGENTA}big jar${RESET}: if it falls, everyone loses more. Spread your stake across ${MAGENTA}many jars${RESET} (smaller validators).${RESET}"
+    echo -e "${WHITE}2. Spreading your ${MAGENTA}marbles${RESET} across ${MAGENTA}jars${RESET} protects your ${YELLOW}investment${RESET} and strengthens the ${WHITE}network${RESET}.${RESET}"
+    echo -e "${WHITE}3. ${WHITE}Decentralization${RESET} keeps the ${WHITE}network${RESET} secure and balanced.${RESET}"
+    echo -e "${WHITE}4. Supporting smaller validators like ${WHITE}Grand Valley${RESET} promotes ${WHITE}stability${RESET} for Namada.${RESET}"
+    echo -e "${WHITE}5. Don’t put all your ${MAGENTA}marbles${RESET} in one ${MAGENTA}jar${RESET} – spread them for ${YELLOW}safety${RESET}!${RESET}"
+    echo -e "${GREEN}------------------------------------${RESET}"
+
+    echo ""
+    echo -e "${GREEN}Let's Buidl Namada Together, Let's Shiedl Together. - Grand Valley${RESET}"
     echo ""
 }
 
@@ -51,7 +71,7 @@ calc_cubic_slash_rate() {
 
     # Validate inputs
     if [[ -z "$window_width" || -z "$validator_voting_power" || -z "$total_voting_power" || "$total_voting_power" -le 0 ]]; then
-        echo "Error: Invalid inputs"
+        echo -e "${RED}Error: Invalid inputs${RESET}"
         return 1
     fi
 
@@ -97,10 +117,10 @@ fetch_and_display_paginated_data() {
 
     while true; do
         clear
-        echo -e "\033[1;32mTotal Voting Power: $total_voting_power NAM\033[0m"
-        echo -e "\033[1;32mPage $current_page of $total_pages\033[0m"
+        echo -e "${GREEN}Total Voting Power: $total_voting_power NAM${RESET}"
+        echo -e "${GREEN}Page $current_page of $total_pages${RESET}"
         echo ""
-        echo -e "\033[1;34mValidator Name                      | Voting Power (NAM) | Voting Power (%) | CSR (NAM)       | CSR (%)\033[0m"
+        echo -e "${BLUE}Validator Name                      | Voting Power (NAM) | Voting Power (%) | CSR (NAM)       | CSR (%)${RESET}"
         echo "-----------------------------------------------------------------------------------------------------"
 
         # Calculate start and end indices for the current page
@@ -147,7 +167,7 @@ fetch_and_display_paginated_data() {
                 if [ $current_page -lt $total_pages ]; then
                     current_page=$((current_page + 1))
                 else
-                    echo "You are already on the last page."
+                    echo -e "${RED}You are already on the last page.${RESET}"
                     sleep 1
                 fi
                 ;;
@@ -155,7 +175,7 @@ fetch_and_display_paginated_data() {
                 if [ $current_page -gt 1 ]; then
                     current_page=$((current_page - 1))
                 else
-                    echo "You are already on the first page."
+                    echo -e "${RED}You are already on the first page.${RESET}"
                     sleep 1
                 fi
                 ;;
@@ -164,20 +184,20 @@ fetch_and_display_paginated_data() {
                 if [[ $jump_page -ge 1 && $jump_page -le $total_pages ]]; then
                     current_page=$jump_page
                 else
-                    echo "Invalid page number. Please enter a valid page number."
+                    echo -e "${RED}Invalid page number. Please enter a valid page number.${RESET}"
                     sleep 1
                 fi
                 ;;
             q)
-                echo "Exiting pagination..."
+                echo -e "${GREEN}Exiting pagination...${RESET}"
                 break
                 ;;
             b)
-                echo "Returning to the main menu..."
+                echo -e "${GREEN}Returning to the main menu...${RESET}"
                 return
                 ;;
             *)
-                echo "Invalid command! Use [n], [p], [q], [j], or [b]."
+                echo -e "${RED}Invalid command! Use [n], [p], [q], [j], or [b].${RESET}"
                 sleep 1
                 ;;
         esac
@@ -186,22 +206,21 @@ fetch_and_display_paginated_data() {
 
 # Manual calculation function
 manual_calculation() {
-    echo "Enter the Voting Power (NAM):"
+    echo -e "${GREEN}Enter the Voting Power (NAM):${RESET}"
     read voting_power
     total_voting_power=$(curl -s -X 'GET' \
       'https://indexer-mainnet-namada.grandvalleys.com/api/v1/pos/voting-power' \
       -H 'accept: application/json' | jq -r '.totalVotingPower')
-    echo "Enter Total Voting Power (NAM) (Current: $total_voting_power, leave empty to use current):"
+    echo -e "${GREEN}Enter Total Voting Power (NAM) (Current: $total_voting_power, leave empty to use current):${RESET}"
     read user_input
     # If the user input is empty, use the current total voting power
     total_voting_power="${user_input:-$total_voting_power}"
-    echo "Using Total Voting Power: $total_voting_power"
-    echo "Enter the Window Width (default: 1, leave empty to use default):"
+    echo -e "${GREEN}Using Total Voting Power: $total_voting_power${RESET}"
+    echo -e "${GREEN}Enter the Window Width (default: 1, leave empty to use default):${RESET}"
     read window_width
     # If the user input is empty, use the default value of 1
     window_width="${window_width:-1}"
-    echo "Using Window Width: $window_width"
-
+    echo -e "${GREEN}Using Window Width: $window_width${RESET}"
 
     # Calculate the cubic slash rate
     cubic_slash_rate=$(calc_cubic_slash_rate $window_width $voting_power $total_voting_power)
@@ -217,8 +236,8 @@ manual_calculation() {
 
     # Display the result in a compact format
     echo ""
-    echo "Manual CSR Calculation"
-    echo "-----------------------------"
+    echo -e "${GREEN}Manual CSR Calculation${RESET}"
+    echo -e "${GREEN}-----------------------------${RESET}"
     printf "%-20s | %-17s | %-16s | %-17s | %-7s\n" "Voting Power (NAM)" "Voting Power (%)" "CSR (NAM)" "CSR (%)"
     echo "-------------------------------------------------------------------------------------"
     printf "%-20s | %-17s | %-16s | %-17s | %-7s\n" "$voting_power NAM" "$voting_power_percentage%" "$cubic_slash_rate_nam NAM" "$cubic_slash_rate_percentage%"
@@ -229,6 +248,7 @@ manual_calculation() {
 # Main menu for the user to select
 while true; do
     clear
+    echo -e "${CYAN}Welcome to Cubic Slashing Rate Monitoring Tool by Grand Valley${RESET}"
     display_explanation
     echo "Choose an option:"
     echo "1. View All Validators' CSR (Paginated, Descending by Voting Power)"
@@ -247,16 +267,14 @@ while true; do
             manual_calculation
             ;;
         3)
-            echo "Exiting the script. Goodbye!"
+            echo -e "${CYAN}Exiting the script. Goodbye!${RESET}"
             exit 0
             ;;
         *)
-            echo "Invalid choice. Please try again."
+            echo -e "${RED}Invalid choice. Please try again.${RESET}"
             sleep 1
             ;;
     esac
 
-    # Friendly reminder after they select an option
-    echo -e "\033[1;33mRemember: Staking to smaller validators helps reduce Cubic Slashing and supports decentralization. A balanced network is a stronger network! ????\033[0m"
-    read -p "Press Enter to return to the main menu..."
+    read -p "Press [Enter] to return to the main menu." dummy
 done
