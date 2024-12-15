@@ -188,10 +188,20 @@ fetch_and_display_paginated_data() {
 manual_calculation() {
     echo "Enter the Voting Power (NAM):"
     read voting_power
-    echo "Enter the Total Voting Power (NAM):"
-    read total_voting_power
-    echo "Enter the Window Width:"
+    total_voting_power=$(curl -s -X 'GET' \
+      'https://indexer-mainnet-namada.grandvalleys.com/api/v1/pos/voting-power' \
+      -H 'accept: application/json' | jq -r '.totalVotingPower')
+    echo "Enter Total Voting Power (NAM) (Current: $total_voting_power, leave empty to use current):"
+    read user_input
+    # If the user input is empty, use the current total voting power
+    total_voting_power="${user_input:-$total_voting_power}"
+    echo "Using Total Voting Power: $total_voting_power"
+    echo "Enter the Window Width (default: 1, leave empty to use default):"
     read window_width
+    # If the user input is empty, use the default value of 1
+    window_width="${window_width:-1}"
+    echo "Using Window Width: $window_width"
+
 
     # Calculate the cubic slash rate
     cubic_slash_rate=$(calc_cubic_slash_rate $window_width $voting_power $total_voting_power)
