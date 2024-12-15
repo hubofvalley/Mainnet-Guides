@@ -51,7 +51,7 @@ display_explanation() {
     echo -e "${WHITE}1. Think of a ${MAGENTA}big jar${RESET}: if it falls, everyone loses more. Spread your stake across ${MAGENTA}many jars${RESET} (smaller validators).${RESET}"
     echo -e "${WHITE}2. Spreading your ${MAGENTA}marbles${RESET} across ${MAGENTA}jars${RESET} protects your ${YELLOW}investment${RESET} and strengthens the ${WHITE}network${RESET}.${RESET}"
     echo -e "${WHITE}3. ${WHITE}Decentralization${RESET} keeps the ${WHITE}network${RESET} secure and balanced.${RESET}"
-    echo -e "${WHITE}4. Supporting smaller validators like ${WHITE}Grand Valley${RESET} promotes ${WHITE}stability${RESET} for Namada.${RESET}"
+    echo -e "${WHITE}4. Supporting smaller validators like ${WHITE}Grand Valley${RESET} promotes ${WHITE}stability${RESET} for Namada ${GREEN}(tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6)${RESET}"
     echo -e "${WHITE}5. Don’t put all your ${MAGENTA}marbles${RESET} in one ${MAGENTA}jar${RESET} – spread them for ${YELLOW}safety${RESET}!${RESET}"
     echo -e "${GREEN}------------------------------------${RESET}"
 
