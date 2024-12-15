@@ -46,23 +46,28 @@ calc_cubic_slash_rate() {
     local validator_voting_power=$2
     local total_voting_power=$3
     local fractional_voting_power
-    local sum_fractional_voting_power=0
+    local sum_fractional_voting_power
+    local cubic_slash_rate
+
+    # Validate inputs
+    if [[ -z "$window_width" || -z "$validator_voting_power" || -z "$total_voting_power" || "$total_voting_power" -le 0 ]]; then
+        echo "Error: Invalid inputs"
+        return 1
+    fi
 
     # Calculate the fractional voting power of the validator
     fractional_voting_power=$(echo "scale=10; $validator_voting_power / $total_voting_power" | bc)
 
-    # Sum the fractional voting powers over the window width
-    # The window width can be positive or negative to simulate a sliding window
-    for ((i = -window_width; i <= window_width; i++)); do
-        sum_fractional_voting_power=$(echo "scale=10; $sum_fractional_voting_power + $fractional_voting_power" | bc)
-    done
+    # Sum fractional voting power across the window
+    sum_fractional_voting_power=$(echo "scale=10; $fractional_voting_power * (2 * $window_width + 1)" | bc)
 
     # Calculate the cubic slash rate
     cubic_slash_rate=$(echo "scale=10; 9 * ($sum_fractional_voting_power ^ 2)" | bc)
 
-    # Ensure the slash rate is at least 0.01 and at most 1.0
+    # Clamp the slash rate to the range [0.01, 1.0]
     cubic_slash_rate=$(echo "scale=2; if ($cubic_slash_rate < 0.01) 0.01 else if ($cubic_slash_rate > 1.0) 1.0 else $cubic_slash_rate" | bc)
 
+    # Return the cubic slash rate
     echo $cubic_slash_rate
 }
 
