@@ -85,7 +85,9 @@ With Public Testnet, Namada's docs and code become public. Check them out below!
 - indexer: `https://indexer-mainnet-namada.grandvalleys.com`
 - masp-indexer: `https://masp-indexer-mainnet-namada.grandvalleys.com`
 
-### Stake to Grand Valley: tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6
+### Stake to Grand Valley (tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6) on [Valley of Namadillo](https://valley-of-namadillo.grandvalleys.com/staking)
+![image](https://github.com/user-attachments/assets/20483dde-2c6e-48d1-aeb8-f79453f6f398)
+
 
 ## Valley Of Namada: Namada Tools Created by Grand Valley
 
@@ -126,6 +128,14 @@ bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main
 #### 3. Namada App Installation
 
 - Install the Namada app (v1.0.0) for command-line transactions and network interactions without running a full node.
+
+#### 4. Cubic Slashing Rate (CSR) Monitoring Tool
+
+This tool helps stakers understand Namada's unique Cubic Slashing system, which penalizes validators based on their voting power.
+It helps you assess risks, rewards, and encourages decentralized staking by spreading your stake across smaller validators.
+
+![image](https://github.com/user-attachments/assets/b76a7fe9-465e-4434-9c97-8d3538f1216b)
+![image](https://github.com/user-attachments/assets/0cb5953c-50c9-431f-868d-70af93927dc3)
 
 ### Usage
 
