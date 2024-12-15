@@ -276,5 +276,7 @@ while true; do
             ;;
     esac
 
+    # Friendly reminder after they select an option
+    echo -e "\033[1;33mRemember: Staking to smaller validators helps reduce Cubic Slashing and supports decentralization. A balanced network is a stronger network! ????\033[0m"
     read -p "Press [Enter] to return to the main menu." dummy
 done
