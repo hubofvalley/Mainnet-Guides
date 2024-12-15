@@ -84,6 +84,7 @@ With Public Testnet, Namada's docs and code become public. Check them out below!
 - peer: `tcp://3879583b9c6b1ac29d38fefb5a14815dd79282d6@peer-mainnet-namada.grandvalleys.com:38656`
 - indexer: `https://indexer-mainnet-namada.grandvalleys.com`
 - masp-indexer: `https://masp-indexer-mainnet-namada.grandvalleys.com`
+- Valley of Namadillo (Namadillo): `https://valley-of-namadillo.grandvalleys.com`
 
 ### Stake to Grand Valley (tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6) on [Valley of Namadillo](https://valley-of-namadillo.grandvalleys.com/staking)
 ![image](https://github.com/user-attachments/assets/20483dde-2c6e-48d1-aeb8-f79453f6f398)
