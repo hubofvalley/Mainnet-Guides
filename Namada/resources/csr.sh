@@ -119,16 +119,12 @@ monitor_csr() {
             printf "%2d | %-30s | %-18s ($fractional_voting_power_percentage) | %s\n" $((i + 1)) "$name" "$voting_power" "$cubic_slash_rate_percentage"
         done
 
-        echo -e "${GREEN}--------------------------------------------${RESET}"
-        echo -e "${BLUE}Simulate Infractions Feature:${RESET}"
-        echo -e "${GREEN}--------------------------------------------${RESET}"
-        echo -e "${YELLOW}Simulate Infractions${RESET} lets you estimate the impact of validator infractions on their ${YELLOW}Cubic Slashing Rate${RESET} (CSR). Input the number of infractions and see how they affect the CSR.${RESET}"
-        echo -e "${WHITE}This feature helps with ${YELLOW}risk management${RESET} by showing how misbehaviors might influence your staking strategy in the Namada ecosystem.${RESET}"
-        echo -e "${GREEN}--------------------------------------------${RESET}"
-        echo -e "${CYAN}Notes:${RESET}"
-        echo -e "${YELLOW}Independent CSR:${RESET} The Independent CSR estimates the slashing rate for a validator assuming it is the only one misbehaving within a 3-epoch window (epochs -1, 0, +1). It increases with the validator’s voting power, so larger validators face higher penalties, enhancing network security."
         echo ""
-        echo -e "${YELLOW}Example of Independet CSR:${RESET} A validator with 10% of TVP could face, minimally, 9% slashing of staked tokens. For a validator with 1000 tokens, 90 could be slashed, assuming it is the only validator with an infraction during the 3-epoch window."
+        echo "-------------------------------------------------------------------"
+        echo -e "${CYAN}Notes:${RESET}"
+        echo -e "${YELLOW}Independent CSR:${RESET} The Independent CSR represents the estimated slashing rate for a validator assuming it is the only one misbehaving with infractions in one window width (3 epochs). It grows proportionally with the validator's voting power, ensuring larger validators face higher penalties for misbehavior, thereby enhancing network security and resilience."
+        echo ""
+        echo -e "${YELLOW}Example:${RESET} A validator with 10% of TVP could face, minimally, 9% slashing of staked tokens. For a validator with 1000 tokens, 90 could be slashed."
         echo ""
         echo -e "Commands: [${GREEN}n${RESET}] Next Page, [${GREEN}p${RESET}] Previous Page, [${GREEN}s${RESET}] Simulate Infractions, [${GREEN}j${RESET}] Jump to Page, [${GREEN}q${RESET}] Quit"
         read -p "Enter command: " command
@@ -136,6 +132,7 @@ monitor_csr() {
         case $command in
             n) [ $current_page -lt $total_pages ] && current_page=$((current_page + 1)) || echo -e "${RED}Last page reached.${RESET}";;
             p) [ $current_page -gt 1 ] && current_page=$((current_page - 1)) || echo -e "${RED}First page reached.${RESET}";;
+            s) simulate_infractions;;
             j)
                 read -p "Enter page number to jump to: " page_number
                 if [[ $page_number =~ ^[0-9]+$ ]] && [ $page_number -ge 1 ] && [ $page_number -le $total_pages ]; then
@@ -143,7 +140,7 @@ monitor_csr() {
                 else
                     echo -e "${RED}Invalid page number. Try again.${RESET}"
                 fi
-            s) simulate_infractions;;
+                ;;
             q) return;;
             *) echo -e "${RED}Invalid command.${RESET}"; sleep 1;;
         esac
