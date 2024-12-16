@@ -102,7 +102,7 @@ monitor_csr() {
         [ $end_index -ge $total_validators ] && end_index=$(( total_validators - 1 ))
 
         echo -e "${CYAN}Page $current_page/$total_pages${RESET}"
-        echo -e "${GREEN}No | Validator Name                 | Voting Power (NAM) (vp/tvp) | Independent CSR (%)${RESET}"
+        echo -e "${GREEN}No | Validator Name                 | Voting Power (NAM) (vp/tvp %) | Independent CSR (%)${RESET}"
         echo "-------------------------------------------------------------------"
 
         for i in $(seq $start_index $end_index); do
@@ -116,7 +116,7 @@ monitor_csr() {
             cubic_slash_rate=$(echo "scale=2; if ($cubic_slash_rate < 0.01) 0.01 else if ($cubic_slash_rate > 1.0) 1.0 else $cubic_slash_rate" | bc)
             cubic_slash_rate_percentage=$(echo "$cubic_slash_rate * 100" | bc -l | awk '{printf "%.2f", $1}')
 
-            printf "%2d | %-30s | %-18s ($fractional_voting_power_percentage%%) | %s\n" $((i + 1)) "$name" "$voting_power" "$cubic_slash_rate_percentage"
+            printf "%2d | %-30s | %-18s ($fractional_voting_power_percentage) | %s\n" $((i + 1)) "$name" "$voting_power" "$cubic_slash_rate_percentage"
         done
 
         echo -e "${GREEN}--------------------------------------------${RESET}"
