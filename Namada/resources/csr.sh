@@ -136,6 +136,13 @@ monitor_csr() {
         case $command in
             n) [ $current_page -lt $total_pages ] && current_page=$((current_page + 1)) || echo -e "${RED}Last page reached.${RESET}";;
             p) [ $current_page -gt 1 ] && current_page=$((current_page - 1)) || echo -e "${RED}First page reached.${RESET}";;
+            j)
+                read -p "Enter page number to jump to: " page_number
+                if [[ $page_number =~ ^[0-9]+$ ]] && [ $page_number -ge 1 ] && [ $page_number -le $total_pages ]; then
+                    current_page=$page_number
+                else
+                    echo -e "${RED}Invalid page number. Try again.${RESET}"
+                fi
             s) simulate_infractions;;
             q) return;;
             *) echo -e "${RED}Invalid command.${RESET}"; sleep 1;;
