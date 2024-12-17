@@ -39,8 +39,8 @@ display_explanation() {
     echo -e "${WHITE}4. Supporting smaller validators like ${WHITE}Grand Valley${RESET} promotes ${WHITE}stability${RESET} for Namada ${GREEN}(tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6)${RESET}"
     echo -e "${WHITE}5. Don’t put all your ${MAGENTA}marbles${RESET} in one ${MAGENTA}jar${RESET} – spread them for ${YELLOW}safety${RESET}!${RESET}"
     echo -e "${GREEN}------------------------------------${RESET}"
-
-    echo -e "${GREEN}Let's Build Namada Together, Let's Shield Together. - Grand Valley${RESET}"
+    echo ""
+    echo -e "${GREEN}Let's Buidl Namada Together, Let's Shiedl Together. - Grand Valley${RESET}"
     echo ""
 }
 
