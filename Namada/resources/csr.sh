@@ -149,8 +149,10 @@ monitor_csr() {
 }
 
 simulate_infractions() {
+    echo ""
     echo -e "${CYAN}Cubic Slashing Rate Simulation Tool${RESET}"
     echo -e "${YELLOW}Notes:${RESET} This tool simulates the Cubic Slashing Rate (CSR) for validators based on their infractions in a specific window width (3 epochs). The simulation considers the infractions of all validators within the window width, calculates the total fractional voting power impacted by the infractions, and estimates the potential slashing amount for each validator based on their voting power. The larger the voting power, the more significant the potential slashing amount. This simulation helps you understand the risks associated with validator infractions and can guide your staking decisions."
+    echo ""
 
     declare -A validators
     total_voting_power=$(curl -s 'https://indexer-mainnet-namada.grandvalleys.com/api/v1/pos/voting-power' | jq -r '.totalVotingPower')
