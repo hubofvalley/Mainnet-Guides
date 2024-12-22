@@ -101,6 +101,7 @@ monitor_csr() {
         end_index=$(( start_index + items_per_page - 1 ))
         [ $end_index -ge $total_validators ] && end_index=$(( total_validators - 1 ))
 
+        echo -e "${GREEN}Total Voting Power (TVP) = $total_voting_power NAM${RESET}"
         echo -e "${CYAN}Page $current_page/$total_pages${RESET}"
         echo -e "${GREEN}No | Validator Name                 | Voting Power (NAM) (vp/tvp %) | Independent CSR (%)${RESET}"
         echo "-------------------------------------------------------------------"
@@ -126,7 +127,7 @@ monitor_csr() {
         echo ""
         echo -e "${YELLOW}Example:${RESET} A validator with 10% of TVP could face, minimally, 9% slashing of staked tokens. For a validator with 1000 tokens, 90 could be slashed."
         echo ""
-        echo -e "Commands: [${GREEN}n${RESET}] Next Page, [${GREEN}p${RESET}] Previous Page, [${GREEN}s${RESET}] Simulate Infractions, [${GREEN}j${RESET}] Jump to Page, [${GREEN}q${RESET}] Quit"
+        echo -e "Commands: [${GREEN}n${RESET}] Next Page, [${GREEN}p${RESET}] Previous Page, [${GREEN}s${RESET}] Simulation Tool, [${GREEN}j${RESET}] Jump to Page, [${GREEN}q${RESET}] Quit"
         read -p "Enter command: " command
 
         case $command in
@@ -147,71 +148,105 @@ monitor_csr() {
     done
 }
 
-# Simulate infractions function
 simulate_infractions() {
-    local total_fraction=0
-    declare -A validator_data
-    declare -A infractions_data
+    echo "${CYAN}Cubic Slashing Rate Simulation Tool${RESET}"
+    echo "${YELLOW}Notes:${RESET} The Independent CSR represents the estimated slashing rate for a validator assuming it is the only one misbehaving with infractions in one window width (3 epochs). It grows proportionally with the validator's voting power, ensuring larger validators face higher penalties for misbehavior, thereby enhancing network security and resilience."
+
+    declare -A validators
+    total_voting_power=$(curl -s 'https://indexer-mainnet-namada.grandvalleys.com/api/v1/pos/voting-power' | jq -r '.totalVotingPower')
 
     while true; do
+        # Step 1: Input validator name
         read -p "Enter validator name (or 'done' to finish): " validator_name
-        [ "$validator_name" == "done" ] && break
+        if [[ "${validator_name,,}" == "done" ]]; then
+            break
+        fi
 
-        read -p "Enter infractions for epoch -1: " inf1
-        read -p "Enter infractions for epoch 0: " inf2
-        read -p "Enter infractions for epoch +1: " inf3
-
-        total_infractions=$((inf1 + inf2 + inf3))
-
-        # Fetch validator voting power
+        # Fetch validator voting power from the API
         vp=$(curl -s "https://indexer-mainnet-namada.grandvalleys.com/api/v1/pos/validator/all?state=consensus" | jq -r --arg name "$validator_name" '.[] | select(.name == $name) | .votingPower')
-        [ -z "$vp" ] && echo -e "${RED}Validator not found. Try again.${RESET}" && continue
+        if [[ -z "$vp" ]]; then
+            echo -e "${RED}Validator not found. Try again.${RESET}"
+            continue
+        fi
 
-        fraction=$(echo "scale=10; $vp / $total_voting_power * $total_infractions" | bc)
-        total_fraction=$(echo "scale=10; $total_fraction + $fraction" | bc)
+        # Step 2: Input epoch for infractions
+        while true; do
+            read -p "Enter the epoch with infractions for ${validator_name}: " epoch
+            if [[ $epoch =~ ^[0-9]+$ ]]; then
+                break
+            else
+                echo -e "${RED}Invalid input. Please enter a valid epoch number.${RESET}"
+            fi
+        done
 
-        validator_data[$validator_name]="$vp"
-        infractions_data[$validator_name]="$total_infractions"
+        # Step 3: Input infractions for the specified epoch
+        while true; do
+            read -p "Enter infractions for ${validator_name} in epoch ${epoch}: " infractions
+            if [[ $infractions =~ ^[0-9]+$ && $infractions -gt 0 ]]; then
+                break
+            else
+                echo -e "${RED}Invalid input. Please enter a valid positive number of infractions.${RESET}"
+            fi
+        done
+
+        # Store validator information
+        validators["$validator_name,$epoch"]="$vp,$infractions"
+        echo -e "${GREEN}Validator ${validator_name} added with infractions in epoch ${epoch}.${RESET}"
     done
 
-    # Calculate CSR
-    csr=$(echo "scale=10; 9 * ($total_fraction ^ 2)" | bc)
-    csr=$(echo "scale=2; if ($csr < 0.01) 0.01 else if ($csr > 1.0) 1.0 else $csr" | bc)
-    csr_percentage=$(echo "$csr * 100" | bc -l | awk '{printf "%.2f", $1}')
+    # Display the collected data
+    echo -e "\n${CYAN}Simulation Input Summary:${RESET}"
+    for key in "${!validators[@]}"; do
+        IFS=',' read -r name epoch <<< "$key"
+        IFS=',' read -r vp infractions <<< "${validators[$key]}"
+        echo -e "${YELLOW}- ${name}${RESET} | ${GREEN}Epoch:${RESET} ${epoch} | ${RED}Infractions:${RESET} ${infractions} | ${BLUE}Voting Power:${RESET} ${vp}"
+    done
 
-    echo -e "\n${CYAN}Simulation Results:${RESET}"
-    echo -e "CSR: ${YELLOW}$csr_percentage%${RESET}"
+    # Calculate CSR for each validator
+    echo -e "\n${CYAN}Calculating CSR...${RESET}"
+    declare -A csr_results
+    declare -A slashed_nam
 
-    for name in "${!validator_data[@]}"; do
-        vp=${validator_data[$name]}
-        infractions=${infractions_data[$name]}
-        if [ $infractions -eq 0 ]; then
-            slash_amount=0
-        else
-            slash_amount=$(echo "scale=2; $csr * $vp" | bc)
-        fi
-        echo -e "Validator: ${BLUE}$name${RESET}, Slashed Amount: ${RED}$slash_amount NAM${RESET}"
+    for key in "${!validators[@]}"; do
+        IFS=',' read -r name epoch <<< "$key"
+        IFS=',' read -r vp infractions <<< "${validators[$key]}"
+        
+        # Calculate Fractional Voting Power (FVP) and Fraction Total Voting Power (FTVP)
+        fvp=$(echo "scale=10; $vp / $total_voting_power" | bc)
+        ftvp=$(echo "scale=10; $fvp * $infractions" | bc)
+
+        # Inside-Window-Width Validators Fraction Total VP (IWWVFTVP)
+        iwwvftvp=0
+        for check_key in "${!validators[@]}"; do
+            IFS=',' read -r check_name check_epoch <<< "$check_key"
+            if (( check_epoch >= epoch - 1 && check_epoch <= epoch + 1 )) && [[ "$check_name" != "$name" ]]; then
+                IFS=',' read -r check_vp check_infractions <<< "${validators[$check_key]}"
+                check_fvp=$(echo "scale=10; $check_vp / $total_voting_power" | bc)
+                check_ftvp=$(echo "scale=10; $check_fvp * $check_infractions" | bc)
+                iwwvftvp=$(echo "scale=10; $iwwvftvp + $check_ftvp" | bc)
+            fi
+        done
+        iwwvftvp=$(echo "scale=10; $iwwvftvp + $ftvp" | bc)
+
+        # Calculate CSR
+        csr=$(echo "scale=10; 9 * ($iwwvftvp^2)" | bc)
+        csr=$(echo "scale=10; if ($csr < 0.01) 0.01 else if ($csr > 1.0) 1.0 else $csr" | bc)
+        csr_percentage=$(echo "$csr * 100" | bc -l | awk '{printf "%.2f", $1}')
+
+        # Calculate Slashed NAM
+        slashed_nam["$name"]=$(echo "scale=2; $csr * $vp" | bc)
+
+        # Store CSR result for the current validator
+        csr_results["$name"]=$csr_percentage
+    done
+
+    # Display CSR and slashed NAM results
+    for name in "${!csr_results[@]}"; do
+        echo -e "Validator: ${BLUE}$name${RESET}, CSR: ${RED}${csr_results[$name]}%${RESET}, Slashed NAM: ${RED}${slashed_nam[$name]} NAM${RESET}"
     done
 
     echo -e "\n${GREEN}Diversify your delegations to minimize risk and support smaller validators!${RESET}"
-    echo -e "\n${CYAN}Conclusion:${RESET}"
-
-    if [ ${#validator_data[@]} -eq 1 ]; then
-        for name in "${!validator_data[@]}"; do
-            infractions=${infractions_data[$name]}
-            echo -e "If ${BLUE}$name${RESET} did ${YELLOW}$infractions${RESET} infractions in one window width (3 epochs), the CSR would be ${YELLOW}$csr_percentage%${RESET}. This highlights the importance of monitoring validator behavior and the potential impact of misbehavior on your stake."
-        done
-    else
-        echo -e "If the validators did the following infractions in one window width (3 epochs), the CSR would be ${YELLOW}$csr_percentage%${RESET}:"
-        for name in "${!validator_data[@]}"; do
-            infractions=${infractions_data[$name]}
-            echo -e "Validator: ${BLUE}$name${RESET}, Infractions: ${YELLOW}$infractions${RESET}"
-        done
-        echo -e "This emphasizes the cumulative impact of multiple validators misbehaving and the importance of decentralization and diversification in staking."
-    fi
-
     read -p "Press Enter to return to the Monitor CSR menu..."
-    monitor_csr
 }
 
 # Ensure dependencies are installed
