@@ -149,8 +149,8 @@ monitor_csr() {
 }
 
 simulate_infractions() {
-    echo "${CYAN}Cubic Slashing Rate Simulation Tool${RESET}"
-    echo "${YELLOW}Notes:${RESET} The Independent CSR represents the estimated slashing rate for a validator assuming it is the only one misbehaving with infractions in one window width (3 epochs). It grows proportionally with the validator's voting power, ensuring larger validators face higher penalties for misbehavior, thereby enhancing network security and resilience."
+    echo -e "${CYAN}Cubic Slashing Rate Simulation Tool${RESET}"
+    echo -e "${YELLOW}Notes:${RESET} The Independent CSR represents the estimated slashing rate for a validator assuming it is the only one misbehaving with infractions in one window width (3 epochs). It grows proportionally with the validator's voting power, ensuring larger validators face higher penalties for misbehavior, thereby enhancing network security and resilience."
 
     declare -A validators
     total_voting_power=$(curl -s 'https://indexer-mainnet-namada.grandvalleys.com/api/v1/pos/voting-power' | jq -r '.totalVotingPower')
