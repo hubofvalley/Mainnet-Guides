@@ -59,7 +59,7 @@ display_snapshot_details() {
     local snapshot_height
 
     if [[ $api_url == *"mandragora"* ]]; then
-        snapshot_height=$(echo "$snapshot_info" | grep -oP '"snapshot_height":\s*\K\d+')
+        snapshot_height=$(echo "$snapshot_info" | grep -oP '"snapshot_height":\s*"\K\d+')
     elif [[ $api_url == *"crouton"* ]]; then
         snapshot_height=$(echo "$snapshot_info" | jq -r '.latest_block_height')
     else
