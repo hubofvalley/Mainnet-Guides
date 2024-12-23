@@ -86,9 +86,9 @@ choose_mandragora_full_snapshot() {
     echo -n "Data Snapshot: "
     check_url $MAND_FULL_DATA_SNAPSHOT_URL
 
-    prompt_back_or_continue
-
     display_snapshot_details $MAND_FULL_API_URL
+
+    prompt_back_or_continue
 
     DB_SNAPSHOT_FILE="db.lz4"
     DATA_SNAPSHOT_FILE="data.lz4"
@@ -102,9 +102,9 @@ choose_mandragora_light_snapshot() {
     echo -n "Data Snapshot: "
     check_url $MAND_LIGHT_DATA_SNAPSHOT_URL
 
-    prompt_back_or_continue
-
     display_snapshot_details $MAND_LIGHT_API_URL
+
+    prompt_back_or_continue
 
     DB_SNAPSHOT_FILE="db.lz4"
     DATA_SNAPSHOT_FILE="data.lz4"
