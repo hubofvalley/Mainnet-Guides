@@ -114,7 +114,7 @@ monitor_csr() {
             fractional_voting_power=$(echo "scale=10; $voting_power / $total_voting_power" | bc)
             fractional_voting_power_percentage=$(echo "$fractional_voting_power * 100" | bc -l | awk '{printf "%.2f", $1}')
             cubic_slash_rate=$(echo "scale=10; 9 * ($fractional_voting_power ^ 2)" | bc)
-            cubic_slash_rate=$(echo "scale=2; if ($cubic_slash_rate < 0.01) 0.01 else if ($cubic_slash_rate > 1.0) 1.0 else $cubic_slash_rate" | bc)
+            cubic_slash_rate=$(echo "scale=2; if ($cubic_slash_rate < 0.001) 0.001 else if ($cubic_slash_rate > 1.0) 1.0 else $cubic_slash_rate" | bc)
             cubic_slash_rate_percentage=$(echo "$cubic_slash_rate * 100" | bc -l | awk '{printf "%.2f", $1}')
 
             printf "%2d | %-30s | %-18s ($fractional_voting_power_percentage) | %s\n" $((i + 1)) "$name" "$voting_power" "$cubic_slash_rate_percentage"
@@ -232,7 +232,7 @@ simulate_infractions() {
 
         # Calculate CSR
         csr=$(echo "scale=10; 9 * ($iwwvftvp^2)" | bc)
-        csr=$(echo "scale=10; if ($csr < 0.01) 0.01 else if ($csr > 1.0) 1.0 else $csr" | bc)
+        csr=$(echo "scale=10; if ($csr < 0.001) 0.001 else if ($csr > 1.0) 1.0 else $csr" | bc)
         csr_percentage=$(echo "$csr * 100" | bc -l | awk '{printf "%.2f", $1}')
 
         # Calculate Slashed NAM
