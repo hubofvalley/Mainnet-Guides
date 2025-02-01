@@ -463,7 +463,7 @@ story validator stake --private-key <your private key> --stake 10240000000000000
 </a>
 
 ```bash
-story validator stake --private-key <your private key> --stake 1024000000000000000000 --validator-pubkey 036a75cfa84cf485e5b4a6844fa9f2ff03f410f7c8c0148f4e4c9e535df9caba22/wP0EPfIwBSPTkyeU135yroi
+story validator stake --private-key <your private key> --stake 1024000000000000000000 --validator-pubkey 022199ce81e29408b87c60ee57a25090fcf19514ed35ab85b4549196316c419858
 ```
 
 ## delete the node
@@ -482,7 +482,7 @@ sed -i "/STORY_/d" $HOME/.bash_profile
 
 ```bash
 # Prompt user for input
-read -p "Enter the story-geth version (e.g., v0.11.0): " GETH_VERSION
+read -p "Enter the story-geth version (e.g., v1.0.1): " GETH_VERSION
 read -p "Enter the installation directory (e.g., $HOME/story-geth-$GETH_VERSION): " GETH_INSTALL_DIR
 
 # Define variables
@@ -509,7 +509,7 @@ sudo systemctl restart story-geth
 
 ```bash
 # Prompt user for input
-read -p "Enter the consensus client version (e.g., v0.12.1): " CONSENSUS_VERSION
+read -p "Enter the consensus client version (e.g., v1.0.0): " CONSENSUS_VERSION
 read -p "Enter the upgrade block height (e.g., 322000): " UPGRADE_HEIGHT
 read -p "Enter the installation directory (e.g., $HOME/story-$CONSENSUS_VERSION): " STORY_INSTALL_DIR
 
