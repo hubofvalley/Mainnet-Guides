@@ -141,7 +141,7 @@ With Public Mainnet, Story's docs and code become public. Check them out below!
 ## Valley of Story: Story Protocol Tools Created by Grand Valley
 
 ![Valley of Story Image 1](https://github.com/user-attachments/assets/5110da6d-4ec2-492d-86ea-887b34b279b4)
-![image](https://github.com/user-attachments/assets/ba8cc713-307f-4440-b146-a6a79856a4c5)
+![image](https://github.com/user-attachments/assets/684ca519-aabf-40c4-a1d3-2403c81e393c)
 
 **Valley of Story** by Grand Valley is an all-in-one infrastructure solution providing powerful tools for efficient node management and validator interactions within the **Story Protocol** network. Designed for node runners in the **Story Protocol** ecosystem, **Valley of Story** offers an accessible, streamlined interface to manage nodes, maintain network participation, and perform validator functions effectively.
 
@@ -150,7 +150,7 @@ With Public Mainnet, Story's docs and code become public. Check them out below!
 Run the following command to install Valley of Story:
 
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Story%20Protocol/resources/valleyofStory.sh)
+bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Story/resources/valleyofStory.sh)
 ```
 
 ### Key Features of Valley of Story
