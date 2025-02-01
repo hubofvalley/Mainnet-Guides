@@ -192,8 +192,8 @@ bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main
 
 - service file name: `story.service` `story-geth.service`
 - current chain: `story`
-- current story node version: `v0.12.0 - v0.12.1 - v0.13.0 - v0.13.2`
-- current story-geth node version: `v0.11.0`
+- current story node version: `v1.0.0`
+- current story-geth node version: `v1.0.1`
 
 ## Validator Manual installation
 
@@ -242,18 +242,18 @@ source $HOME/.bash_profile
 cd $HOME
 
 # geth binary
-mkdir -p story-geth-v0.11.0
-wget -O story-geth-v0.11.0/geth-linux-amd64 https://github.com/piplabs/story-geth/releases/download/v0.11.0/geth-linux-amd64
+mkdir -p story-geth-v1.0.1
+wget -O story-geth-v1.0.1/geth-linux-amd64 https://github.com/piplabs/story-geth/releases/download/v1.0.1/geth-linux-amd64
 geth_file_name=geth-linux-amd64
-cp story-geth-v0.11.0/$geth_file_name $HOME/go/bin/geth
+cp story-geth-v1.0.1/$geth_file_name $HOME/go/bin/geth
 sudo chown -R $USER:$USER $HOME/go/bin/geth
 sudo chmod +x $HOME/go/bin/geth
 
 # consensus client binary
-mkdir -p story-v0.12.0
-wget -O story-v0.12.0/story-linux-amd64 https://github.com/piplabs/story/releases/download/v0.12.0/story-linux-amd64
+mkdir -p story-v1.0.0
+wget -O story-v1.0.0/story-linux-amd64 https://github.com/piplabs/story/releases/download/v1.0.0/story-linux-amd64
 story_file__name=story-linux-amd64
-cp story-v0.12.0/$story_file__name $HOME/go/bin/story
+cp story-v1.0.0/$story_file__name $HOME/go/bin/story
 sudo chown -R $USER:$USER $HOME/go/bin/story
 sudo chmod +x $HOME/go/bin/story
 ```
@@ -273,7 +273,7 @@ s%proxy_app = \"tcp://127.0.0.1:26658\"%proxy_app = \"tcp://127.0.0.1:${STORY_PO
 s%laddr = \"tcp://127.0.0.1:26657\"%laddr = \"tcp://127.0.0.1:${STORY_PORT}657\"%" $HOME/.story/story/config/config.toml
 
 sed -i.bak -e "s%engine-endpoint = \"http://localhost:8551\"%engine-endpoint = \"http://localhost:${STORY_PORT}551\"%;
-s%api-address = \"127.0.0.1:1317\"%api-address = \"127.0.0.1:${STORY_PORT}317\"%" $HOME/.story/story/config/story.toml
+s%adress = \"127.0.0.1:1317\"%adress = \"127.0.0.1:${STORY_PORT}317\"%" $HOME/.story/story/config/story.toml
 ```
 
 ### 8. add peers to the config.toml
