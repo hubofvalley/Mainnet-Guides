@@ -298,23 +298,23 @@ suggest_update() {
 
     echo -e "${YELLOW}Current consensus client version: $current_version${NC}"
 
-    if [[ $snapshot_height -ge 0 && $snapshot_height -le 321999 ]]; then
-        required_version="v0.12.0-stable"
-    elif [[ $snapshot_height -ge 322000 && $snapshot_height -le 857999 ]]; then
-        required_version="v0.12.1-stable"
-    elif [[ $snapshot_height -ge 858000 && $snapshot_height -le 2065885 ]]; then
-        required_version="v0.13.0-stable"
-    elif [[ $snapshot_height -ge 2065886 ]]; then
-        required_version="v0.13.2-stable"
+    if [[ $snapshot_height -ge 0 ]]; then
+        required_version="v1.0.0-stable"
+    #elif [[ $snapshot_height -ge 322000 && $snapshot_height -le 857999 ]]; then
+        #required_version="v0.12.1-stable"
+    #elif [[ $snapshot_height -ge 858000 && $snapshot_height -le 2065885 ]]; then
+        #required_version="v0.13.0-stable"
+    #elif [[ $snapshot_height -ge 2065886 ]]; then
+        #required_version="v0.13.2-stable"
     fi
 
-    echo -e "${YELLOW}Required version for snapshot block height $snapshot_height: $required_version${NC}"
+    #echo -e "${YELLOW}Required version for snapshot block height $snapshot_height: $required_version${NC}"
 
-    if [[ $required_version == "v0.12.1-stable" ]]; then
-        echo -e "${YELLOW}If an update is required, choose option 'a' at the consensus client update prompt.${NC}"
-    elif [[ $required_version == "v0.13.0-stable" ]]; then
-        echo -e "${YELLOW}If an update is required, choose option 'b' at the consensus client update prompt.${NC}"
-    fi
+    #if [[ $required_version == "v0.12.1-stable" ]]; then
+        #echo -e "${YELLOW}If an update is required, choose option 'a' at the consensus client update prompt.${NC}"
+    #elif [[ $required_version == "v0.13.0-stable" ]]; then
+        #echo -e "${YELLOW}If an update is required, choose option 'b' at the consensus client update prompt.${NC}"
+    #fi
 
     read -p "Do you want to update the consensus client version? (y/n): " update_choice
 }
@@ -517,7 +517,7 @@ main_script() {
 
     # Execute the update script if the user chose to update
     if [[ $update_choice == "y" || $update_choice == "Y" ]]; then
-        bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Testnet-Guides/main/Story%20Protocol/resources/story_update.sh)
+        bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/war-branch/Story/resources/story_update.sh)
     fi
 
     # Start your story-geth and story nodes
