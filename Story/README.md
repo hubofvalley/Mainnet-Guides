@@ -1,4 +1,4 @@
-# Story Protocol Mainnet Guide
+# Story Protocol Mainnet Mainnet Guide
 
 `will always update`
 
@@ -6,8 +6,8 @@
   <img src="https://github.com/user-attachments/assets/2ac53a77-8eec-48be-9106-eb832ae5fee3" width="600" height="300">
 </p>
 
-- [Story Protocol Mainnet Guide](#story-protocol-mainnet-guide)
-- [Story Protocol](#story-protocol)
+- [Story Protocol Mainnet Mainnet Guide](#story-protocol-mainnet-mainnet-guide)
+- [Story Protocol Mainnet](#story-protocol-mainnet)
   - [What Is Story?](#what-is-story)
   - [Story’s Architecture](#storys-architecture)
     - [Components](#components)
@@ -16,8 +16,8 @@
   - [Story Solving Target](#story-solving-target)
   - [Example Use Case](#example-use-case)
   - [Conclusion](#conclusion)
-  - [Grand Valley's Story Protocol public endpoints:](#grand-valleys-story-protocol-public-endpoints)
-  - [Valley of Story: Story Protocol Tools Created by Grand Valley](#valley-of-story-story-protocol-tools-created-by-grand-valley)
+  - [Grand Valley's Story Protocol Mainnet public endpoints:](#grand-valleys-story-protocol-mainnet-public-endpoints)
+  - [Valley of Story: Story Protocol Mainnet Tools Created by Grand Valley](#valley-of-story-story-protocol-mainnet-tools-created-by-grand-valley)
     - [Installation](#installation)
     - [Key Features of Valley of Story](#key-features-of-valley-of-story)
       - [1. Node Interactions](#1-node-interactions)
@@ -62,7 +62,7 @@
   - [upgrade the consensus client (`story`) to a user-specified version at a user-specified block height](#upgrade-the-consensus-client-story-to-a-user-specified-version-at-a-user-specified-block-height)
 - [let's buidl Story together](#lets-buidl-story-together)
 
-# Story Protocol
+# Story Protocol Mainnet
 
 ## What Is Story?
 
@@ -130,20 +130,21 @@ With Public Mainnet, Story's docs and code become public. Check them out below!
 - [Story Explorer](https://Mainnet.storyscan.app/)
 - [Piplabs Github](https://github.com/piplabs)
 
-## Grand Valley's Story Protocol public endpoints:
+## Grand Valley's Story Protocol Mainnet public endpoints:
 
-- cosmos rpc: `https://lightnode-rpc-story.grandvalleys.com`
-- evm rpc: `https://lightnode-json-rpc-story.grandvalleys.com`
-- cosmos rest-api: `https://lightnode-api-story.grandvalleys.com`
-- cosmos ws: `wss://lightnode-rpc-story.grandvalleys.com/websocket`
-- evm ws: `wss://lightnode-wss-story.grandvalleys.com`
+- cosmos rpc: `https://lightnode-rpc-mainnet-story.grandvalleys.com`
+- evm-rpc: `https://lightnode-json-rpc-mainnet-story.grandvalleys.com`
+- cosmos rest-api: `https://lightnode-api-mainnet-story.grandvalleys.com`
+- cosmos ws: `wss://lightnode-rpc-mainnet-story.grandvalleys.com/websocket`
+- evm ws: `wss://lightnode-wss-mainnet-story.grandvalleys.com`
+- peer: `fffb1a0dc2b6af331c65328c1ed9afad0bf107de@lightnode-peer-mainnet-story.grandvalleys.com:38656`
 
-## Valley of Story: Story Protocol Tools Created by Grand Valley
+## Valley of Story: Story Protocol Mainnet Tools Created by Grand Valley
 
 ![Valley of Story Image 1](https://github.com/user-attachments/assets/5110da6d-4ec2-492d-86ea-887b34b279b4)
 ![image](https://github.com/user-attachments/assets/684ca519-aabf-40c4-a1d3-2403c81e393c)
 
-**Valley of Story** by Grand Valley is an all-in-one infrastructure solution providing powerful tools for efficient node management and validator interactions within the **Story Protocol** network. Designed for node runners in the **Story Protocol** ecosystem, **Valley of Story** offers an accessible, streamlined interface to manage nodes, maintain network participation, and perform validator functions effectively.
+**Valley of Story** by Grand Valley is an all-in-one infrastructure solution providing powerful tools for efficient node management and validator interactions within the **Story Protocol Mainnet** network. Designed for node runners in the **Story Protocol Mainnet** ecosystem, **Valley of Story** offers an accessible, streamlined interface to manage nodes, maintain network participation, and perform validator functions effectively.
 
 ### Installation
 
