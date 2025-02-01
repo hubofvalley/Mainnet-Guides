@@ -209,7 +209,7 @@ echo "There are currently no new versions available."
 #echo "d. Batch update: Upgrade to v0.12.1 at height 322,000, v0.13.0 at height 858,000, and v0.13.2 at height 2,065,886 (RECOMMENDED FOR THOSE AIMING TO ACHIEVE ARCHIVE NODE STATUS)."
 #read -p "Enter the letter corresponding to the version: " choice
 
-case $choice in
+#case $choice in
     #a)
         update_version "v0.12.1" "https://github.com/piplabs/story/releases/download/v0.12.1" 322000
         ;;
@@ -226,4 +226,4 @@ case $choice in
         echo "Invalid choice. Exiting."
         exit 1
         ;;
-esac
+#esac
