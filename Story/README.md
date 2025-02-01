@@ -133,7 +133,7 @@ With Public Mainnet, Story's docs and code become public. Check them out below!
 ## Grand Valley's Story Protocol public endpoints:
 
 - cosmos rpc: `https://lightnode-rpc-story.grandvalleys.com`
-- json-rpc: `https://lightnode-json-rpc-story.grandvalleys.com`
+- evm rpc: `https://lightnode-json-rpc-story.grandvalleys.com`
 - cosmos rest-api: `https://lightnode-api-story.grandvalleys.com`
 - cosmos ws: `wss://lightnode-rpc-story.grandvalleys.com/websocket`
 - evm ws: `wss://lightnode-wss-story.grandvalleys.com`
