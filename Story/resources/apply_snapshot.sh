@@ -67,7 +67,7 @@ display_snapshot_details() {
         snapshot_height=$(echo "$snapshot_info" | grep -oP '"snapshot_height":\s*\K\d+')
     elif [[ $api_url == *"originstake"* ]]; then
         snapshot_height=$(echo "$snapshot_info" | jq -r '.height')
-    elif [[ $api_url == *"josephtran"* ]]; then
+    elif [[ $api_url == *"j-node"* ]]; then
         snapshot_height=$(echo "$snapshot_info" | grep -oP '"block_height":\s*\K\d+')
     elif [[ $api_url == *"crouton"* ]]; then
         snapshot_height=$(echo "$snapshot_info" | grep -oP '"latest_block_height":\s*"\K\d+')
