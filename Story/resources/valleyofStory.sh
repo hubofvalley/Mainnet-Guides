@@ -106,14 +106,14 @@ source $HOME/.bash_profile
 
 # Function to update to a specific version
 function update_geth() {
-    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/war-branch/Story/resources/story-geth_update.sh)
+    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Story/resources/story-geth_update.sh)
     menu
 }
 
 # Validator Node Functions
 function deploy_validator_node() {
     echo -e "${CYAN}Deploying Validator Node...${RESET}"
-    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/war-branch/Story/resources/story_validator_node_install_homer.sh)
+    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Story/resources/story_validator_node_install_homer.sh)
     menu
 }
 
@@ -417,7 +417,7 @@ function manage_consensus_client() {
             migrate_to_cosmovisor
             ;;
         2)
-            bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/war-branch/Story/resources/story_update.sh)
+            bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Story/resources/story_update.sh)
             menu
             ;;
         3)
@@ -436,7 +436,7 @@ function migrate_to_cosmovisor() {
     echo "The service file for your current validator node will be updated to match Grand Valley's current configuration."
     echo -e "${YELLOW}Press Enter to continue${RESET}"
     read -r
-    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/war-branch/Story/resources/cosmovisor_migration.sh)
+    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Story/resources/cosmovisor_migration.sh)
     menu
 }
 
@@ -498,7 +498,7 @@ function install_story_app() {
 }
 
 function apply_snapshot() {
-    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/war-branch/Story/resources/apply_snapshot.sh)
+    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Story/resources/apply_snapshot.sh)
     menu
 }
 
