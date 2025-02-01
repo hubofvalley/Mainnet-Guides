@@ -34,7 +34,7 @@ update_version() {
 
 # Menu for selecting the version
 echo "Choose the version to update to:"
-echo "There are currently no new versions available."
+read -p "There are currently no new versions available."
 
 # Placeholder for future versions
 # Uncomment and add new versions here
@@ -48,11 +48,11 @@ case $choice in
     # Placeholder for future versions
     # Uncomment and add new versions here
     #a)
-         update_version "v0.10.1" "https://github.com/piplabs/story-geth/releases/download/v0.10.1"
-         ;;
+         #update_version "v0.10.1" "https://github.com/piplabs/story-geth/releases/download/v0.10.1"
+         #;;
     #b)
-         update_version "v0.11.0" "https://github.com/piplabs/story-geth/releases/download/v0.11.0"
-         ;;
+         #update_version "v0.11.0" "https://github.com/piplabs/story-geth/releases/download/v0.11.0"
+         #;;
     *)
         echo "Invalid choice. Exiting."
         exit 1

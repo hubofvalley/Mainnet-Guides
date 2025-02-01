@@ -202,28 +202,28 @@ batch_update_version() {
 
 # Menu for selecting the version
 echo "Choose the version to update to:"
-echo "There are currently no new versions available."
-#echo "a. v0.12.1 (Upgrade height: 322,000)"
-#echo "b. v0.13.0 (Upgrade height: 858,000)"
-#echo "c. v0.13.2 (Upgrade height: 2,065,886)"
+read -p "There are currently no new versions available."
+#echo "a. v1.0.1 (Upgrade height: 322,000)"
+#echo "b. v1.1.0 (Upgrade height: 858,000)"
+#echo "c. v1.1.1 (Upgrade height: 2,065,886)"
 #echo "d. Batch update: Upgrade to v0.12.1 at height 322,000, v0.13.0 at height 858,000, and v0.13.2 at height 2,065,886 (RECOMMENDED FOR THOSE AIMING TO ACHIEVE ARCHIVE NODE STATUS)."
-#read -p "Enter the letter corresponding to the version: " choice
+read -p "Enter the letter corresponding to the version: " choice
 
-#case $choice in
+case $choice in
     #a)
-        update_version "v0.12.1" "https://github.com/piplabs/story/releases/download/v0.12.1" 322000
-        ;;
+        #update_version "v0.12.1" "https://github.com/piplabs/story/releases/download/v0.12.1" 322000
+        #;;
     #b)
-        update_version "v0.13.0" "https://github.com/piplabs/story/releases/download/v0.13.0" 858000
-        ;;
+        #update_version "v0.13.0" "https://github.com/piplabs/story/releases/download/v0.13.0" 858000
+        #;;
     #c)
-        update_version "v0.13.2" "https://github.com/piplabs/story/releases/download/v0.13.2" 2065886
-        ;;
+        #update_version "v0.13.2" "https://github.com/piplabs/story/releases/download/v0.13.2" 2065886
+        #;;
     #d)
-        batch_update_version
-        ;;
+        #batch_update_version
+        #;;
     *)
         echo "Invalid choice. Exiting."
         exit 1
         ;;
-#esac
+esac
