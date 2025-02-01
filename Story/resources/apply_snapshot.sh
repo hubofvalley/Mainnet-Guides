@@ -24,13 +24,13 @@ ITR_ARCHIVE_API_URL_2="https://server-8.itrocket.net/testnet/story/.current_stat
 CROUTON_SNAPSHOT_URL="https://storage.crouton.digital/testnet/story/snapshots/story_latest.tar.lz4"
 CROUTON_API_URL="https://storage.crouton.digital/testnet/story/snapshots/block_status.json"
 
-JOSEPHTRAN_PRUNED_GETH_SNAPSHOT_URL="https://story.josephtran.co/Geth_snapshot.lz4"
-JOSEPHTRAN_PRUNED_STORY_SNAPSHOT_URL="https://story.josephtran.co/Story_snapshot.lz4"
-JOSEPHTRAN_ARCHIVE_GETH_SNAPSHOT_URL="https://story.josephtran.co/archive_Geth_snapshot.lz4"
-JOSEPHTRAN_ARCHIVE_STORY_SNAPSHOT_URL="https://story.josephtran.co/archive_Story_snapshot.lz4"
+JOSEPHTRAN_PRUNED_GETH_SNAPSHOT_URL="https://story.j-node.net/mainnet/Geth_snapshot.lz4"
+JOSEPHTRAN_PRUNED_STORY_SNAPSHOT_URL="https://story.j-node.net/mainnet/Story_snapshot.lz4"
+JOSEPHTRAN_ARCHIVE_GETH_SNAPSHOT_URL="https://story.j-node.net/mainnet/archive_Geth_snapshot.lz4"
+JOSEPHTRAN_ARCHIVE_STORY_SNAPSHOT_URL="https://story.j-node.net/mainnet/archive_Story_snapshot.lz4"
 
-JOSEPHTRAN_PRUNED_API_URL="https://story.josephtran.co/prune_snapshot_info.json"
-JOSEPHTRAN_ARCHIVE_API_URL="https://story.josephtran.co/archive_snapshot_info.json"
+JOSEPHTRAN_PRUNED_API_URL="https://story.j-node.net/mainnet/prune_snapshot_info.json"
+JOSEPHTRAN_ARCHIVE_API_URL="https://story.j-node.net/mainnet/archive_snapshot_info.json"
 
 ORIGINSTAKE_PRUNED_API_URL="https://snapshot.originstake.com/story_snapshot_metadata.json"
 ORIGINSTAKE_ARCHIVE_API_URL="https://snapshot.originstake.com/full/story_full_snapshot_metadata.json"
