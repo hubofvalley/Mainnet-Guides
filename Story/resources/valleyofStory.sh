@@ -68,21 +68,21 @@ ${GREEN}Contact${RESET}
 
 ENDPOINTS="${GREEN}
 Grand Valley Story Protocol public endpoints:${RESET}
-- cosmos-rpc: \e]8;;https://lightnode-rpc-story.grandvalleys.com\a${BLUE}https://lightnode-rpc-story.grandvalleys.com\e]8;;\a${RESET}
-- evm-rpc: ${BLUE}https://lightnode-json-rpc-story.grandvalleys.com${RESET}
-- cosmos rest-api: ${BLUE}https://lightnode-api-story.grandvalleys.com${RESET}
-- cosmos ws: ${BLUE}wss://lightnode-rpc-story.grandvalleys.com/websocket${RESET}
-- evm ws: ${BLUE}wss://lightnode-wss-story.grandvalleys.com${RESET}
+- cosmos-rpc: ${BLUE}https://lightnode-rpc-mainnet-story.grandvalleys.com${RESET}
+- evm-rpc: ${BLUE}https://lightnode-json-rpc-mainnet-story.grandvalleys.com${RESET}
+- cosmos rest-api: ${BLUE}https://lightnode-api-mainnet-story.grandvalleys.com${RESET}
+- cosmos ws: ${BLUE}wss://lightnode-rpc-mainnet-story.grandvalleys.com/websocket${RESET}
+- evm ws: ${BLUE}wss://lightnode-wss-mainnet-story.grandvalleys.com${RESET}
 
 ${GREEN}Connect with Story Protocol:${RESET}
-- Official Website: \e]8;;https://www.story.foundation\a${BLUE}https://www.story.foundation\e]8;;\a${RESET}
-- X: \e]8;;https://x.com/StoryProtocol\a${BLUE}https://x.com/StoryProtocol\e]8;;\a${RESET}
-- Official Docs: \e]8;;https://docs.story.foundation\a${BLUE}https://docs.story.foundation\e]8;;\a${RESET}
+- Official Website: ${BLUE}https://www.story.foundation${RESET}
+- X: ${BLUE}https://x.com/StoryProtocol${RESET}
+- Official Docs: ${BLUE}https://docs.story.foundation${RESET}
 
 ${GREEN}Connect with Grand Valley:${RESET}
-- X: \e]8;;https://x.com/bacvalley\a${BLUE}https://x.com/bacvalley\e]8;;\a${RESET}
-- GitHub: \e]8;;https://github.com/hubofvalley\a${BLUE}https://github.com/hubofvalley\e]8;;\a${RESET}
-- Email: \e]8;;mailto:letsbuidltogether@grandvalleys.com\a${BLUE}letsbuidltogether@grandvalleys.com\e]8;;\a${RESET}
+- X: ${BLUE}https://x.com/bacvalley${RESET}
+- GitHub: ${BLUE}https://github.com/hubofvalley${RESET}
+- Email: ${BLUE}letsbuidltogether@grandvalleys.com${RESET}
 "
 
 # Display LOGO and wait for user input to continue
@@ -238,7 +238,7 @@ function stake_tokens() {
     fi
 
     if [ "$RPC_CHOICE" == "2" ]; then
-        story validator stake --validator-pubkey $VALIDATOR_PUBKEY --stake $AMOUNT $PRIVATE_KEY_FLAG --rpc https://lightnode-json-rpc-story.grandvalleys.com:443 --chain-id 1516
+        story validator stake --validator-pubkey $VALIDATOR_PUBKEY --stake $AMOUNT $PRIVATE_KEY_FLAG --rpc https://lightnode-json-rpc-mainnet-story.grandvalleys.com:443 --chain-id 1516
     elif [ "$RPC_CHOICE" == "1" ]; then
         story validator stake --validator-pubkey $VALIDATOR_PUBKEY --stake $AMOUNT $PRIVATE_KEY_FLAG --chain-id 1516
     else
@@ -298,7 +298,7 @@ function unstake_tokens() {
     fi
 
     if [ "$RPC_CHOICE" == "2" ]; then
-        story validator unstake --validator-pubkey $VALIDATOR_PUBKEY --unstake $AMOUNT $PRIVATE_KEY_FLAG --rpc https://lightnode-json-rpc-story.grandvalleys.com:443 --chain-id 1516
+        story validator unstake --validator-pubkey $VALIDATOR_PUBKEY --unstake $AMOUNT $PRIVATE_KEY_FLAG --rpc https://lightnode-json-rpc-mainnet-story.grandvalleys.com:443 --chain-id 1516
     elif [ "$RPC_CHOICE" == "1" ]; then
         story validator unstake --validator-pubkey $VALIDATOR_PUBKEY --unstake $AMOUNT $PRIVATE_KEY_FLAG --chain-id 1516
     else
@@ -381,7 +381,7 @@ function add_peers() {
             fi
             ;;
         2)
-            peers=$(curl -sS https://lightnode-rpc-story.grandvalleys.com/net_info | jq -r '.result.peers[] | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr)"' | awk -F ':' '{print $1":"$(NF)}' | paste -sd, -)
+            peers=$(curl -sS https://lightnode-rpc-mainnet-story.grandvalleys.com/net_info | jq -r '.result.peers[] | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr)"' | awk -F ':' '{print $1":"$(NF)}' | paste -sd, -)
             echo "Grand Valley's peers: $peers"
             read -p "Do you want to proceed? (yes/no): " confirm
             if [[ $confirm == "yes" ]]; then
