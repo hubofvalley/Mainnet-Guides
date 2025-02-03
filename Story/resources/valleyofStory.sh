@@ -346,87 +346,23 @@ function restart_validator_node() {
 }
 
 function show_node_status() {
-    # Clear previous output for better readability
-    clear
-    
-    # Get current timestamp for reference
-    timestamp=$(date +"%Y-%m-%d %H:%M:%S")
-    
-    # Get node status once and reuse
-    if ! node_status=$(story status 2>&1); then
-        echo -e "${RED}Error getting node status!${NC}"
-        echo -e "${YELLOW}Press Enter to return${NC}"
-        read -r
-        return 1
+    port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.story/story/config/config.toml") && curl "http://127.0.0.1:$port/status" | jq
+    story status
+    geth_block_height=$(geth --exec "eth.blockNumber" attach $HOME/.story/geth/story/geth.ipc)
+    realtime_block_height=$(curl -s -X POST "https://mainnet.storyrpc.io" -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' | jq -r '.result' | xargs printf "%d\n")
+    node_height=$(story status | jq -r '.sync_info.latest_block_height')
+    echo "Geth block height: $geth_block_height"
+    block_difference=$((realtime_block_height - node_height))
+    echo -e "${GREEN}Real-time Block Height:${NC} $realtime_block_height"
+    echo -e "${GREEN}Block Difference:${NC} $block_difference"
+
+    # Add explanation for negative values
+    if (( block_difference < 0 )); then
+        echo -e "${GREEN}Note:${NC} A negative value is normal - this means Story's official block height is currently behind your node's height"
     fi
-
-    # Get all metrics in parallel where possible
-    {
-        # Port detection with error handling
-        port=$(grep -oP 'laddr = "tcp://.*?:\K[0-9]+(?=")' "$HOME/.story/story/config/config.toml" | head -1)
-        
-        # Node metrics
-        sync_info=$(jq -r '.sync_info' <<< "$node_status")
-        node_height=$(jq -r '.sync_info.latest_block_height' <<< "$node_status")
-        catching_up=$(jq -r '.sync_info.catching_up' <<< "$node_status")
-
-        # Geth metrics with timeout
-        geth_block_height=$(timeout 5 geth --exec "eth.blockNumber" attach "$HOME/.story/geth/story/geth.ipc" 2>/dev/null || echo "N/A")
-
-        # External block height with timeout and hex conversion
-        realtime_block_height=$(timeout 5 curl -s -X POST "https://mainnet.storyrpc.io" \
-            -H "Content-Type: application/json" \
-            -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' \
-            | jq -r '.result | fromjson')
-    } &>/dev/null
-
-    # Display formatted output
-    echo -e "${BLUE}Node Status at ${WHITE}$timestamp${NC}"
-    echo "---------------------------------"
-    
-    # Sync status with color coding
-    if [[ "$catching_up" == "true" ]]; then
-        echo -e "Sync Status:   ${YELLOW}Syncing${NC}"
-    else
-        echo -e "Sync Status:   ${GREEN}Caught Up${NC}"
-    fi
-
-    # Format large numbers with commas
-    format_number() { printf "%'d" "$1" 2>/dev/null || echo "$1"; }
-
-    # Node height display
-    echo -e "Node Height:   ${CYAN}$(format_number "$node_height")${NC}"
-    
-    # Geth height display
-    if [[ "$geth_block_height" != "N/A" ]]; then
-        echo -e "Geth Height:   ${CYAN}$(format_number "$geth_block_height")${NC}"
-    else
-        echo -e "Geth Height:   ${RED}Unavailable${NC}"
-    fi
-
-    # Real-time comparison
-    if [[ -n "$realtime_block_height" ]]; then
-        realtime_dec=$((realtime_block_height))
-        block_difference=$((realtime_dec - node_height))
-        
-        echo -e "Network Height: ${CYAN}$(format_number "$realtime_dec")${NC}"
-        
-        # Color-code difference display
-        if (( block_difference > 0 )); then
-            echo -e "Blocks Behind:  ${RED}$(format_number "$block_difference")${NC}"
-        elif (( block_difference < 0 )); then
-            echo -e "Blocks Ahead:   ${GREEN}$(format_number "${block_difference#-}")${NC}"
-            echo -e "${YELLOW}Note: Negative values mean your node is ahead of the reference height${NC}"
-        else
-            echo -e "Sync Status:    ${GREEN}Fully Synced${NC}"
-        fi
-    else
-        echo -e "${RED}Failed to get network height${NC}"
-    fi
-
-    echo -e "\n${YELLOW}Press Enter to refresh...${NC}"
+    echo -e "\n${YELLOW}Press Enter to go back to main menu${RESET}"
     read -r
-    show_node_status  # Auto-refresh instead of returning to menu
+    menu
 }
 
 function backup_validator_key() {
