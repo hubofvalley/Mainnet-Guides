@@ -34,7 +34,7 @@ sudo apt update -y && sudo apt upgrade -y
 sudo apt install -y curl git jq build-essential gcc unzip wget lz4 openssl libssl-dev pkg-config protobuf-compiler clang cmake llvm llvm-dev
 
 # 2. Install Go
-cd $HOME && ver="1.23.0"
+cd $HOME && ver="1.22.5"
 wget "https://golang.org/dl/go$ver.linux-amd64.tar.gz"
 sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf "go$ver.linux-amd64.tar.gz"
 rm "go$ver.linux-amd64.tar.gz"
@@ -58,11 +58,16 @@ source $HOME/.bash_profile
 cd $HOME
 
 # Geth binary
-mkdir -p story-geth-v1.0.1
-wget -O story-geth-v1.0.1/geth-linux-amd64 https://github.com/piplabs/story-geth/releases/download/v1.0.1/geth-linux-amd64
-cp story-geth-v1.0.1/geth-linux-amd64 $HOME/go/bin/geth
+mkdir -p story-geth
+cd story-geth
+wget -O v1.0.1.tar.gz https://github.com/piplabs/story-geth/archive/refs/tags/v1.0.1.tar.gz
+tar -xzf v1.0.1.tar.gz
+cd story-geth-1.0.1
+make geth
+cp /build/bin/geth $HOME/go/bin/
 sudo chown -R $USER:$USER $HOME/go/bin/geth
 sudo chmod +x $HOME/go/bin/geth
+cd $HOME
 
 # Consensus client binary
 mkdir -p story-v1.0.0
