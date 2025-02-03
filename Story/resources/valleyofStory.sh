@@ -358,7 +358,7 @@ function show_node_status() {
 
     # Add explanation for negative values
     if (( block_difference < 0 )); then
-        echo -e "${GREEN}Note:${NC} A negative value is normal - this means Story's official block height is currently behind your node's height"
+        echo -e "${GREEN}Note:${NC} A negative value is normal - this means Story's official RPC block height is currently behind your node's height"
     fi
     echo -e "\n${YELLOW}Press Enter to go back to main menu${RESET}"
     read -r
