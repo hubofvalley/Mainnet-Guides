@@ -295,7 +295,7 @@ sed -i -e 's/^indexer = "null"/indexer = "kv"/' $HOME/.story/story/config/config
 
 ```bash
 echo "export DAEMON_NAME=story" >> $HOME/.bash_profile
-echo "export DAEMON_HOME=$(find "$HOME/.story" -type d -name "story" -print -quit)" >> $HOME/.bash_profile
+echo "export DAEMON_HOME=$(find "$HOME/.story/story" -type d -name "story" -print -quit)" >> $HOME/.bash_profile
 source $HOME/.bash_profile
 cosmovisor init $HOME/go/bin/story
 cd $HOME/go/bin/
@@ -313,7 +313,7 @@ cd $HOME
 
 ```bash
 input1=$(which cosmovisor)
-input2=$(find "$HOME/.story" -type d -name "story" -print -quit)
+input2=$(find "$HOME/.story/story" -type d -name "story" -print -quit)
 input3=$(find "$HOME/.story/story/cosmovisor" -type d -name "backup" -print -quit)
 echo "export DAEMON_NAME=story" >> $HOME/.bash_profile
 echo "export DAEMON_HOME=$input2" >> $HOME/.bash_profile
