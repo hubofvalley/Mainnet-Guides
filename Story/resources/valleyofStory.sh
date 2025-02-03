@@ -353,8 +353,8 @@ function show_node_status() {
     node_height=$(story status | jq -r '.sync_info.latest_block_height')
     echo "Geth block height: $geth_block_height"
     block_difference=$((realtime_block_height - node_height))
-    echo -e "${GREEN}Real-time Block Height:${NC} $realtime_block_height"
-    echo -e "${GREEN}Block Difference:${NC} $block_difference"
+    echo Real-time Block Height: $realtime_block_height"
+    echo -e "${YELLOW}Block Difference:${NC} $block_difference"
 
     # Add explanation for negative values
     if (( block_difference < 0 )); then
