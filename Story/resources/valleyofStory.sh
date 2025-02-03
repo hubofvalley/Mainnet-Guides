@@ -453,12 +453,14 @@ function migrate_to_cosmovisor() {
 
 # New functions for stopping and restarting individual services
 function stop_consensus_client() {
+    sudo systemctl daemon-reload
     sudo systemctl stop story
     echo "Consensus client service stopped."
     menu
 }
 
 function stop_geth() {
+    sudo systemctl daemon-reload
     sudo systemctl stop story-geth
     echo "Geth service stopped."
     menu
