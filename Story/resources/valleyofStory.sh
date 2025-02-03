@@ -333,6 +333,7 @@ function delete_validator_node() {
 }
 
 function stop_validator_node() {
+    sudo systemctl daemon-reload
     sudo systemctl stop story story-geth
     echo "Consensus client and Geth service stopped."
     menu
