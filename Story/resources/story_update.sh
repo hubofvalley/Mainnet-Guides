@@ -158,13 +158,13 @@ update_version() {
 
 # Function to perform batch update
 batch_update_version() {
-    #local version1="v1.1.0"
-    local version2="v1.0.0"
-    local version3="v1.1.0"
+    local version1="v1.1.0"
+    local version2="v1.2.0"
+    local version3="v1.3.0"
     local download_url1="https://github.com/piplabs/story/releases/download/v1.1.0"
-    local download_url2="https://github.com/piplabs/story/releases/download/v1.0.0"
-    local download_url3="https://github.com/piplabs/story/releases/download/v1.1.0"
-    local upgrade_height1=322000
+    local download_url2="https://github.com/piplabs/story/releases/download/v1.2.0"
+    local download_url3="https://github.com/piplabs/story/releases/download/v1.3.0"
+    local upgrade_height1=809988
     local upgrade_height2=858000
     local upgrade_height3=2065886
 
