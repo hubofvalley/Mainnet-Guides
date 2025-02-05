@@ -609,7 +609,7 @@ function show_guidelines() {
 
 # Menu function
 function menu() {
-    echo -e "${CYAN}Valley of Story${RESET}"
+    echo -e "${CYAN}Valley of Story Mainnet${RESET}"
     echo -e "${CYAN}Story Validator Node = Consensus Client Service + Execution Client Service (geth/story-geth)${RESET}"
     echo "Main Menu:"
     echo -e "${GREEN}1. Node Interactions:${RESET}"
