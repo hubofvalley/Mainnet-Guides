@@ -113,7 +113,7 @@ function update_geth() {
 # Validator Node Functions
 function deploy_validator_node() {
     echo -e "${CYAN}Deploying Validator Node...${RESET}"
-    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Story/resources/story_validator_node_install_homer.sh)
+    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Story/resources/story_validator_node_install_mainnet.sh)
     menu
 }
 

@@ -14,14 +14,14 @@ init_cosmovisor() {
     echo "Initializing cosmovisor..."
 
     # Download genesis story version
-    mkdir -p story-v0.12.0
-    if ! wget -p $HOME/story-v0.12.0 https://github.com/piplabs/story/releases/download/v0.12.0/story-linux-amd64 -O $HOME/story-v0.12.0/story; then
+    mkdir -p story-v1.0.0
+    if ! wget -p $HOME/story-v1.0.0 https://github.com/piplabs/story/releases/download/v1.0.0/story-linux-amd64 -O $HOME/story-v1.0.0/story; then
         echo "Failed to download the genesis binary. Exiting."
         exit 1
     fi
 
     # Initialize cosmovisor
-    if ! cosmovisor init $HOME/story-v0.12.0/story; then
+    if ! cosmovisor init $HOME/story-v1.0.0/story; then
         echo "Failed to initialize cosmovisor. Exiting."
         exit 1
     fi
@@ -37,16 +37,16 @@ init_cosmovisor() {
 }
 
 # Function to initialize cosmovisor
-init_cosmovisor0132() {
+init_cosmovisor110() {
     sudo systemctl stop story story-geth
 
     # Download genesis story version
-    mkdir -p story-v0.13.2
-    wget -p $HOME/story-v0.13.2 https://github.com/piplabs/story/releases/download/v0.13.2/story-linux-amd64 -O $HOME/story-v0.13.2/story
+    mkdir -p story-v1.1.0
+    wget -p $HOME/story-v1.1.0 https://github.com/piplabs/story/releases/download/v1.1.0/story-linux-amd64 -O $HOME/story-v1.1.0/story
 
     # Initialize cosmovisor
     sudo rm -r $HOME/.story/story/cosmovisor
-    cosmovisor init $HOME/story-v0.13.2/story
+    cosmovisor init $HOME/story-v1.1.0/story
     cd $HOME/go/bin/
     sudo rm -r story
     ln -s $HOME/.story/story/cosmovisor/current/bin/story story
@@ -158,12 +158,12 @@ update_version() {
 
 # Function to perform batch update
 batch_update_version() {
-    local version1="v0.12.1"
-    local version2="v0.13.0"
-    local version3="v0.13.2"
-    local download_url1="https://github.com/piplabs/story/releases/download/v0.12.1"
-    local download_url2="https://github.com/piplabs/story/releases/download/v0.13.0"
-    local download_url3="https://github.com/piplabs/story/releases/download/v0.13.2"
+    #local version1="v1.1.0"
+    local version2="v1.0.0"
+    local version3="v1.1.0"
+    local download_url1="https://github.com/piplabs/story/releases/download/v1.1.0"
+    local download_url2="https://github.com/piplabs/story/releases/download/v1.0.0"
+    local download_url3="https://github.com/piplabs/story/releases/download/v1.1.0"
     local upgrade_height1=322000
     local upgrade_height2=858000
     local upgrade_height3=2065886
@@ -203,21 +203,21 @@ batch_update_version() {
 # Menu for selecting the version
 echo "Choose the version to update to:"
 read -p "There are currently no new versions available."
-#echo "a. v1.0.1 (Upgrade height: 322,000)"
-#echo "b. v1.1.0 (Upgrade height: 858,000)"
-#echo "c. v1.1.1 (Upgrade height: 2,065,886)"
-#echo "d. Batch update: Upgrade to v0.12.1 at height 322,000, v0.13.0 at height 858,000, and v0.13.2 at height 2,065,886 (RECOMMENDED FOR THOSE AIMING TO ACHIEVE ARCHIVE NODE STATUS)."
+echo "a. v1.1.0 ("Virgil" Upgrade height: 809,988)"
+#echo "b. v1.2.0 (Upgrade height: 858,000)"
+#echo "c. v1.3.0 (Upgrade height: 2,065,886)"
+#echo "d. Batch update: Upgrade to v1.1.0 at height 809,988, v1.0.0 at height 858,000, and v1.1.0 at height 2,065,886 (RECOMMENDED FOR THOSE AIMING TO ACHIEVE ARCHIVE NODE STATUS)."
 read -p "Enter the letter corresponding to the version: " choice
 
 case $choice in
-    #a)
-        #update_version "v0.12.1" "https://github.com/piplabs/story/releases/download/v0.12.1" 677886
-        #;;
+    a)
+        update_version "v1.1.0" "https://github.com/piplabs/story/releases/download/v1.1.0" 809988
+        ;;
     #b)
-        #update_version "v0.13.0" "https://github.com/piplabs/story/releases/download/v0.13.0" 858000
+        #update_version "v1.0.0" "https://github.com/piplabs/story/releases/download/v1.0.0" 858000
         #;;
     #c)
-        #update_version "v0.13.2" "https://github.com/piplabs/story/releases/download/v0.13.2" 2065886
+        #update_version "v1.1.0" "https://github.com/piplabs/story/releases/download/v1.1.0" 2065886
         #;;
     #d)
         #batch_update_version
