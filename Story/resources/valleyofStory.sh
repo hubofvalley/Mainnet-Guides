@@ -40,7 +40,7 @@ ${YELLOW}| Category  | Requirements     |
 - consensus client service file name: ${CYAN}story.service${RESET}
 - geth service file name: ${CYAN}story-geth.service${RESET}
 - current chain: ${CYAN}story${RESET}
-- current story node version: ${CYAN}v1.0.0${RESET}
+- current story node version: ${CYAN}v1.0.0 - v1.1.0${RESET}
 - current story-geth node version: ${CYAN}v1.0.1${RESET}
 "
 
