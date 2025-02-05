@@ -211,7 +211,7 @@ batch_update_version() {
 # Menu for selecting the version
 echo "Choose the version to update to:"
 #read -p "There are currently no new versions available."
-echo -e "${YELLOW}a. v1.1.0 (${GREEN}Virgil${RESET} Upgrade height: ${GREEN}809,988${RESET})${RESET}"
+echo -e "a. ${YELLOW}v1.1.0${RESET} (${GREEN}Virgil${RESET} Upgrade height: 809,988)"
 #echo "b. v1.2.0 (Upgrade height: 858,000)"
 #echo "c. v1.3.0 (Upgrade height: 2,065,886)"
 #echo "d. Batch update: Upgrade to v1.1.0 at height 809,988, v1.0.0 at height 858,000, and v1.1.0 at height 2,065,886 (RECOMMENDED FOR THOSE AIMING TO ACHIEVE ARCHIVE NODE STATUS)."
