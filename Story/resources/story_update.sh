@@ -154,6 +154,7 @@ update_version() {
     # Set ownership and permissions
     sudo chown -R $USER:$USER $HOME/.story && \
     sudo chown -R $USER:$USER $HOME/go/bin/story && \
+    sudo chmod +x $HOME/story-$version/story && \
     sudo chmod +x $HOME/go/bin/story && \
     sudo rm -f $HOME/.story/story/data/upgrade-info.json
 
@@ -199,6 +200,9 @@ batch_update_version() {
     sudo chown -R $USER:$USER $HOME/story-$version1/story && \
     sudo chown -R $USER:$USER $HOME/story-$version2/story && \
     sudo chown -R $USER:$USER $HOME/story-$version3/story && \
+    sudo chmod +x $HOME/story-$version1/story && \
+    sudo chmod +x $HOME/story-$version2/story && \
+    sudo chmod +x $HOME/story-$version3/story && \
     sudo rm -f $HOME/.story/story/data/upgrade-info.json
 
     # Add the batch upgrade to cosmovisor
