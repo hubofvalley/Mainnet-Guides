@@ -500,9 +500,9 @@ function show_geth_logs() {
 
 function install_story_app() {
     echo -e "${YELLOW}This option is only for those who want to execute the transactions without running the node.${RESET}"
-    mkdir -p story-v1.0.0
-    wget -O story-v1.0.0/story https://github.com/piplabs/story/releases/download/v1.0.0/story-linux-amd64
-    cp story-v1.0.0/story $HOME/go/bin/story
+    mkdir -p story-v1.1.0
+    wget -O story-v1.1.0/story https://github.com/piplabs/story/releases/download/v1.1.0/story-linux-amd64
+    cp story-v1.1.0/story $HOME/go/bin/story
     sudo chown -R $USER:$USER $HOME/go/bin/story
     sudo chmod +x $HOME/go/bin/story
     story init --network $STORY_CHAIN_ID --moniker gv-story
@@ -594,7 +594,7 @@ function show_guidelines() {
     echo "      - Guide: This option will backup your validator key to your home directory. Ensure you keep this key secure."
     echo "   h. Delete Validator Node: Deletes the validator node. Ensure you backup your seeds phrase/EVM-private key and priv_validator_key.json before doing this."
     echo "      - Guide: Use this option to delete your validator node. Make sure to backup all important data before proceeding."
-    echo -e "${GREEN}Install Story App only: Installs the Story app (v1.0.0) for executing transactions without running the node.${RESET}"
+    echo -e "${GREEN}Install Story App only: Installs the Story app (v1.1.0) for executing transactions without running the node.${RESET}"
     echo "      - Guide: Use this option to install the Story app if you only need to execute transactions without running a full node."
     echo -e "${GREEN}Show Grand Valley's Endpoints:${RESET}"
     echo "   Displays Grand Valley's public endpoints."
