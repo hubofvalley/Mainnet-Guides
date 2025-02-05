@@ -207,7 +207,7 @@ echo "a. v1.1.0 ("Virgil" Upgrade height: 809,988)"
 #echo "b. v1.2.0 (Upgrade height: 858,000)"
 #echo "c. v1.3.0 (Upgrade height: 2,065,886)"
 #echo "d. Batch update: Upgrade to v1.1.0 at height 809,988, v1.0.0 at height 858,000, and v1.1.0 at height 2,065,886 (RECOMMENDED FOR THOSE AIMING TO ACHIEVE ARCHIVE NODE STATUS)."
-#read -p "Enter the letter corresponding to the version: " choice
+read -p "Enter the letter corresponding to the version: " choice
 
 case $choice in
     a)
