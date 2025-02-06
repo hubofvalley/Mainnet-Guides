@@ -1059,9 +1059,18 @@ function claim_rewards() {
         1|2|3)
             # Auto-fetch validator address for options 1 and 3
             if [ "$CHOICE" -eq 1 ] || [ "$CHOICE" -eq 3 ]; then
-                VALIDATOR_ADDRESS=$(namadac status | grep -A 2 "validator_info" | grep -oP 'address: account::Id\(\K[^)]+')
+                # Get validator address in one step
+                VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(
+                    namadac status | 
+                    grep -A 2 "validator_info" | 
+                    grep -oP 'address: account::Id\(\K[^)]+'
+                ) 2>/dev/null | grep -oP 'Tendermint address: \K\S+')
+                
+                [ -z "$VALIDATOR_ADDRESS" ] && 
+                    echo "Error: Validator address not found!" && 
+                    return 1
+                
                 echo "Your validator address: $VALIDATOR_ADDRESS"
-                [ -z "$VALIDATOR_ADDRESS" ] && echo "Error: Validator address not found!" && return 1
             fi
             
             # Get validator address for option 2
@@ -1080,7 +1089,7 @@ function claim_rewards() {
                 [ -z "$WALLET_NAME" ] && WALLET_NAME=$DEFAULT_WALLET
                 
                 # Verify wallet exists
-                WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+                WALLET_ADDRESS=$(namadaw find --alias "$WALLET_NAME" | grep -oP '(?<=Implicit: ).*')
                 [ -n "$WALLET_ADDRESS" ] && break
                 echo "Wallet name not found. Please try again."
             done
@@ -1091,12 +1100,12 @@ function claim_rewards() {
             case $CHOICE in
                 1|2)
                     # Delegator rewards flow
-                    REWARDS=$(namadac rewards --source $WALLET_NAME --validator $VALIDATOR_ADDRESS)
+                    REWARDS=$(namadac rewards --source "$WALLET_NAME" --validator "$VALIDATOR_ADDRESS")
                     CLAIM_CMD="namadac claim-rewards --source $WALLET_NAME --validator $VALIDATOR_ADDRESS"
                     ;;
                 3)
                     # Commission rewards flow
-                    REWARDS=$(namadac rewards --validator $VALIDATOR_ADDRESS)
+                    REWARDS=$(namadac rewards --validator "$VALIDATOR_ADDRESS")
                     CLAIM_CMD="namadac claim-rewards --validator $VALIDATOR_ADDRESS signing-keys $WALLET_NAME"
                     ;;
             esac
