@@ -203,7 +203,7 @@ function stake_tokens() {
 
     case $CHOICE in
         1)
-            VALIDATOR_PUBKEY="036a75cfa84cf485e5b4a6844fa9f2ff03f410f7c8c0148f4e4c9e535df9caba22"
+            VALIDATOR_PUBKEY="022199ce81e29408b87c60ee57a25090fcf19514ed35ab85b4549196316c419858"
             ;;
         2)
             VALIDATOR_PUBKEY=$(story validator export | grep -oP 'Compressed Public Key \(hex\): \K[0-9a-fA-F]+')
