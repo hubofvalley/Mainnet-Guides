@@ -1059,16 +1059,13 @@ function claim_rewards() {
         1|2|3)
             # Auto-fetch validator address for options 1 and 3
             if [ "$CHOICE" -eq 1 ] || [ "$CHOICE" -eq 3 ]; then
-                # Get validator address in one step
-                VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$(
-                    namadac status | 
-                    grep -A 2 "validator_info" | 
-                    grep -oP 'address: account::Id\(\K[^)]+'
-                ) 2>/dev/null | grep -oP 'Tendermint address: \K\S+')
+                # Get account ID first
+                VALIDATOR_ACCOUNT_ID=$(namadac status | grep -A 2 "validator_info" | grep -oP 'address: account::Id\(\K[^)]+')
+                [ -z "$VALIDATOR_ACCOUNT_ID" ] && echo "Error: Validator account ID not found!" && return 1
                 
-                [ -z "$VALIDATOR_ADDRESS" ] && 
-                    echo "Error: Validator address not found!" && 
-                    return 1
+                # Now get proper validator address using find-validator
+                VALIDATOR_ADDRESS=$(namadac find-validator --tm-address="$VALIDATOR_ACCOUNT_ID" 2>/dev/null | grep -oP 'Tendermint address: \K\S+')
+                [ -z "$VALIDATOR_ADDRESS" ] && echo "Error: Validator address not found!" && return 1
                 
                 echo "Your validator address: $VALIDATOR_ADDRESS"
             fi
