@@ -193,7 +193,7 @@ bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main
 
 - service file name: `story.service` `story-geth.service`
 - current chain: `story`
-- current story node version: `v1.0.0 - v1.1.0`
+- current story node version: `v1.1.0`
 - current story-geth node version: `v1.0.1`
 
 ## Validator Manual installation
@@ -255,10 +255,10 @@ sudo chmod +x $HOME/go/bin/geth
 cd $HOME
 
 # consensus client binary
-mkdir -p story-v1.0.0
-wget -O story-v1.0.0/story-linux-amd64 https://github.com/piplabs/story/releases/download/v1.0.0/story-linux-amd64
+mkdir -p story-v1.1.0
+wget -O story-v1.1.0/story-linux-amd64 https://github.com/piplabs/story/releases/download/v1.1.0/story-linux-amd64
 story_file_name=story-linux-amd64
-cp story-v1.0.0/$story_file_name $HOME/go/bin/story
+cp story-v1.1.0/$story_file_name $HOME/go/bin/story
 sudo chown -R $USER:$USER $HOME/go/bin/story
 sudo chmod +x $HOME/go/bin/story
 ```
@@ -514,7 +514,7 @@ sudo systemctl restart story-geth
 
 ```bash
 # Prompt user for input
-read -p "Enter the consensus client version (e.g., v1.0.0): " CONSENSUS_VERSION
+read -p "Enter the consensus client version (e.g., v1.1.0): " CONSENSUS_VERSION
 read -p "Enter the upgrade block height (e.g., 322000): " UPGRADE_HEIGHT
 read -p "Enter the installation directory (e.g., $HOME/story-$CONSENSUS_VERSION): " STORY_INSTALL_DIR
 
