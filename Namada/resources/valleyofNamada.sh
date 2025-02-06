@@ -1059,14 +1059,24 @@ function claim_rewards() {
         1|2|3)
             # Auto-fetch validator address for options 1 and 3
             if [ "$CHOICE" -eq 1 ] || [ "$CHOICE" -eq 3 ]; then
-                # Get account ID first
-                VALIDATOR_ACCOUNT_ID=$(namadac status | grep -A 2 "validator_info" | grep -oP 'address: account::Id\(\K[^)]+')
-                [ -z "$VALIDATOR_ACCOUNT_ID" ] && echo "Error: Validator account ID not found!" && return 1
+                echo "Fetching validator address..."
+                port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml")
+                if [ -z "$port" ]; then
+                    echo "Error: Could not find RPC port in config.toml"
+                    return 1
+                fi
                 
-                # Now get proper validator address using find-validator
-                VALIDATOR_ADDRESS=$(namadac find-validator --tm-address="$VALIDATOR_ACCOUNT_ID" 2>/dev/null | grep -oP 'Tendermint address: \K\S+')
-                [ -z "$VALIDATOR_ADDRESS" ] && echo "Error: Validator address not found!" && return 1
+                tm_address=$(curl -s 127.0.0.1:$port/status | jq -r .result.validator_info.address)
+                if [ -z "$tm_address" ]; then
+                    echo "Error: Failed to fetch Tendermint validator address"
+                    return 1
+                fi
                 
+                VALIDATOR_ADDRESS=$(namadac find-validator --tm-address=$tm_address | grep 'Found validator address' | awk -F'"' '{print $2}')
+                if [ -z "$VALIDATOR_ADDRESS" ]; then
+                    echo "Error: Validator address not found!"
+                    return 1
+                fi
                 echo "Your validator address: $VALIDATOR_ADDRESS"
             fi
             
@@ -1083,10 +1093,10 @@ function claim_rewards() {
 
             while true; do
                 read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
-                [ -z "$WALLET_NAME" ] && WALLET_NAME=$DEFAULT_WALLET
+                [ -z "$WALLET_NAME" ] && WALLET_NAME=$DEFAULT_WALLE
                 
                 # Verify wallet exists
-                WALLET_ADDRESS=$(namadaw find --alias "$WALLET_NAME" | grep -oP '(?<=Implicit: ).*')
+                WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
                 [ -n "$WALLET_ADDRESS" ] && break
                 echo "Wallet name not found. Please try again."
             done
@@ -1097,12 +1107,12 @@ function claim_rewards() {
             case $CHOICE in
                 1|2)
                     # Delegator rewards flow
-                    REWARDS=$(namadac rewards --source "$WALLET_NAME" --validator "$VALIDATOR_ADDRESS")
+                    REWARDS=$(namadac rewards --source $WALLET_NAME --validator $VALIDATOR_ADDRESS)
                     CLAIM_CMD="namadac claim-rewards --source $WALLET_NAME --validator $VALIDATOR_ADDRESS"
                     ;;
                 3)
                     # Commission rewards flow
-                    REWARDS=$(namadac rewards --validator "$VALIDATOR_ADDRESS")
+                    REWARDS=$(namadac rewards --validator $VALIDATOR_ADDRESS)
                     CLAIM_CMD="namadac claim-rewards --validator $VALIDATOR_ADDRESS signing-keys $WALLET_NAME"
                     ;;
             esac
