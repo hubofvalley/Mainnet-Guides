@@ -64,7 +64,7 @@ wget -O v1.0.1.tar.gz https://github.com/piplabs/story-geth/archive/refs/tags/v1
 tar -xzf v1.0.1.tar.gz
 cd story-geth-1.0.1
 make geth
-cp /build/bin/geth $HOME/go/bin/
+cp $HOME/story-geth/story-geth-1.0.1/build/bin/geth $HOME/go/bin/
 sudo chown -R $USER:$USER $HOME/go/bin/geth
 sudo chmod +x $HOME/go/bin/geth
 cd $HOME
