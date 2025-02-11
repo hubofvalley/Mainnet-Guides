@@ -134,7 +134,7 @@ function create_validator() {
 
     read -p "Enter the amount to be staked in IP (e.g., 1024 for 1024 IP, minimum requirement is 1024 IP): " STAKE_IP
 
-    # Convert IP to the required format (assuming 1 IP = 10^18 units)
+    # Validate minimum stake
     MIN_STAKE=1024
     if [ "$STAKE_IP" -lt "$MIN_STAKE" ]; then
         echo "The stake amount is below the minimum requirement of 1024 IP."
@@ -142,10 +142,29 @@ function create_validator() {
         return
     fi
 
+    # Stake type selection
+    echo "Choose the stake type for your validator:"
+    PS3="Enter your choice (1-2): "
+    select STAKE_TYPE in "Locked (non-withdrawable stake)" "Unlocked (withdrawable stake)"; do
+        case $REPLY in
+            1)
+                UNLOCKED_FLAG="false"
+                break
+                ;;
+            2)
+                UNLOCKED_FLAG="true"
+                break
+                ;;
+            *)
+                echo "Invalid option. Please select 1 or 2."
+                ;;
+        esac
+    done
+
     # Convert the stake from IP to the required unit format
     STAKE=$(echo "$STAKE_IP * 10^18" | bc)
 
-    story validator create --stake "$STAKE" --moniker "$MONIKER" --private-key "$PRIVATE_KEY" --chain-id 1516
+    story validator create --stake "$STAKE" --moniker "$MONIKER" --private-key "$PRIVATE_KEY" --chain-id 1514 --unlocked "$UNLOCKED_FLAG"
     menu
 }
 
@@ -239,9 +258,9 @@ function stake_tokens() {
     fi
 
     if [ "$RPC_CHOICE" == "2" ]; then
-        story validator stake --validator-pubkey $VALIDATOR_PUBKEY --stake $AMOUNT $PRIVATE_KEY_FLAG --rpc https://lightnode-json-rpc-mainnet-story.grandvalleys.com:443 --chain-id 1516
+        story validator stake --validator-pubkey $VALIDATOR_PUBKEY --stake $AMOUNT $PRIVATE_KEY_FLAG --rpc https://lightnode-json-rpc-mainnet-story.grandvalleys.com:443 --chain-id 1514
     elif [ "$RPC_CHOICE" == "1" ]; then
-        story validator stake --validator-pubkey $VALIDATOR_PUBKEY --stake $AMOUNT $PRIVATE_KEY_FLAG --chain-id 1516
+        story validator stake --validator-pubkey $VALIDATOR_PUBKEY --stake $AMOUNT $PRIVATE_KEY_FLAG --chain-id 1514
     else
         echo "Invalid choice. Please select a valid option."
         stake_tokens
@@ -299,9 +318,9 @@ function unstake_tokens() {
     fi
 
     if [ "$RPC_CHOICE" == "2" ]; then
-        story validator unstake --validator-pubkey $VALIDATOR_PUBKEY --unstake $AMOUNT $PRIVATE_KEY_FLAG --rpc https://lightnode-json-rpc-mainnet-story.grandvalleys.com:443 --chain-id 1516
+        story validator unstake --validator-pubkey $VALIDATOR_PUBKEY --unstake $AMOUNT $PRIVATE_KEY_FLAG --rpc https://lightnode-json-rpc-mainnet-story.grandvalleys.com:443 --chain-id 1514
     elif [ "$RPC_CHOICE" == "1" ]; then
-        story validator unstake --validator-pubkey $VALIDATOR_PUBKEY --unstake $AMOUNT $PRIVATE_KEY_FLAG --chain-id 1516
+        story validator unstake --validator-pubkey $VALIDATOR_PUBKEY --unstake $AMOUNT $PRIVATE_KEY_FLAG --chain-id 1514
     else
         echo "Invalid choice. Please select a valid option."
         unstake_tokens
