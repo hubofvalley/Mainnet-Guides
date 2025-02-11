@@ -44,7 +44,7 @@ sudo apt update -y && sudo apt upgrade -y
 sudo apt install -y curl git jq build-essential gcc unzip wget lz4 openssl libssl-dev pkg-config protobuf-compiler clang cmake llvm llvm-dev
 
 # 2. Install Go
-cd $HOME && ver="1.22.0"
+cd $HOME && ver="1.22.5"
 wget "https://golang.org/dl/go$ver.linux-amd64.tar.gz"
 sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf "go$ver.linux-amd64.tar.gz"
 rm "go$ver.linux-amd64.tar.gz"
