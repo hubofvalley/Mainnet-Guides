@@ -1731,11 +1731,12 @@ function menu() {
         1)
             case $SUB_OPTION in
                 a) deploy_validator_node ;;
-                b) show_validator_node_status ;;
-                c) show_validator_node_logs ;;
-                d) apply_snapshot ;;
-                e) add_seeds ;;
-                f) add_peers ;;
+                b) update_namada ;;
+                c) show_validator_node_status ;;
+                d) show_validator_node_logs ;;
+                e) apply_snapshot ;;
+                f) add_seeds ;;
+                g) add_peers ;;
                 *) echo "Invalid sub-option. Please try again." ;;
             esac
             ;;
