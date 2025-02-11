@@ -1672,7 +1672,7 @@ function show_guidelines() {
 # Menu function
 function menu() {
     echo -e "Show your support for Grand Valley by staking with us!: ${CYAN}tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6${RESET}"
-    echo -e "${CYAN}Valley of Namada${RESET}"
+    echo -e "${CYAN}Valley of Namada Mainnet${RESET}"
     echo "Main Menu:"
     echo -e "${GREEN}1. Node Interactions:${RESET}"
     echo "   a. Deploy/re-Deploy Validator Node"
