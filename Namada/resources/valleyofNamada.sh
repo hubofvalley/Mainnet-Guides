@@ -255,6 +255,11 @@ function show_validator_node_status() {
     menu
 }
 
+function update_namada() {
+    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Namada/resources/namada_validator_node_install_mainnet.sh)
+    menu
+}
+
 function install_namada_app() {
     echo -e "${YELLOW}This option is only for those who want to execute the transactions without running the node.${RESET}"
     wget https://github.com/anoma/namada/releases/download/v1.0.0/namada-v1.0.0-Linux-x86_64.tar.gz
@@ -1671,11 +1676,12 @@ function menu() {
     echo "Main Menu:"
     echo -e "${GREEN}1. Node Interactions:${RESET}"
     echo "   a. Deploy/re-Deploy Validator Node"
-    echo "   b. Show Validator Node Status"
-    echo "   c. Show Validator Node Logs"
-    echo "   d. Apply Snapshot"
-    echo "   e. Add Seeds"
-    echo "   f. Add Peers"
+    echo "   b. Update Namada Binary Version"
+    echo "   c. Show Validator Node Status"
+    echo "   d. Show Validator Node Logs"
+    echo "   e. Apply Snapshot"
+    echo "   f. Add Seeds"
+    echo "   g. Add Peers"
     echo -e "${GREEN}2. Validator/Key Interactions:${RESET}"
     echo "   a. Create Wallet (Transparent Key, Shielded Key, Shielded Payment Address)"
     echo "   b. Restore Wallet (Transparent Key, Shielded Key, Shielded Payment Address)"

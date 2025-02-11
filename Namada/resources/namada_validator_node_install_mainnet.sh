@@ -41,7 +41,7 @@ sed -i "/NAMADA_/d" $HOME/.bash_profile
 
 # 1. Install dependencies for building from source
 sudo apt update -y && sudo apt upgrade -y
-sudo apt install -y curl git jq build-essential gcc unzip wget lz4 openssl libssl-dev pkg-config protobuf-compiler clang cmake llvm llvm-dev
+sudo apt install -y curl git jq build-essential gcc unzip wget lz4 openssl libssl-dev pkg-config protobuf-compiler clang cmake llvm llvm-dev libudev-dev
 
 # 2. Install Go
 cd $HOME && ver="1.22.5"
