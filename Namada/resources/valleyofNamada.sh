@@ -256,7 +256,7 @@ function show_validator_node_status() {
 }
 
 function update_namada() {
-    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Namada/resources/namada_validator_node_install_mainnet.sh)
+    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Namada/resources/namada_update.sh)
     menu
 }
 
