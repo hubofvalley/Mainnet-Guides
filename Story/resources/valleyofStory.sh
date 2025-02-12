@@ -161,10 +161,51 @@ function create_validator() {
         esac
     done
 
+    # Commission rates input
+    while true; do
+        read -p "Enter commission rate percentage (e.g., 10 for 10%): " COMMISSION_PERCENT
+        if [[ ! "$COMMISSION_PERCENT" =~ ^[0-9]+$ ]]; then
+            echo "Invalid input. Please enter an integer value."
+        else
+            COMMISSION_RATE=$(echo "$COMMISSION_PERCENT * 100" | bc)
+            break
+        fi
+    done
+
+    while true; do
+        read -p "Enter maximum commission change rate percentage (e.g., 5 for 5% daily increase): " MAX_CHANGE_PERCENT
+        if [[ ! "$MAX_CHANGE_PERCENT" =~ ^[0-9]+$ ]]; then
+            echo "Invalid input. Please enter an integer value."
+        else
+            MAX_COMMISSION_CHANGE_RATE=$(echo "$MAX_CHANGE_PERCENT * 100" | bc)
+            break
+        fi
+    done
+
+    while true; do
+        read -p "Enter maximum commission rate percentage (e.g., 50 for 50% maximum): " MAX_COMMISSION_PERCENT
+        if [[ ! "$MAX_COMMISSION_PERCENT" =~ ^[0-9]+$ ]]; then
+            echo "Invalid input. Please enter an integer value."
+        else
+            MAX_COMMISSION_RATE=$(echo "$MAX_COMMISSION_PERCENT * 100" | bc)
+            break
+        fi
+    done
+
     # Convert the stake from IP to the required unit format
     STAKE=$(echo "$STAKE_IP * 10^18" | bc)
 
-    story validator create --stake "$STAKE" --moniker "$MONIKER" --private-key "$PRIVATE_KEY" --chain-id 1514 --unlocked "$UNLOCKED_FLAG"
+    story validator create \
+        --stake "$STAKE" \
+        --moniker "$MONIKER" \
+        --private-key "$PRIVATE_KEY" \
+        --chain-id 1514 \
+        --unlocked="$UNLOCKED_FLAG" \
+        --commission-rate "$COMMISSION_RATE" \
+        --max-commission-change-rate "$MAX_COMMISSION_CHANGE_RATE" \
+        --max-commission-rate "$MAX_COMMISSION_RATE" \
+        --rpc "https://mainnet.storyrpc.io"
+        
     menu
 }
 
