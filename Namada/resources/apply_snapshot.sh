@@ -300,6 +300,7 @@ main_script() {
     cp $HOME/.local/share/namada/priv_validator_state.json.backup $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/cometbft/data/priv_validator_state.json
 
     # Start your namada node
+    sudo systemctl daemon-reload
     sudo systemctl restart namadad
 
     # Delete snapshot files if chosen

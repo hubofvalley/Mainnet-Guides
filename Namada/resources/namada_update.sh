@@ -141,7 +141,7 @@ sudo chmod +x /usr/local/bin/namada*
 
 # Restart service with error checking
 echo -e "\nRestarting $SERVICE_NAME service..."
-if ! sudo systemctl restart $SERVICE_NAME; then
+if ! sudo systemctl daemon-reload && sudo systemctl restart $SERVICE_NAME; then
     echo "Service restart failed! Check configuration."
     exit 1
 fi
