@@ -90,7 +90,7 @@ method2() {
     git checkout "$version"
     
     # Build with optimized parameters
-    cargo build --release --locked
+    cargo build --release
     
     # Install binaries
     sudo cp target/release/namada* /usr/local/bin/
