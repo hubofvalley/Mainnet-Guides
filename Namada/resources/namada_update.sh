@@ -87,7 +87,7 @@ method2() {
     
     cd $HOME/namada
     git fetch --all --tags
-    git checkout "v$version"
+    git checkout "$version"
     
     # Build with optimized parameters
     cargo build --release --locked
@@ -114,13 +114,13 @@ while true; do
 
     case $method_choice in
         1)
-            version="1.1.1"  # Update this for new versions
-            url="https://github.com/anoma/namada/releases/download/v$version"
+            version="v1.1.1"  # Update this for new versions
+            url="https://github.com/anoma/namada/releases/download/$version"
             method1 "$version" "$url"
             break
             ;;
         2)
-            version="1.1.1"  # Update this for new versions
+            version="v1.1.1"  # Update this for new versions
             method2 "$version"
             break
             ;;
