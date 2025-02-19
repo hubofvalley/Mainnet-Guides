@@ -355,55 +355,55 @@ main_script() {
             read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
             ;;
         #6)
-            provider_name="ITRocket"
-            echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
+            #provider_name="ITRocket"
+            #echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
 
-            echo -e "${GREEN}Checking availability of ITRocket snapshots:${NC}"
-            echo -n "Pruned Snapshot (Server 1): "
-            check_url $ITR_PRUNED_API_URL_1
-            echo -n "Pruned Snapshot (Server 3): "
-            check_url $ITR_PRUNED_API_URL_2
-            echo -n "Archive Snapshot (Server 5): "
-            check_url $ITR_ARCHIVE_API_URL_1
-            echo -n "Archive Snapshot (Server 8): "
-            check_url $ITR_ARCHIVE_API_URL_2
+            #echo -e "${GREEN}Checking availability of ITRocket snapshots:${NC}"
+            #echo -n "Pruned Snapshot (Server 1): "
+            #check_url $ITR_PRUNED_API_URL_1
+            #echo -n "Pruned Snapshot (Server 3): "
+            #check_url $ITR_PRUNED_API_URL_2
+            #echo -n "Archive Snapshot (Server 5): "
+            #check_url $ITR_ARCHIVE_API_URL_1
+            #echo -n "Archive Snapshot (Server 8): "
+            #check_url $ITR_ARCHIVE_API_URL_2
 
-            prompt_back_or_continue
+            #prompt_back_or_continue
 
-            choose_itrocket_snapshot
-            GETH_SNAPSHOT_FILE=$GETH_FILE_NAME
-            STORY_SNAPSHOT_FILE=$FILE_NAME
+            #choose_itrocket_snapshot
+            #GETH_SNAPSHOT_FILE=$GETH_FILE_NAME
+            #STORY_SNAPSHOT_FILE=$FILE_NAME
 
             # Suggest update based on snapshot block height
-            snapshot_height=$(curl -s $SNAPSHOT_API_URL | jq -r '.snapshot_height')
-            suggest_update $snapshot_height
+            #snapshot_height=$(curl -s $SNAPSHOT_API_URL | jq -r '.snapshot_height')
+            #suggest_update $snapshot_height
 
             # Ask the user if they want to delete the downloaded snapshot files
-            read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
-            ;;
+            #read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
+            #;;
         #4)
-            provider_name="CroutonDigital"
-            echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
+            #provider_name="CroutonDigital"
+            #echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
 
-            echo -e "${GREEN}Checking availability of CroutonDigital snapshot:${NC}"
-            echo -n "Archive Snapshot: "
-            check_url $CROUTON_SNAPSHOT_URL
+            #echo -e "${GREEN}Checking availability of CroutonDigital snapshot:${NC}"
+            #echo -n "Archive Snapshot: "
+            #check_url $CROUTON_SNAPSHOT_URL
 
-            prompt_back_or_continue
+            #prompt_back_or_continue
 
-            SNAPSHOT_FILE="story_latest.tar.lz4"
-            SNAPSHOT_URL=$CROUTON_SNAPSHOT_URL
+            #SNAPSHOT_FILE="story_latest.tar.lz4"
+            #SNAPSHOT_URL=$CROUTON_SNAPSHOT_URL
 
             # Display snapshot details
-            display_snapshot_details $CROUTON_API_URL
+            #display_snapshot_details $CROUTON_API_URL
 
             # Suggest update based on snapshot block height
-            snapshot_height=$(curl -s $CROUTON_API_URL | grep -oP '"latest_block_height":\s*"\K\d+')
-            suggest_update $snapshot_height
+            #snapshot_height=$(curl -s $CROUTON_API_URL | grep -oP '"latest_block_height":\s*"\K\d+')
+            #suggest_update $snapshot_height
 
             # Ask the user if they want to delete the downloaded snapshot files
-            read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
-            ;;
+            #read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
+            #;;
         1)
             provider_name="Josephtran"
             echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
@@ -432,27 +432,27 @@ main_script() {
             read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
             ;;
         #5)
-            provider_name="OriginStake"
-            echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
+            #provider_name="OriginStake"
+            #echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
 
-            echo -e "${GREEN}Checking availability of OriginStake snapshots:${NC}"
-            echo -n "Pruned Snapshot: "
-            check_url $ORIGINSTAKE_PRUNED_API_URL
-            echo -n "Archive Snapshot: "
-            check_url $ORIGINSTAKE_ARCHIVE_API_URL
+            #echo -e "${GREEN}Checking availability of OriginStake snapshots:${NC}"
+            #echo -n "Pruned Snapshot: "
+            #check_url $ORIGINSTAKE_PRUNED_API_URL
+            #echo -n "Archive Snapshot: "
+            #check_url $ORIGINSTAKE_ARCHIVE_API_URL
 
-            prompt_back_or_continue
+            #prompt_back_or_continue
 
-            choose_originstake_snapshot
-            SNAPSHOT_FILE=$FILE_NAME
-            SNAPSHOT_URL=$SNAPSHOT_URL
+            #choose_originstake_snapshot
+            #SNAPSHOT_FILE=$FILE_NAME
+            #SNAPSHOT_URL=$SNAPSHOT_URL
 
             # Suggest update based on snapshot block height
-            snapshot_height=$(curl -s $SNAPSHOT_API_URL | jq -r '.height')
-            suggest_update $snapshot_height
+            #snapshot_height=$(curl -s $SNAPSHOT_API_URL | jq -r '.height')
+            #suggest_update $snapshot_height
 
             # Ask the user if they want to delete the downloaded snapshot files
-            read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
+            #read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
             ;;
         3)
             echo -e "${GREEN}Exiting.${NC}"
