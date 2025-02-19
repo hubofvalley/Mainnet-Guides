@@ -453,7 +453,7 @@ main_script() {
 
             # Ask the user if they want to delete the downloaded snapshot files
             #read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
-            ;;
+            #;;
         3)
             echo -e "${GREEN}Exiting.${NC}"
             exit 0
