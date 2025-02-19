@@ -354,7 +354,7 @@ main_script() {
             # Ask the user if they want to delete the downloaded snapshot files
             read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
             ;;
-        6)
+        #6)
             provider_name="ITRocket"
             echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
 
@@ -381,7 +381,7 @@ main_script() {
             # Ask the user if they want to delete the downloaded snapshot files
             read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
             ;;
-        4)
+        #4)
             provider_name="CroutonDigital"
             echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
 
@@ -431,7 +431,7 @@ main_script() {
             # Ask the user if they want to delete the downloaded snapshot files
             read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
             ;;
-        5)
+        #5)
             provider_name="OriginStake"
             echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
 
