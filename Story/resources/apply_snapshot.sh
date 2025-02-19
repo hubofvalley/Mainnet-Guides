@@ -43,7 +43,7 @@ show_menu() {
     #echo "3. ITRocket"
     #echo "4. CroutonDigital"
     #echo "5. OriginStake"
-    echo "6. Exit"
+    echo "3. Exit"
 }
 
 # Function to check if a URL is available
@@ -354,7 +354,7 @@ main_script() {
             # Ask the user if they want to delete the downloaded snapshot files
             read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
             ;;
-        3)
+        6)
             provider_name="ITRocket"
             echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
 
@@ -454,7 +454,7 @@ main_script() {
             # Ask the user if they want to delete the downloaded snapshot files
             read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
             ;;
-        6)
+        3)
             echo -e "${GREEN}Exiting.${NC}"
             exit 0
             ;;
