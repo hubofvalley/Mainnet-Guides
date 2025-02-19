@@ -43,7 +43,7 @@ show_menu() {
     #echo "3. ITRocket"
     #echo "4. CroutonDigital"
     #echo "5. OriginStake"
-    #echo "6. Exit"
+    echo "6. Exit"
 }
 
 # Function to check if a URL is available
