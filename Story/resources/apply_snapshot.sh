@@ -38,10 +38,10 @@ ORIGINSTAKE_ARCHIVE_API_URL="https://snapshot.originstake.com/full/story_full_sn
 # Function to display the menu
 show_menu() {
     echo -e "${GREEN}Choose a snapshot provider:${NC}"
-    #echo "1. Mandragora"
-    #echo "2. ITRocket"
-    #echo "3. CroutonDigital"
     echo "1. Josephtran (J•Node)"
+    echo "2. Mandragora"
+    #echo "3. ITRocket"
+    #echo "4. CroutonDigital"
     #echo "5. OriginStake"
     #echo "6. Exit"
 }
@@ -299,7 +299,7 @@ suggest_update() {
     echo -e "${YELLOW}Current consensus client version: $current_version${NC}"
 
     if [[ $snapshot_height -ge 0 ]]; then
-        required_version="v1.0.0-stable"
+        required_version="v1.1.0-stable"
     #elif [[ $snapshot_height -ge 322000 && $snapshot_height -le 857999 ]]; then
         #required_version="v0.12.1-stable"
     #elif [[ $snapshot_height -ge 858000 && $snapshot_height -le 2065885 ]]; then
@@ -327,7 +327,7 @@ main_script() {
     provider_name=""
 
     case $provider_choice in
-        4)
+        2)
             provider_name="Mandragora"
             echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
 
@@ -354,7 +354,7 @@ main_script() {
             # Ask the user if they want to delete the downloaded snapshot files
             read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
             ;;
-        2)
+        3)
             provider_name="ITRocket"
             echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
 
@@ -381,7 +381,7 @@ main_script() {
             # Ask the user if they want to delete the downloaded snapshot files
             read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
             ;;
-        3)
+        4)
             provider_name="CroutonDigital"
             echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
 
