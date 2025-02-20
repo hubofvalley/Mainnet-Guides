@@ -1118,7 +1118,7 @@ function claim_rewards() {
                 3)
                     # Commission rewards flow
                     REWARDS=$(namadac rewards --validator $VALIDATOR_ADDRESS)
-                    CLAIM_CMD="namadac claim-rewards --validator $VALIDATOR_ADDRESS signing-keys $WALLET_NAME"
+                    CLAIM_CMD="namadac claim-rewards --validator $VALIDATOR_ADDRESS --signing-keys $WALLET_NAME"
                     ;;
             esac
 
