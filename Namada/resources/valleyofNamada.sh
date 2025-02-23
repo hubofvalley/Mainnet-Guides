@@ -103,6 +103,7 @@ read -r
 echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin' >> ~/.bash_profile
 echo 'export NAMADA_CHAIN_ID="namada.5f5de2dd1b88cba30586420"' >> $HOME/.bash_profile
 export NAMADA_CHAIN_ID="namada.5f5de2dd1b88cba30586420"
+realtime_block_height=$(curl -s https://lightnode-rpc-mainnet-namada.grandvalleys.com/status | jq -r '.result.sync_info.latest_block_height')
 source $HOME/.bash_profile
 
 # Validator Node Functions
@@ -1673,6 +1674,7 @@ function show_guidelines() {
 function menu() {
     echo -e "Show your support for Grand Valley by staking with us!: ${CYAN}tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6${RESET}"
     echo -e "${CYAN}Valley of Namada Mainnet${RESET}"
+    echo -e "Latest Block Height: ${GREEN}$realtime_block_height${RESET}"
     echo "Main Menu:"
     echo -e "${GREEN}1. Node Interactions:${RESET}"
     echo "   a. Deploy/re-Deploy Validator Node"
