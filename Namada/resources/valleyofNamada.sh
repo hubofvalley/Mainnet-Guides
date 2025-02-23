@@ -1674,7 +1674,6 @@ function menu() {
     realtime_block_height=$(curl -s https://lightnode-rpc-mainnet-namada.grandvalleys.com/status | jq -r '.result.sync_info.latest_block_height')
     echo -e "Show your support for Grand Valley by staking with us!: ${CYAN}tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6${RESET}"
     echo -e "${CYAN}Valley of Namada Mainnet${RESET}"
-    echo -e "Latest Block Height: ${GREEN}$realtime_block_height${RESET}"
     echo "Main Menu:"
     echo -e "${GREEN}1. Node Interactions:${RESET}"
     echo "   a. Deploy/re-Deploy Validator Node"
@@ -1713,6 +1712,7 @@ function menu() {
     echo -e "${YELLOW}7. Show Guidelines${RESET}"
     echo -e "${RED}8. Exit${RESET}"
 
+    echo -e "Latest Block Height: ${GREEN}$realtime_block_height${RESET}"
     echo -e "\n${YELLOW}Please run the following command to apply the changes after exiting the script:${RESET}"
     echo -e "${GREEN}source ~/.bash_profile${RESET}"
     echo -e "${YELLOW}This ensures the environment variables are set in your current bash session.${RESET}"
