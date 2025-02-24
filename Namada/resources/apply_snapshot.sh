@@ -51,6 +51,10 @@ display_snapshot_details() {
 
     if [[ $api_url == *"mandragora"* ]]; then
         snapshot_height=$(echo "$snapshot_info" | grep -oP '"snapshot_height":\s*"\K\d+')
+        if [[ -z $snapshot_height ]]; then
+            echo -e "${RED}Error: Unable to retrieve snapshot height from Mandragora.${NC}"
+            return 1
+        fi
     elif [[ $api_url == *"crouton"* ]]; then
         snapshot_height=$(echo "$snapshot_info" | jq -r '.latest_block_height')
     else
@@ -93,7 +97,10 @@ choose_mandragora_snapshot() {
             ;;
     esac
 
-    display_snapshot_details $SNAPSHOT_API_URL
+    if ! display_snapshot_details $SNAPSHOT_API_URL; then
+        echo -e "${RED}Failed to retrieve snapshot details. Exiting.${NC}"
+        exit 1
+    fi
 
     prompt_back_or_continue
 }
@@ -222,7 +229,7 @@ main_script() {
             DATA_SNAPSHOT_FILE="data.lz4"
 
             # Suggest update based on snapshot block height
-            snapshot_height=$(curl -s $SNAPSHOT_API_URL | grep -oP '"snapshot_height":\s*\K\d+')
+            snapshot_height=$(curl -s $SNAPSHOT_API_URL | grep -oP '"snapshot_height":\s*"\K\d+')
             suggest_update $snapshot_height
 
             # Ask the user if they want to delete the downloaded snapshot files
@@ -248,9 +255,6 @@ main_script() {
 
             choose_croutondigital_snapshot
             SNAPSHOT_FILE="namada_latest.tar.lz4"
-
-            # Display snapshot details
-            display_snapshot_details $CRD_API_URL
 
             # Suggest update based on snapshot block height
             snapshot_height=$(curl -s $CRD_API_URL | grep -oP '"latest_block_height":\s*"\K\d+')

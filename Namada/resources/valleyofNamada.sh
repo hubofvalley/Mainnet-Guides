@@ -40,7 +40,7 @@ ${YELLOW}| Category  | Requirements     |
 
 - validator node service file name: ${CYAN}namadad.service${RESET}
 - current chain: ${CYAN}namada.5f5de2dd1b88cba30586420${RESET}
-- current namada node version: ${CYAN}v1.0.0${RESET}
+- current namada node version: ${CYAN}v1.0.0 - v1.1.1${RESET}
 "
 
 PRIVACY_SAFETY_STATEMENT="
@@ -262,9 +262,9 @@ function update_namada() {
 
 function install_namada_app() {
     echo -e "${YELLOW}This option is only for those who want to execute the transactions without running the node.${RESET}"
-    wget https://github.com/anoma/namada/releases/download/v1.0.0/namada-v1.0.0-Linux-x86_64.tar.gz
-    tar -xvf namada-v1.0.0-Linux-x86_64.tar.gz
-    cd namada-v1.0.0-Linux-x86_64
+    wget https://github.com/anoma/namada/releases/download/v1.1.1/namada-v1.1.1-Linux-x86_64.tar.gz
+    tar -xvf namada-v1.1.1-Linux-x86_64.tar.gz
+    cd namada-v1.1.1-Linux-x86_64
     mv namad* /usr/local/bin/
     export NAMADA_CHAIN_ID="namada.5f5de2dd1b88cba30586420"
     export NAMADA_NETWORK_CONFIGS_SERVER="https://github.com/anoma/namada-mainnet-genesis/releases/download/mainnet-genesis/"
@@ -1706,7 +1706,7 @@ function menu() {
     echo "   b. Stop Validator Node"
     echo "   c. Backup Validator Key (store it to $HOME directory)"
     echo "   d. Delete Validator Node (BACKUP YOUR SEEDS PHRASE AND priv_validator_key.json BEFORE YOU DO THIS)"
-    echo -e "${GREEN}4. Install the Namada App (v1.0.0) only to execute transactions without running a node${RESET}"
+    echo -e "${GREEN}4. Install the Namada App (v1.1.1) only to execute transactions without running a node${RESET}"
     echo -e "${YELLOW}5. Open Cubic Slashing Rate (CSR) Monitoring Tool${RESET}"
     echo -e "${GREEN}6. Show Grand Valley's Endpoints${RESET}"
     echo -e "${YELLOW}7. Show Guidelines${RESET}"
