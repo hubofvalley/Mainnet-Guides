@@ -190,7 +190,7 @@ suggest_update() {
 
     echo -e "${YELLOW}Required version for snapshot block height $snapshot_height: $required_version${NC}"
 
-    read -p "Do you want to update the consensus client version? (y/n): " update_choice
+    read -p "Do you want to update the Namada binary version? (y/n): " update_choice
 }
 
 # Main script
