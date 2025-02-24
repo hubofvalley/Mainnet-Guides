@@ -7,15 +7,14 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Snapshot URLs for Mandragora Full Snapshot
-MAND_FULL_DB_SNAPSHOT_URL="https://snapshots2.mandragora.io/namada-full/db.lz4"
-MAND_FULL_DATA_SNAPSHOT_URL="https://snapshots2.mandragora.io/namada-full/data.lz4"
-MAND_FULL_API_URL="https://snapshots2.mandragora.io/namada-full/info.json"
+# Snapshot URLs for Mandragora
+MAND_PRUNED_DB_SNAPSHOT_URL="https://snapshots2.mandragora.io/namada-light/db.lz4"
+MAND_PRUNED_DATA_SNAPSHOT_URL="https://snapshots2.mandragora.io/namada-light/data.lz4"
+MAND_ARCHIVE_DB_SNAPSHOT_URL="https://snapshots2.mandragora.io/namada-full/db.lz4"
+MAND_ARCHIVE_DATA_SNAPSHOT_URL="https://snapshots2.mandragora.io/namada-full/data.lz4"
 
-# Snapshot URLs for Mandragora Light Snapshot
-MAND_LIGHT_DB_SNAPSHOT_URL="https://snapshots2.mandragora.io/namada-light/db.lz4"
-MAND_LIGHT_DATA_SNAPSHOT_URL="https://snapshots2.mandragora.io/namada-light/data.lz4"
-MAND_LIGHT_API_URL="https://snapshots2.mandragora.io/namada-light/info.json"
+MAND_PRUNED_API_URL="https://snapshots2.mandragora.io/namada-light/info.json"
+MAND_ARCHIVE_API_URL="https://snapshots2.mandragora.io/namada-full/info.json"
 
 # Snapshot URL for ITRocket
 ITR_API_URL="https://server-5.itrocket.net/mainnet/namada/.current_state.json"
@@ -31,14 +30,6 @@ show_menu() {
     echo "2. ITRocket"
     echo "3. CroutonDigital"
     echo "4. Exit"
-}
-
-# Function to display the Mandragora snapshot type menu
-show_mandragora_menu() {
-    echo -e "${GREEN}Choose a Mandragora snapshot type:${NC}"
-    echo "1. Full Snapshot"
-    echo "2. Light Snapshot"
-    echo "3. Back to Snapshot main menu"
 }
 
 # Function to check if a URL is available
@@ -78,36 +69,33 @@ display_snapshot_details() {
     echo -e "${GREEN}Block Difference:${NC} $block_difference"
 }
 
-# Function to choose snapshot type for Mandragora Full
-choose_mandragora_full_snapshot() {
-    echo -e "${GREEN}Checking availability of Mandragora Full snapshots:${NC}"
-    echo -n "DB Snapshot: "
-    check_url $MAND_FULL_DB_SNAPSHOT_URL
-    echo -n "Data Snapshot: "
-    check_url $MAND_FULL_DATA_SNAPSHOT_URL
+# Function to choose snapshot type for Mandragora
+choose_mandragora_snapshot() {
+    echo -e "${GREEN}Choose the type of snapshot for Mandragora:${NC}"
+    echo "1. Pruned"
+    echo "2. Archive"
+    read -p "Enter your choice: " snapshot_type_choice
 
-    display_snapshot_details $MAND_FULL_API_URL
+    case $snapshot_type_choice in
+        1)
+            SNAPSHOT_API_URL=$MAND_PRUNED_API_URL
+            DB_SNAPSHOT_URL=$MAND_PRUNED_DB_SNAPSHOT_URL
+            DATA_SNAPSHOT_URL=$MAND_PRUNED_DATA_SNAPSHOT_URL
+            ;;
+        2)
+            SNAPSHOT_API_URL=$MAND_ARCHIVE_API_URL
+            DB_SNAPSHOT_URL=$MAND_ARCHIVE_DB_SNAPSHOT_URL
+            DATA_SNAPSHOT_URL=$MAND_ARCHIVE_DATA_SNAPSHOT_URL
+            ;;
+        *)
+            echo -e "${RED}Invalid choice. Exiting.${NC}"
+            exit 1
+            ;;
+    esac
+
+    display_snapshot_details $SNAPSHOT_API_URL
 
     prompt_back_or_continue
-
-    DB_SNAPSHOT_FILE="db.lz4"
-    DATA_SNAPSHOT_FILE="data.lz4"
-}
-
-# Function to choose snapshot type for Mandragora Light
-choose_mandragora_light_snapshot() {
-    echo -e "${GREEN}Checking availability of Mandragora Light snapshots:${NC}"
-    echo -n "DB Snapshot: "
-    check_url $MAND_LIGHT_DB_SNAPSHOT_URL
-    echo -n "Data Snapshot: "
-    check_url $MAND_LIGHT_DATA_SNAPSHOT_URL
-
-    display_snapshot_details $MAND_LIGHT_API_URL
-
-    prompt_back_or_continue
-
-    DB_SNAPSHOT_FILE="db.lz4"
-    DATA_SNAPSHOT_FILE="data.lz4"
 }
 
 # Function to choose snapshot type for ITRocket
@@ -187,6 +175,24 @@ delete_snapshot_files() {
     fi
 }
 
+# Function to suggest update based on snapshot block height
+suggest_update() {
+    local snapshot_height=$1
+    current_version=$(/usr/local/bin/namada --version 2>/dev/null | awk '{print $2}')
+
+    echo -e "${YELLOW}Current Namada binary version: $current_version${NC}"
+
+    if [[ $snapshot_height -ge 894000 ]]; then
+        required_version="Namada v1.1.1"
+    else
+        required_version="Namada v1.0.0"
+    fi
+
+    echo -e "${YELLOW}Required version for snapshot block height $snapshot_height: $required_version${NC}"
+
+    read -p "Do you want to update the consensus client version? (y/n): " update_choice
+}
+
 # Main script
 main_script() {
     show_menu
@@ -199,36 +205,59 @@ main_script() {
             provider_name="Mandragora"
             echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
 
-            show_mandragora_menu
-            read -p "Enter your choice: " mandragora_choice
+            echo -e "${GREEN}Checking availability of Mandragora snapshots:${NC}"
+            echo -n "Pruned DB Snapshot: "
+            check_url $MAND_PRUNED_DB_SNAPSHOT_URL
+            echo -n "Pruned Data Snapshot: "
+            check_url $MAND_PRUNED_DATA_SNAPSHOT_URL
+            echo -n "Archive DB Snapshot: "
+            check_url $MAND_ARCHIVE_DB_SNAPSHOT_URL
+            echo -n "Archive Data Snapshot: "
+            check_url $MAND_ARCHIVE_DATA_SNAPSHOT_URL
 
-            case $mandragora_choice in
-                1)
-                    choose_mandragora_full_snapshot
-                    ;;
-                2)
-                    choose_mandragora_light_snapshot
-                    ;;
-                3)
-                    main_script
-                    ;;
-                *)
-                    echo -e "${RED}Invalid choice. Exiting.${NC}"
-                    exit 1
-                    ;;
-            esac
+            prompt_back_or_continue
+
+            choose_mandragora_snapshot
+            DB_SNAPSHOT_FILE="db.lz4"
+            DATA_SNAPSHOT_FILE="data.lz4"
+
+            # Suggest update based on snapshot block height
+            snapshot_height=$(curl -s $SNAPSHOT_API_URL | grep -oP '"snapshot_height":\s*\K\d+')
+            suggest_update $snapshot_height
+
+            # Ask the user if they want to delete the downloaded snapshot files
+            read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
             ;;
         2)
             provider_name="ITRocket"
             echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
 
             choose_itrocket_snapshot
+            SNAPSHOT_FILE=$FILE_NAME
+
+            # Suggest update based on snapshot block height
+            snapshot_height=$(curl -s $ITR_API_URL | jq -r '.snapshot_height')
+            suggest_update $snapshot_height
+
+            # Ask the user if they want to delete the downloaded snapshot files
+            read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
             ;;
         3)
             provider_name="CroutonDigital"
             echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
 
             choose_croutondigital_snapshot
+            SNAPSHOT_FILE="namada_latest.tar.lz4"
+
+            # Display snapshot details
+            display_snapshot_details $CRD_API_URL
+
+            # Suggest update based on snapshot block height
+            snapshot_height=$(curl -s $CRD_API_URL | grep -oP '"latest_block_height":\s*"\K\d+')
+            suggest_update $snapshot_height
+
+            # Ask the user if they want to delete the downloaded snapshot files
+            read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
             ;;
         4)
             echo -e "${GREEN}Exiting.${NC}"
@@ -239,10 +268,6 @@ main_script() {
             exit 1
             ;;
     esac
-
-    prompt_delete_snapshots
-
-    prompt_back_or_continue
 
     # Prompt the user for the download location
     read -p "Enter the directory where you want to download the snapshots (default is $HOME): " download_location
@@ -276,16 +301,11 @@ main_script() {
     fi
 
     # Download and decompress snapshots based on the provider
-    if [[ $mandragora_choice -eq 1 ]]; then
-        wget -O $DB_SNAPSHOT_FILE $MAND_FULL_DB_SNAPSHOT_URL
-        wget -O $DATA_SNAPSHOT_FILE $MAND_FULL_DATA_SNAPSHOT_URL
-        decompress_mandragora_snapshots
-    elif [[ $mandragora_choice -eq 2 ]]; then
-        wget -O $DB_SNAPSHOT_FILE $MAND_LIGHT_DB_SNAPSHOT_URL
-        wget -O $DATA_SNAPSHOT_FILE $MAND_LIGHT_DATA_SNAPSHOT_URL
+    if [[ $provider_choice -eq 1 ]]; then
+        wget -O $DB_SNAPSHOT_FILE $DB_SNAPSHOT_URL
+        wget -O $DATA_SNAPSHOT_FILE $DATA_SNAPSHOT_URL
         decompress_mandragora_snapshots
     elif [[ $provider_choice -eq 2 ]]; then
-        SNAPSHOT_FILE=$FILE_NAME
         wget -O $SNAPSHOT_FILE $SNAPSHOT_URL
         decompress_itrocket_snapshot
     elif [[ $provider_choice -eq 3 ]]; then
@@ -296,18 +316,31 @@ main_script() {
     # Change ownership of the .local/share/namada directory
     sudo chown -R $USER:$USER $HOME/.local/share/namada
 
+    # Delete downloaded snapshot files if the user chose to do so
+    if [[ $delete_choice == "y" || $delete_choice == "Y" ]]; then
+        if [[ $provider_choice -eq 1 ]]; then
+            sudo rm -v $DB_SNAPSHOT_FILE $DATA_SNAPSHOT_FILE
+        elif [[ $provider_choice -eq 2 || $provider_choice -eq 3 ]]; then
+            sudo rm -v $SNAPSHOT_FILE
+        fi
+        echo -e "${GREEN}Downloaded snapshot files have been deleted.${NC}"
+    else
+        echo -e "${GREEN}Downloaded snapshot files have been kept.${NC}"
+    fi
+
     # Restore your validator state
     cp $HOME/.local/share/namada/priv_validator_state.json.backup $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/cometbft/data/priv_validator_state.json
+
+    # Execute the update script if the user chose to update
+    if [[ $update_choice == "y" || $update_choice == "Y" ]]; then
+        bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Namada/resources/namada_update.sh)
+    fi
 
     # Start your namada node
     sudo systemctl daemon-reload
     sudo systemctl restart namadad
 
-    # Delete snapshot files if chosen
-    delete_snapshot_files
-
     echo -e "${GREEN}Snapshot setup completed successfully.${NC}"
-    exit 0
 }
 
 main_script

@@ -1,21 +1,32 @@
 #!/bin/bash
 
 # Detect OS and version
-OS_NAME=$(lsb_release -si)
-OS_VERSION=$(lsb_release -sr)
+source /etc/os-release
 SERVICE_NAME="namadad"
 
-echo "Detected OS: $OS_NAME $OS_VERSION"
+echo "Detected OS: $NAME $VERSION_ID"
 
-# Function to show method recommendations
-recommend_method() {
-    if [[ "$OS_NAME" == "Ubuntu" && "$OS_VERSION" == "22.04" ]]; then
-        echo -e "\nRecommendation: Both methods work, but Method 1 (pre-built binary) is faster"
-    elif [[ "$OS_NAME" == "Ubuntu" && $(echo "$OS_VERSION >= 22.04" | bc -l) -eq 1 ]]; then
-        echo -e "\nRecommendation: Method 1 (pre-built binary) recommended"
-    else
-        echo -e "\nRecommendation: Method 2 (build from source) required"
-    fi
+# Available versions and their details
+declare -A versions=(
+    ["v1.0.0"]="0-893999 https://github.com/anoma/namada/releases/download/v1.0.0"
+    ["v1.1.1"]="894000-next https://github.com/anoma/namada/releases/download/v1.1.1"
+    # Add new versions here in the format: ["version"]="block_height_range download_url"
+    # ["v1.2.0"]="next-next https://github.com/anoma/namada/releases/download/v1.2.0"
+)
+
+# Function to show version options
+show_version_options() {
+    echo -e "\n\033[1mChoose the version to install:\033[0m"
+    local index=1
+
+    for version in "${!versions[@]}"; do
+        details=(${versions[$version]})
+        block_height_range=${details[0]}
+        echo "$index) Namada $version (Block height: $block_height_range)"
+        ((index++))
+    done
+
+    echo "$index) Exit"
 }
 
 # Method 1: Pre-built binary
@@ -29,31 +40,31 @@ method1() {
     echo "Cons:"
     echo "- Limited to x86_64 architecture"
     echo "- Requires Ubuntu 22.04+"
-    
-    local version=$1
-    local download_url=$2
+
+    version=$1
+    download_url=$2
     namada_file_name="namada-$version-Linux-x86_64"
-    
+
     echo -e "\nStarting installation for version $version..."
     sudo systemctl stop $SERVICE_NAME
-    
+
     # Create temporary directory
     temp_dir=$(mktemp -d -t namada-XXXXXX)
-    
+
     if ! wget -P "$temp_dir" "$download_url/$namada_file_name.tar.gz"; then
         echo "Failed to download the binary. Exiting."
         exit 1
     fi
-    
+
     tar -xvf "$temp_dir/$namada_file_name.tar.gz" -C "$temp_dir"
     sudo chmod +x "$temp_dir/$namada_file_name/namada"*
-    
+
     # Move binaries
     sudo mv "$temp_dir/$namada_file_name/namada"* "/usr/local/bin/"
-    
+
     # Cleanup
     rm -rf "$temp_dir"
-    
+
     echo "Binary installed successfully"
 }
 
@@ -69,69 +80,75 @@ method2() {
     echo "- Requires >=16GB RAM"
     echo "- Longer installation time"
     echo "- Needs build dependencies"
-    
-    local version=$1
-    
+
+    version=$1
+
     echo -e "\nStarting source build for version $version..."
     sudo systemctl stop $SERVICE_NAME
-    
+
     # Install dependencies
     sudo apt update -y
     sudo apt install -y libssl-dev pkg-config protobuf-compiler \
         clang cmake llvm llvm-dev libudev-dev git
-    
+
     # Clone repository (if needed)
     if [ ! -d "$HOME/namada" ]; then
         git clone https://github.com/anoma/namada.git $HOME/namada
     fi
-    
+
     cd $HOME/namada
     git fetch --all --tags
     git checkout "$version"
-    
+
     # Build with optimized parameters
     cargo build --release
-    
+
     # Install binaries
     sudo cp target/release/namada* /usr/local/bin/
-    
+
     echo "Source build completed successfully"
 }
 
 # Main script
-show_menu() {
-    echo -e "\n\033[1mChoose installation method:\033[0m"
-    echo "1) Pre-built binary (Ubuntu 22.04+ recommended)"
-    echo "2) Build from source (other distributions)"
-    echo "3) Exit"
-    
-    recommend_method
-}
-
 while true; do
-    show_menu
-    read -p "Enter your choice (1/2/3): " method_choice
+    show_version_options
+    read -p "Enter your choice: " version_choice
 
-    case $method_choice in
-        1)
-            version="v1.1.1"  # Update this for new versions
-            url="https://github.com/anoma/namada/releases/download/$version"
-            method1 "$version" "$url"
-            break
-            ;;
-        2)
-            version="v1.1.1"  # Update this for new versions
-            method2 "$version"
-            break
-            ;;
-        3)
-            echo "Back to main menu"
-            exit 0
-            ;;
-        *)
-            echo "Invalid option, please try again"
-            ;;
-    esac
+    if [[ $version_choice == "Exit" ]]; then
+        echo "Exiting..."
+        exit 0
+    fi
+
+    versions_array=("${!versions[@]}")
+    selected_version=${versions_array[$version_choice-1]}
+
+    if [[ -z $selected_version ]]; then
+        echo "Invalid option, please try again"
+        continue
+    fi
+
+    details=(${versions[$selected_version]})
+    block_height_range=${details[0]}
+    url=${details[1]}
+
+    echo "Selected version: $selected_version (Block height: $block_height_range)"
+
+    # Confirmation prompt
+    read -p "Are you sure you want to proceed with this version? (yes/no): " confirm
+    if [[ $confirm != "yes" ]]; then
+        echo "Operation cancelled."
+        exit 0
+    fi
+
+    if [ "$VERSION_ID" = "22.04" ]; then
+        method2 "$selected_version"
+    elif dpkg --compare-versions "$VERSION_ID" "gt" "22.04"; then
+        method1 "$selected_version" "$url"
+    else
+        echo "Error: Unsupported Ubuntu version. Only Ubuntu 22.04 and newer are supported."
+        exit 1
+    fi
+    break
 done
 
 # Final steps common to both methods
@@ -148,7 +165,4 @@ fi
 
 # Verification
 echo -e "\nVerifying installation..."
-namada --version | grep "$version" && echo "Success!" || echo "Version mismatch detected!"
-
-echo -e "\nService logs (Ctrl+C to exit):"
-sudo journalctl -u $SERVICE_NAME -f --output cat
+namada --version | grep "$selected_version" && echo "Success!" || echo "Version mismatch detected!"
