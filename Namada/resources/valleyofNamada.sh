@@ -320,7 +320,7 @@ function restore_wallet() {
     namadaw find --alias $WALLET_NAME-shielded-addr
     echo -e "${GREEN}Wallet restoration completed successfully, including shielded wallet restoration.${RESET}"
     echo -e "\n${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
-    read -p
+    read -r
     menu
 }
 
