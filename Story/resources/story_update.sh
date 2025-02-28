@@ -226,7 +226,7 @@ case $choice in
         update_version "v1.1.0" "https://github.com/piplabs/story/releases/download/v1.1.0" 640000
         ;;
     b)
-        update_version "v1.1.1" "https://github.com/piplabs/story/releases/download/v1.0.0" 1398904
+        update_version "v1.1.1" "https://github.com/piplabs/story/releases/download/v1.1.1" 1398904
         ;;
     #c)
         #update_version "v1.1.0" "https://github.com/piplabs/story/releases/download/v1.1.0" 2065886
