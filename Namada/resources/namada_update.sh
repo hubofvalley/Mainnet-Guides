@@ -22,11 +22,11 @@ show_version_options() {
     for version in "${!versions[@]}"; do
         details=(${versions[$version]})
         block_height_range=${details[0]}
-        echo "$index) Namada $version (Block height: $block_height_range)"
+        echo "$index. Namada $version (Block height: $block_height_range)"
         ((index++))
     done
 
-    echo "$index) Exit"
+    echo "$index. Exit"
 }
 
 # Method 1: Pre-built binary
@@ -114,7 +114,7 @@ while true; do
     show_version_options
     read -p "Enter your choice: " version_choice
 
-    if [[ $version_choice == "Exit" ]]; then
+    if (( version_choice == ${#versions[@]} + 1 )); then
         echo "Exiting..."
         exit 0
     fi
