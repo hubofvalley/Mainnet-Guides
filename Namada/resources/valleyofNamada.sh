@@ -77,7 +77,9 @@ Grand Valley Namada mainnet public endpoints:${RESET}
 - masp-indexer: ${BLUE}https://masp-indexer-mainnet-namada.grandvalleys.com${RESET}
 - Valley of Namadillo (Namadillo): ${BLUE}https://valley-of-namadillo.grandvalleys.com${RESET}
 
-${GREEN}Stake to Grand Valley:${RESET} ${ORANGE}tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6${RESET}
+${GREEN}Grand Valley Namada Mainnet validator profile links:${RESET}
+    - ${ORANGE}https://explorer75.org/namada/validators/tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6${RESET}
+    - ${ORANGE}https://namada.valopers.com/validators/tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6${RESET}
 
 ${GREEN}Connect with Namada:${RESET}
 - Official Website: ${BLUE}https://namada.net${RESET}
