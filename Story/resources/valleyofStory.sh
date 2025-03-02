@@ -75,6 +75,10 @@ Grand Valley Story Protocol public endpoints:${RESET}
 - evm ws: ${BLUE}wss://lightnode-wss-mainnet-story.grandvalleys.com${RESET}
 - peer: ${BLUE}fffb1a0dc2b6af331c65328c1ed9afad0bf107de@peer-mainnet-story.grandvalleys.com:38656${RESET}
 
+- Grand Valley Story Mainnet validator profile links: 
+    https://storyscan.app/validators/storyvaloper1q2vd9hdp2p4qtplty7vh9nmupenv2xn0turd4p
+    https://story.explorers.guru/validator/storyvaloper1q2vd9hdp2p4qtplty7vh9nmupenv2xn0turd4p
+
 ${GREEN}Connect with Story Protocol:${RESET}
 - Official Website: ${BLUE}https://www.story.foundation${RESET}
 - X: ${BLUE}https://x.com/StoryProtocol${RESET}

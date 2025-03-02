@@ -17,6 +17,7 @@
   - [Example Use Case](#example-use-case)
   - [Conclusion](#conclusion)
   - [Grand Valley's Story Protocol Mainnet public endpoints:](#grand-valleys-story-protocol-mainnet-public-endpoints)
+  - [Grand Valley Story Mainnet validator profile links:](#grand-valley-story-mainnet-validator-profile-links)
   - [Valley of Story: Story Protocol Mainnet Tools Created by Grand Valley](#valley-of-story-story-protocol-mainnet-tools-created-by-grand-valley)
     - [Installation](#installation)
     - [Key Features of Valley of Story](#key-features-of-valley-of-story)
@@ -138,6 +139,11 @@ With Public Mainnet, Story's docs and code become public. Check them out below!
 - cosmos ws: `wss://lightnode-rpc-mainnet-story.grandvalleys.com/websocket`
 - evm ws: `wss://lightnode-wss-mainnet-story.grandvalleys.com`
 - peer: `fffb1a0dc2b6af331c65328c1ed9afad0bf107de@peer-mainnet-story.grandvalleys.com:38656`
+
+## Grand Valley Story Mainnet validator profile links:
+
+- `https://storyscan.app/validators/storyvaloper1q2vd9hdp2p4qtplty7vh9nmupenv2xn0turd4p`
+- `https://story.explorers.guru/validator/storyvaloper1q2vd9hdp2p4qtplty7vh9nmupenv2xn0turd4p`
 
 ## Valley of Story: Story Protocol Mainnet Tools Created by Grand Valley
 
