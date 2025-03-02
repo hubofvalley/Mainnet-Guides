@@ -199,8 +199,8 @@ bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main
 
 - service file name: `story.service` `story-geth.service`
 - current chain: `story`
-- current story node version: `v1.1.0`
-- current story-geth node version: `v1.0.1`
+- current story node version: `v1.1.1`
+- current story-geth node version: `v1.0.2`
 
 ## Validator Manual installation
 
@@ -251,9 +251,9 @@ cd $HOME
 # geth binary
 mkdir -p story-geth
 cd story-geth
-wget -O v1.0.1.tar.gz https://github.com/piplabs/story-geth/archive/refs/tags/v1.0.1.tar.gz
-tar -xzf v1.0.1.tar.gz
-cd story-geth-1.0.1
+wget -O v1.0.2.tar.gz https://github.com/piplabs/story-geth/archive/refs/tags/v1.0.2.tar.gz
+tar -xzf v1.0.2.tar.gz
+cd story-geth-1.0.2
 make geth
 cp /build/bin/geth $HOME/go/bin/
 sudo chown -R $USER:$USER $HOME/go/bin/geth
@@ -261,10 +261,10 @@ sudo chmod +x $HOME/go/bin/geth
 cd $HOME
 
 # consensus client binary
-mkdir -p story-v1.1.0
-wget -O story-v1.1.0/story-linux-amd64 https://github.com/piplabs/story/releases/download/v1.1.0/story-linux-amd64
+mkdir -p story-v1.1.1
+wget -O story-v1.1.1/story-linux-amd64 https://github.com/piplabs/story/releases/download/v1.1.1/story-linux-amd64
 story_file_name=story-linux-amd64
-cp story-v1.1.0/$story_file_name $HOME/go/bin/story
+cp story-v1.1.1/$story_file_name $HOME/go/bin/story
 sudo chown -R $USER:$USER $HOME/go/bin/story
 sudo chmod +x $HOME/go/bin/story
 ```
@@ -493,7 +493,7 @@ sed -i "/STORY_/d" $HOME/.bash_profile
 
 ```bash
 # Prompt user for input
-read -p "Enter the story-geth version (e.g., v1.0.1): " GETH_VERSION
+read -p "Enter the story-geth version (e.g., v1.0.2): " GETH_VERSION
 read -p "Enter the installation directory (e.g., $HOME/story-geth-$GETH_VERSION): " GETH_INSTALL_DIR
 
 # Define variables
@@ -520,7 +520,7 @@ sudo systemctl restart story-geth
 
 ```bash
 # Prompt user for input
-read -p "Enter the consensus client version (e.g., v1.1.0): " CONSENSUS_VERSION
+read -p "Enter the consensus client version (e.g., v1.1.1): " CONSENSUS_VERSION
 read -p "Enter the upgrade block height (e.g., 322000): " UPGRADE_HEIGHT
 read -p "Enter the installation directory (e.g., $HOME/story-$CONSENSUS_VERSION): " STORY_INSTALL_DIR
 
