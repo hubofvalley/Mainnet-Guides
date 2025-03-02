@@ -28,7 +28,7 @@ LOGO="
 "
 
 INTRO="
-Valley of Story by Grand Valley
+Valley of Story by ${ORANGE}Grand Valley${RESET}
 
 ${GREEN}Story Validator Node System Requirements${RESET}
 ${YELLOW}| Category  | Requirements     |
@@ -76,9 +76,9 @@ Grand Valley Story Protocol public endpoints:${RESET}
 - evm ws: ${BLUE}wss://lightnode-wss-mainnet-story.grandvalleys.com${RESET}
 - peer: ${BLUE}fffb1a0dc2b6af331c65328c1ed9afad0bf107de@peer-mainnet-story.grandvalleys.com:38656${RESET}
 
-- Grand Valley Story Mainnet validator profile links: 
-    ${ORANGE}https://storyscan.app/validators/storyvaloper1q2vd9hdp2p4qtplty7vh9nmupenv2xn0turd4p${RESET}
-    ${ORANGE}https://story.explorers.guru/validator/storyvaloper1q2vd9hdp2p4qtplty7vh9nmupenv2xn0turd4p${RESET}
+${GREEN}Grand Valley Story Mainnet validator profile links:${RESET}
+    - ${ORANGE}https://storyscan.app/validators/storyvaloper1q2vd9hdp2p4qtplty7vh9nmupenv2xn0turd4p${RESET}
+    - ${ORANGE}https://story.explorers.guru/validator/storyvaloper1q2vd9hdp2p4qtplty7vh9nmupenv2xn0turd4p${RESET}
 
 ${GREEN}Connect with Story Protocol:${RESET}
 - Official Website: ${BLUE}https://www.story.foundation${RESET}
@@ -663,7 +663,7 @@ function show_guidelines() {
     echo "      - Guide: Use this option to install the Story app if you only need to execute transactions without running a full node."
     echo -e "${GREEN}Show Grand Valley's Endpoints:${RESET}"
     echo "   Displays Grand Valley's public endpoints."
-    echo "      - Guide: This option will show you the public endpoints provided by Grand Valley. These endpoints can be used for various operations."
+    echo "      - Guide: This option will show you the public endpoints provided by ${ORANGE}Grand Valley${RESET}. These endpoints can be used for various operations."
     echo -e "${GREEN}Show Guidelines:${RESET}"
     echo "   Displays these guidelines."
     echo "      - Guide: Use this option to view the guidelines on how to use the tool effectively."
@@ -675,7 +675,7 @@ function show_guidelines() {
 # Menu function
 function menu() {
     realtime_block_height=$(curl -s -X POST "https://mainnet.storyrpc.io" -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' | jq -r '.result' | xargs printf "%d\n")
-    echo -e "${CYAN}Valley of Story Mainnet${RESET}"
+    echo -e "${ORANGE}Valley of Story Mainnet${RESET}"
     echo -e "${CYAN}Story Validator Node = Consensus Client Service + Execution Client Service (geth/story-geth)${RESET}"
     echo "Main Menu:"
     echo -e "${GREEN}1. Node Interactions:${RESET}"

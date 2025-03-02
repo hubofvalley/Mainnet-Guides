@@ -29,7 +29,7 @@ LOGO="
 "
 
 INTRO="
-Valley of Namada by Grand Valley
+Valley of Namada by ${ORANGE}Grand Valley${RESET}
 
 ${GREEN}Namada Validator Node System Requirements${RESET}
 ${YELLOW}| Category  | Requirements     |
