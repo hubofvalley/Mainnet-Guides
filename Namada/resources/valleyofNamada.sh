@@ -1674,7 +1674,7 @@ function show_guidelines() {
 function menu() {
     realtime_block_height=$(curl -s https://lightnode-rpc-mainnet-namada.grandvalleys.com/status | jq -r '.result.sync_info.latest_block_height')
     echo -e "Show your support for Grand Valley by staking with us!: ${CYAN}tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6${RESET}"
-    echo -e "${CYAN}Valley of Namada Mainnet${RESET}"
+    echo -e "${ORANGE}Valley of Namada Mainnet${RESET}"
     echo "Main Menu:"
     echo -e "${GREEN}1. Node Interactions:${RESET}"
     echo "   a. Deploy/re-Deploy Validator Node"
