@@ -80,6 +80,9 @@ Grand Valley Namada mainnet public endpoints:${RESET}
 ${GREEN}Grand Valley Namada Mainnet validator profile links:${RESET}
     - ${ORANGE}https://explorer75.org/namada/validators/tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6${RESET}
     - ${ORANGE}https://namada.valopers.com/validators/tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6${RESET}
+    - ${ORANGE}https://shielded.live/validators/9FB9AC991FE50B76FB1E4FFEDCC47E6BF13F58FED9B0079400D4F043DD16D207${RESET}
+    - ${ORANGE}https://namada.coverlet.io/validators/9FB9AC991FE50B76FB1E4FFEDCC47E6BF13F58FED9B0079400D4F043DD16D207${RESET}
+    - ${ORANGE}https://namada-explorer.sproutstake.space/main/validators/9FB9AC991FE50B76FB1E4FFEDCC47E6BF13F58FED9B0079400D4F043DD16D207${RESET}
 
 ${GREEN}Connect with Namada:${RESET}
 - Official Website: ${BLUE}https://namada.net${RESET}
