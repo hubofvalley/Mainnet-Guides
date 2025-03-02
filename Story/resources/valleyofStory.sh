@@ -6,6 +6,7 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 YELLOW='\033[0;33m'
+ORANGE='\033[38;5;214m'
 RESET='\033[0m'
 
 LOGO="
@@ -76,8 +77,8 @@ Grand Valley Story Protocol public endpoints:${RESET}
 - peer: ${BLUE}fffb1a0dc2b6af331c65328c1ed9afad0bf107de@peer-mainnet-story.grandvalleys.com:38656${RESET}
 
 - Grand Valley Story Mainnet validator profile links: 
-    https://storyscan.app/validators/storyvaloper1q2vd9hdp2p4qtplty7vh9nmupenv2xn0turd4p
-    https://story.explorers.guru/validator/storyvaloper1q2vd9hdp2p4qtplty7vh9nmupenv2xn0turd4p
+    ${ORANGE}https://storyscan.app/validators/storyvaloper1q2vd9hdp2p4qtplty7vh9nmupenv2xn0turd4p${RESET}
+    ${ORANGE}https://story.explorers.guru/validator/storyvaloper1q2vd9hdp2p4qtplty7vh9nmupenv2xn0turd4p${RESET}
 
 ${GREEN}Connect with Story Protocol:${RESET}
 - Official Website: ${BLUE}https://www.story.foundation${RESET}

@@ -6,6 +6,7 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 YELLOW='\033[0;33m'
+ORANGE='\033[38;5;214m'
 RESET='\033[0m'
 
 LOGO="
@@ -76,7 +77,7 @@ Grand Valley Namada mainnet public endpoints:${RESET}
 - masp-indexer: ${BLUE}https://masp-indexer-mainnet-namada.grandvalleys.com${RESET}
 - Valley of Namadillo (Namadillo): ${BLUE}https://valley-of-namadillo.grandvalleys.com${RESET}
 
-Stake to Grand Valley: ${CYAN}tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6${RESET}
+Stake to Grand Valley: ${ORANGE}tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6${RESET}
 
 ${GREEN}Connect with Namada:${RESET}
 - Official Website: ${BLUE}https://namada.net${RESET}
