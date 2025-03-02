@@ -137,7 +137,7 @@ With Public Mainnet, Story's docs and code become public. Check them out below!
 - cosmos rest-api: `https://lightnode-api-mainnet-story.grandvalleys.com`
 - cosmos ws: `wss://lightnode-rpc-mainnet-story.grandvalleys.com/websocket`
 - evm ws: `wss://lightnode-wss-mainnet-story.grandvalleys.com`
-- peer: `fffb1a0dc2b6af331c65328c1ed9afad0bf107de@lightnode-peer-mainnet-story.grandvalleys.com:38656`
+- peer: `fffb1a0dc2b6af331c65328c1ed9afad0bf107de@peer-mainnet-story.grandvalleys.com:38656`
 
 ## Valley of Story: Story Protocol Mainnet Tools Created by Grand Valley
 
