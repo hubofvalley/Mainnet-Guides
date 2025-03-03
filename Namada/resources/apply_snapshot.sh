@@ -198,6 +198,14 @@ suggest_update() {
     echo -e "${YELLOW}Required version for snapshot block height $snapshot_height: $required_version${NC}"
 
     read -p "Do you want to update the Namada binary version? (y/n): " update_choice
+    if [[ $update_choice =~ ^[Yy]$ ]]; then
+        if [[ $required_version == "Namada v1.0.0" ]]; then
+            echo -e "${YELLOW}When the update prompt appears after decompression, please choose option 1 to update to v1.0.0.${NC}"
+        elif [[ $required_version == "Namada v1.1.1" ]]; then
+            echo -e "${YELLOW}When the update prompt appears after decompression, please choose option 2 to update to v1.1.1.${NC}"
+        fi
+        read -p "Press Enter to continue..."
+    fi
 }
 
 # Main script
