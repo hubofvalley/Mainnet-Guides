@@ -92,6 +92,7 @@ ${GREEN}Connect with Namada:${RESET}
 ${GREEN}Connect with Grand Valley:${RESET}
 - X: ${BLUE}https://x.com/bacvalley${RESET}
 - GitHub: ${BLUE}https://github.com/hubofvalley${RESET}
+- Namada Mainnet Guide on GitHub by Grand Valley: ${BLUE}https://github.com/hubofvalley/Mainnet-Guides/tree/main/Namada${RESET}
 - Email: ${BLUE}letsbuidltogether@grandvalleys.com${RESET}
 "
 
@@ -1582,9 +1583,39 @@ function vote_proposal() {
     menu
 }
 
-function apply_snapshot() {
+function deploy_namada_indexer() {
+    echo -e "${CYAN}Deploying Namada Indexer...${RESET}"
+    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Namada/resources/namada_indexer_install.sh)
+    menu
+}
+
+function apply_snapshot_namada_indexer() {
     echo -e "${CYAN}Applying snapshot...${RESET}"
-    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Namada/resources/apply_snapshot.sh)
+    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Namada/resources/apply_snapshot_namada_indexer.sh)
+    menu
+}
+
+function show_namada_indexer_logs() {
+    echo "Displaying Namada Indexer Logs:"
+    docker logs --tail 50 -f namada-indexer-transactions-1
+    menu
+}
+
+function deploy_masp_namada_indexer() {
+    echo -e "${CYAN}Deploying Namada MASP Indexer...${RESET}"
+    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Namada/resources/namada_masp_indexer_install.sh)
+    menu
+}
+
+function apply_snapshot_namada_masp_indexer() {
+    echo -e "${CYAN}Applying snapshot...${RESET}"
+    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Namada/resources/apply_snapshot_namada_masp_indexer.sh)
+    menu
+}
+
+function show_namada_masp_indexer_logs() {
+    echo "Displaying Namada MASP Indexer Logs:"
+    docker logs --tail 50 -f namada-masp-indexer-crawler-1
     menu
 }
 
@@ -1707,16 +1738,24 @@ function menu() {
     echo "   o. Transfer (Shielded to Shielded)"
     echo "   p. Transfer (Unshielding)"
     echo "   q. Delete Wallet (Keys or Addresses)"  # New option added
-    echo -e "${GREEN}3. Node Management:${RESET}"
+    echo -e "${GREEN}3. Namada Indexer Interactions:${RESET}"
+    echo "   a. Deploy Namada Indexer"
+    echo "   b. Apply Namada Indexer Snapshot"
+    echo "   c. Show Namada Indexer Logs"
+    echo -e "${GREEN}4. Namada MASP Indexer Interactions:${RESET}"
+    echo "   a. Deploy Namada MASP Indexer"
+    echo "   b. Apply Namada MASP Indexer Snapshot"
+    echo "   c. Show Namada MASP Indexer Logs"
+    echo -e "${GREEN}5. Node Management:${RESET}"
     echo "   a. Restart Validator Node"
     echo "   b. Stop Validator Node"
     echo "   c. Backup Validator Key (store it to $HOME directory)"
     echo "   d. Delete Validator Node (BACKUP YOUR SEEDS PHRASE AND priv_validator_key.json BEFORE YOU DO THIS)"
-    echo -e "${GREEN}4. Install the Namada App (v1.1.1) only to execute transactions without running a node${RESET}"
-    echo -e "${YELLOW}5. Open Cubic Slashing Rate (CSR) Monitoring Tool${RESET}"
-    echo -e "${GREEN}6. Show Grand Valley's Endpoints${RESET}"
-    echo -e "${YELLOW}7. Show Guidelines${RESET}"
-    echo -e "${RED}8. Exit${RESET}"
+    echo -e "${GREEN}6. Install the Namada App (v1.1.1) only to execute transactions without running a node${RESET}"
+    echo -e "${YELLOW}7. Open Cubic Slashing Rate (CSR) Monitoring Tool${RESET}"
+    echo -e "${GREEN}8. Show Grand Valley's Endpoints${RESET}"
+    echo -e "${YELLOW}9. Show Guidelines${RESET}"
+    echo -e "${RED}10. Exit${RESET}"
 
     echo -e "Latest Block Height: ${GREEN}$realtime_block_height${RESET}"
     echo -e "\n${YELLOW}Please run the following command to apply the changes after exiting the script:${RESET}"
@@ -1725,12 +1764,12 @@ function menu() {
     echo -e "${GREEN}Let's Buidl Namada Together, Let's Shiedl Together. - Grand Valley${RESET}"
     read -p "Choose an option (e.g., 1a or 1 then a): " OPTION
 
-    if [[ $OPTION =~ ^[1-7][a-z]$ ]]; then
+    if [[ $OPTION =~ ^[1-8][a-z]$ ]]; then
         MAIN_OPTION=${OPTION:0:1}
         SUB_OPTION=${OPTION:1:1}
     else
         MAIN_OPTION=$OPTION
-        if [[ $MAIN_OPTION =~ ^[1-3]$ ]]; then
+        if [[ $MAIN_OPTION =~ ^[1-4]$ ]]; then
             read -p "Choose a sub-option: " SUB_OPTION
         fi
     fi
@@ -1772,6 +1811,22 @@ function menu() {
             ;;
         3)
             case $SUB_OPTION in
+                a) deploy_namada_indexer ;;
+                b) apply_snapshot_namada_indexer ;;
+                c) show_namada_indexer_logs ;;
+                *) echo "Invalid sub-option. Please try again." ;;
+            esac
+            ;;
+        4)
+            case $SUB_OPTION in
+                a) deploy_namada_masp_indexer ;;
+                b) apply_snapshot_namada_masp_indexer ;;
+                c) show_namada_masp_indexer_logs ;;
+                *) echo "Invalid sub-option. Please try again." ;;
+            esac
+            ;;
+        5)
+            case $SUB_OPTION in
                 a) restart_validator_node ;;
                 b) stop_validator_node ;;
                 c) backup_validator_key ;;
@@ -1779,11 +1834,11 @@ function menu() {
                 *) echo "Invalid sub-option. Please try again." ;;
             esac
             ;;
-        4) install_namada_app ;;
-        5) cubic_slashing ;;
-        6) show_endpoints ;;
-        7) show_guidelines ;;
-        8) exit 0 ;;
+        6) install_namada_app ;;
+        7) cubic_slashing ;;
+        8) show_endpoints ;;
+        9) show_guidelines ;;
+        10) exit 0 ;;
         *) echo "Invalid option. Please try again." ;;
     esac
 }
