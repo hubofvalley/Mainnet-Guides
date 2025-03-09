@@ -13,6 +13,7 @@ validate_non_empty() {
 read -p "Please input RPC you want to use (leave empty for Grand Valley's RPC): " TENDERMINT_URL
 TENDERMINT_URL=${TENDERMINT_URL:-"https://lightnode-rpc-mainnet-namada.grandvalleys.com"}
 
+# Capture PostgreSQL credentials
 POSTGRES_USER=$(validate_non_empty "" "Enter postgres username (can't be empty): ")
 POSTGRES_PASSWORD=$(validate_non_empty "" "Enter postgres password (can't be empty): ")
 CHAIN_ID="namada.5f5de2dd1b88cba30586420"
@@ -37,7 +38,7 @@ git fetch --all
 git checkout "$LATEST_TAG"
 git reset --hard "$LATEST_TAG"
 
-# Create custom docker-compose-db.yml
+# Create docker-compose-db.yml with ACTUAL VALUES substituted
 cat > docker-compose-db.yml << EOF
 services:
   postgres:
@@ -48,12 +49,12 @@ services:
     ports:
       - "5433:5433"
     environment:
-      POSTGRES_PASSWORD: \$POSTGRES_PASSWORD
-      POSTGRES_USER: \$POSTGRES_USER
-      PGUSER: \$POSTGRES_USER
+      POSTGRES_PASSWORD: $POSTGRES_PASSWORD  # Removed backslash to substitute value
+      POSTGRES_USER: $POSTGRES_USER          # Removed backslash to substitute value
+      PGUSER: $POSTGRES_USER
       POSTGRES_DB: namada-indexer
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U \$POSTGRES_USER -d namada-indexer -h localhost -p 5433"]
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d namada-indexer -h localhost -p 5433"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -83,6 +84,7 @@ EOF
 
 docker system prune -f
 
+# Create .env file (unchanged)
 cat > .env << EOF
 DATABASE_URL="postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@postgres:5433/namada-indexer"
 TENDERMINT_URL="$TENDERMINT_URL"
