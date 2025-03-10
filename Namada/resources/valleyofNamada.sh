@@ -1650,7 +1650,7 @@ function apply_snapshot_namada_masp_indexer() {
 
 function show_namada_masp_indexer_logs() {
     echo "Displaying Namada MASP Indexer Logs:"
-    docker logs --tail 50 -f namada-masp-crawler-1
+    docker logs --tail 50 -f namada-masp-indexer-crawler-1
     menu
 }
 
