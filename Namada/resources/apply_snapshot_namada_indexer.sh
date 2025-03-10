@@ -34,7 +34,7 @@ docker compose cp indexer_snapshot.sql postgres:/tmp/indexer_snapshot.sql
 
 # Force continuation regardless of pg_restore exit status
 echo "5. Database restore (errors ignored)..."
-docker compose exec postgres "pg_restore -p 5433 -d namada-indexer --clean tmp/indexer_snapshot.sql --verbose || true"
+docker compose exec postgres pg_restore -p 5433 -d namada-indexer --clean tmp/indexer_snapshot.sql --verbose || true
 
 echo "6. Finalizing..."
 docker compose exec postgres rm -f /tmp/indexer_snapshot.sql
@@ -44,4 +44,4 @@ echo "7. Restarting services..."
 docker compose up -d
 
 echo "8. Monitoring..."
-docker logs --tail 50 -f namada-indexer-indexer-transactions-1
+docker logs --tail 50 -f namada-indexer-transactions-1
