@@ -6,7 +6,6 @@ INDEXER_DIR="$HOME/namada-masp-indexer"
 COMPOSE_FILE="${INDEXER_DIR}/docker-compose.yml"
 ENV_FILE="${INDEXER_DIR}/.env"
 WEBSERVER_PORT="8000"
-POSTGRES_PORT="5432"
 PROJECT_NAME="namada-masp"
 
 # Error handling and cleanup
@@ -62,7 +61,7 @@ PORT="${WEBSERVER_PORT}"
 EOF
 
     # Start new deployment
-    docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" --env-file $ENV_FILE up -d --pull always --build --force-recreate
+    docker compose -f "${COMPOSE_FILE}" --env-file $ENV_FILE up -d --pull always --build --force-recreate
 }
 
 verify_deployment() {
@@ -95,7 +94,7 @@ main() {
     verify_deployment
     
     echo -e "\n=== Deployment complete ==="
-    echo "To view logs: docker compose -p ${PROJECT_NAME} -f ${COMPOSE_FILE} logs -f"
+    echo "To view logs: docker logs --tail 50 -f namada-masp-indexer-crawler-1"
 }
 
 main

@@ -34,7 +34,7 @@ docker compose cp masp_indexer_snapshot.sql postgres:/tmp/masp_indexer_snapshot.
 
 # Force continuation regardless of pg_restore exit status
 echo "5. Database restore (errors ignored)..."
-docker compose exec postgres sh -c "pg_restore -d masp_indexer_local --clean /tmp/masp_indexer_snapshot.sql --verbose || true"
+docker compose exec postgres pg_restore -d masp_indexer_local --clean /tmp/masp_indexer_snapshot.sql --verbose || true
 
 echo "6. Finalizing..."
 docker compose exec postgres rm -f /tmp/masp_indexer_snapshot.sql
@@ -44,4 +44,4 @@ echo "7. Restarting services..."
 docker compose up -d
 
 echo "8. Monitoring..."
-docker logs --tail 50 -f namada-masp-indexer-transactions-1
+docker logs --tail 50 -f namada-masp-indexer-crawler-1
