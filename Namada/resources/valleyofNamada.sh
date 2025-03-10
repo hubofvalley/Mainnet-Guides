@@ -1601,7 +1601,42 @@ function show_namada_indexer_logs() {
     menu
 }
 
-function deploy_masp_namada_indexer() {
+function stop_namada_indexer() {
+    echo "Stopping Namada Indexer:"
+    docker stop $(docker container ls --all | grep 'namada-indexer' | awk '{print $1}')
+    menu
+}
+
+function restart_namada_indexer() {
+    echo "Restarting Namada Indexer:"
+    docker stop $(docker container ls --all | grep 'namada-indexer' | awk '{print $1}')
+    sleep 3
+    docker start $(docker container ls --all | grep 'namada-indexer' | awk '{print $1}')
+    menu
+}
+
+function backup_namada_indexer() {
+    echo "Backuping Namada Indexer:"
+    cd $HOME/namada-indexer
+    docker compose exec postgres pg_dump -F c --dbname="namada-indexer" --file="/tmp/indexer_snapshot.sql" -p 5433
+    docker compose cp postgres:/tmp/indexer_snapshot.sql "$HOME/namada-indexer/indexer_snapshot.sql"
+    menu
+}
+
+function delete_namada_indexer() {
+    echo "Deleting Namada Indexer:"
+    cd $HOME/namada-indexer
+    docker stop $(docker container ls --all | grep 'namada-indexer' | awk '{print $1}')
+    docker container rm --force $(docker container ls --all | grep 'namada-indexer' | awk '{print $1}')
+    docker image rm --force $(docker image ls --all | grep -E '^namada/.*-indexer.*$' | awk '{print $3}')
+    docker image rm --force $(docker image ls --all | grep '<none>' | awk '{print $3}')
+    docker volume prune -fa
+    cd $HOME
+    rm -rf $HOME/namada-indexer
+    menu
+}
+
+function deploy_namada_masp_indexer() {
     echo -e "${CYAN}Deploying Namada MASP Indexer...${RESET}"
     bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Namada/resources/namada_masp_indexer_install.sh)
     menu
@@ -1616,6 +1651,42 @@ function apply_snapshot_namada_masp_indexer() {
 function show_namada_masp_indexer_logs() {
     echo "Displaying Namada MASP Indexer Logs:"
     docker logs --tail 50 -f namada-masp-indexer-crawler-1
+    menu
+}
+
+function stop_namada_masp_indexer() {
+    echo "Stopping Namada MASP Indexer:"
+    docker stop $(docker container ls --all | grep 'namada-masp-' | awk '{print $1}')
+    menu
+}
+
+function restart_namada_masp_indexer() {
+    echo "Restart Namada MASP Indexer:"
+    docker stop $(docker container ls --all | grep 'namada-masp-' | awk '{print $1}')
+    sleep 3
+    docker start $(docker container ls --all | grep 'namada-masp-' | awk '{print $1}')
+    menu
+}
+
+function backup_namada_masp_indexer() {
+    echo "Backuping Namada MASP Indexer:"
+    cd $HOME/namada-masp-indexer
+    docker compose exec postgres pg_dump -F c --dbname="masp_indexer_local" --file="/tmp/masp_indexer_snapshot.sql"
+    docker compose cp postgres:/tmp/masp_indexer_snapshot.sql "$HOME/namada-masp-indexer/masp_indexer_snapshot.sql"
+    menu
+}
+
+function delete_namada_masp_indexer() {
+    echo "Deleting Namada MASP Indexer:"
+    cd $HOME/namada-masp-indexer
+    docker compose -f docker-compose.yml down --volumes
+    docker stop $(docker container ls --all | grep 'namada-masp-' | awk '{print $1}')
+    docker container rm --force $(docker container ls --all | grep 'namada-masp-' | awk '{print $1}')
+    docker image rm --force $(docker image ls --all | grep 'namada-masp-' | awk '{print $3}')
+    docker image rm --force $(docker image ls --all | grep '<none>' | awk '{print $3}')
+    docker volume prune -fa
+    cd $HOME
+    rm -rf $HOME/namada-masp-indexer
     menu
 }
 
@@ -1748,9 +1819,17 @@ function menu() {
     echo "   c. Show Namada MASP Indexer Logs"
     echo -e "${GREEN}5. Node Management:${RESET}"
     echo "   a. Restart Validator Node"
-    echo "   b. Stop Validator Node"
-    echo "   c. Backup Validator Key (store it to $HOME directory)"
-    echo "   d. Delete Validator Node (BACKUP YOUR SEEDS PHRASE AND priv_validator_key.json BEFORE YOU DO THIS)"
+    echo "   b. Restart Namada Indexer"
+    echo "   c. Restart Namada MASP Indexer"
+    echo "   d. Stop Validator Node"
+    echo "   e. Stop Namada Indexer"
+    echo "   f. Stop Namada MASP Indexer"
+    echo "   g. Backup Validator Key (store it to $HOME directory)"
+    echo "   h. Backup Namada Indexer database (store it to $HOME/namada-indexer directory)"
+    echo "   i. Backup Namada MASP Indexer database (store it to $HOME/namada-masp-indexer directory)"
+    echo "   j. Delete Validator Node (BACKUP YOUR SEEDS PHRASE AND priv_validator_key.json BEFORE YOU DO THIS)"
+    echo "   k. Delete Namada Indexer"
+    echo "   l. Delete Namada MASP Indexer"
     echo -e "${GREEN}6. Install the Namada App (v1.1.1) only to execute transactions without running a node${RESET}"
     echo -e "${YELLOW}7. Open Cubic Slashing Rate (CSR) Monitoring Tool${RESET}"
     echo -e "${GREEN}8. Show Grand Valley's Endpoints${RESET}"
@@ -1828,9 +1907,17 @@ function menu() {
         5)
             case $SUB_OPTION in
                 a) restart_validator_node ;;
-                b) stop_validator_node ;;
-                c) backup_validator_key ;;
-                d) delete_validator_node ;;
+                b) restart_namada_indexer ;;
+                c) restart_namada_masp_indexer ;;
+                d) stop_validator_node ;;
+                e) stop_namada_indexer ;;
+                f) stop_namada_masp_indexer ;;
+                g) backup_validator_key ;;
+                h) backup_namada_indexer ;;
+                i) backup_namada_masp_indexer ;;
+                j) delete_validator_node ;;
+                k) delete_namada_indexer ;;
+                l) delete_namada_masp_indexer ;;
                 *) echo "Invalid sub-option. Please try again." ;;
             esac
             ;;
