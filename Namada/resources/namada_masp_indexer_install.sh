@@ -62,7 +62,7 @@ PORT="${WEBSERVER_PORT}"
 EOF
 
     # Start new deployment
-    docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" up -d --pull always --build --force-recreate
+    docker compose -p "${PROJECT_NAME}" -f "${COMPOSE_FILE}" --env-file $ENV_FILE up -d --pull always --build --force-recreate
 }
 
 verify_deployment() {

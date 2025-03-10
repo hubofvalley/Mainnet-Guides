@@ -96,9 +96,12 @@ WIPE_DB=false
 POSTGRES_PORT=5433
 EOF
 
+INDEXER_DIR="$HOME/namada-indexer"
+ENV_FILE="${INDEXER_DIR}/.env"
+
 wget -q https://indexer-snapshot-mainnet-namada.grandvalleys.com/checksums.json || echo "Warning: Failed to download checksums"
 
 docker compose -f docker-compose.yml -f docker-compose-db.yml down --volumes --rmi all
-docker compose -f docker-compose.yml -f docker-compose-db.yml up -d --pull always --force-recreate
+docker compose -f docker-compose.yml --env-file $ENV_FILE -d  --pull always --force-recreate
 
 echo -e "\nInstallation complete. Services running with custom database configuration."
