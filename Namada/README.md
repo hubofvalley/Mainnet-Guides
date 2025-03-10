@@ -90,12 +90,10 @@ With Public Testnet, Namada's docs and code become public. Check them out below!
 
 ![image](https://github.com/user-attachments/assets/20483dde-2c6e-48d1-aeb8-f79453f6f398)
 
-
 ## Valley Of Namada: Namada Tools Created by Grand Valley
 
 ![VON](resources/image.png)
-![image](https://github.com/user-attachments/assets/1230c033-d95c-4e56-bfa8-48b4e5a165c4)
-
+![VoN](resources/image1.png)
 
 **Valley of Namada** by Grand Valley is an all-in-one infrastructure solution providing powerful tools for efficient node management and validator interactions within the **Namada** network. Designed for node runners in the **Namada** ecosystem, **Valley of Namada** offers an accessible, streamlined interface to manage nodes, maintain network participation, and perform validator functions effectively.
 
@@ -139,6 +137,20 @@ It helps you assess risks, rewards, and encourages decentralized staking by spre
 
 ![image](https://github.com/user-attachments/assets/b76a7fe9-465e-4434-9c97-8d3538f1216b)
 ![image](https://github.com/user-attachments/assets/0cb5953c-50c9-431f-868d-70af93927dc3)
+
+#### 5. Namada Indexer Interactions
+
+- **Deploy Namada Indexer**: Deploy the Namada Indexer for transaction indexing.
+- **Apply Snapshot**: Apply a snapshot to the Namada Indexer.
+- **Show Logs**: Display the logs for the Namada Indexer.
+- **Management**: Restart, stop, backup, and delete the Namada Indexer.
+
+#### 6. Namada MASP Indexer Interactions
+
+- **Deploy Namada MASP Indexer**: Deploy the Namada MASP Indexer for MASP transaction indexing.
+- **Apply Snapshot**: Apply a snapshot to the Namada MASP Indexer.
+- **Show Logs**: Display the logs for the Namada MASP Indexer.
+- **Management**: Restart, stop, backup, and delete the Namada MASP Indexer.
 
 ### Usage
 
