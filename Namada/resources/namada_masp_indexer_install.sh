@@ -50,6 +50,11 @@ deploy() {
     
     # Clone fresh repository
     git clone https://github.com/anoma/namada-masp-indexer.git "${INDEXER_DIR}"
+    git fetch --all
+    LATEST_TAG="v1.2.0"
+    git checkout $LATEST_TAG
+    git reset --hard $LATEST_TAG
+    git pull
     
     # Create environment file
     read -p "Enter RPC URL [https://lightnode-rpc-mainnet-namada.grandvalleys.com]: " TENDERMINT_URL
