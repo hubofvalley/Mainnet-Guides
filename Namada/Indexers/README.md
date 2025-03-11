@@ -15,7 +15,7 @@ Snapshots are provided by **Grand Valley for the Namada Community**. The snapsho
 
 - **MASP Indexer Snapshot:**  
   The current snapshot has been tested and applied to the MASP indexer corresponding to commit  
-  `8a324b8d2c1332ea214167fc7e15d58e614c5c3f` (HEAD -> master, origin/master, origin/HEAD).
+  `38093aca7bc8cd3bb03ef06ce139fe4e672b20ff` (HEAD, tag: `v1.2.0`, origin/master, origin/HEAD, master).
 
 ## How It Works
 
@@ -26,41 +26,49 @@ Every day at **2AM UTC** a new snapshot is generated. Since the file names remai
 ### Namada Indexer Database Snapshot
 
 1. **Switch to your namada-indexer directory:**
+
    ```bash
    cd $HOME/namada-indexer
    ```
 
 2. **Download the snapshot:**
+
    ```bash
    wget -O indexer_snapshot.sql https://indexer-snapshot-mainnet-namada.grandvalleys.com/indexer_snapshot.sql
    ```
 
 3. **Stop and remove the containers (and volumes):**
+
    ```bash
    docker compose down -v
    ```
 
 4. **Start only the PostgreSQL container:**
+
    ```bash
    docker compose up -d postgres
    ```
 
 5. **Copy the snapshot file into the container:**
+
    ```bash
    docker compose cp indexer_snapshot.sql postgres:/tmp/indexer_snapshot.sql
    ```
 
 6. **Restore the database from the snapshot:**
+
    ```bash
    docker compose exec postgres pg_restore -p 5433 -d namada-indexer --clean /tmp/indexer_snapshot.sql --verbose
    ```
 
 7. **Remove the snapshot file from the container:**
+
    ```bash
    docker compose exec postgres rm /tmp/indexer_snapshot.sql
    ```
 
 8. **Bring up the remaining containers:**
+
    ```bash
    docker compose up -d
    ```
@@ -73,41 +81,49 @@ Every day at **2AM UTC** a new snapshot is generated. Since the file names remai
 ### Namada MASP Indexer Database Snapshot
 
 1. **Switch to your namada-masp-indexer directory:**
+
    ```bash
    cd $HOME/namada-masp-indexer
    ```
 
 2. **Download the snapshot:**
+
    ```bash
    wget -O masp_indexer_snapshot.sql https://masp-indexer-snapshot-mainnet-namada.grandvalleys.com/masp_indexer_snapshot.sql
    ```
 
 3. **Stop the containers:**
+
    ```bash
    docker compose down
    ```
 
 4. **Start only the PostgreSQL container:**
+
    ```bash
    docker compose up -d postgres
    ```
 
 5. **Copy the snapshot file into the container:**
+
    ```bash
    docker compose cp masp_indexer_snapshot.sql postgres:/tmp/masp_indexer_snapshot.sql
    ```
 
 6. **Restore the database from the snapshot:**
+
    ```bash
    docker compose exec postgres pg_restore -d masp_indexer_local --clean /tmp/masp_indexer_snapshot.sql --verbose
    ```
 
 7. **Remove the snapshot file from the container:**
+
    ```bash
    docker compose exec postgres rm /tmp/masp_indexer_snapshot.sql
    ```
 
 8. **Bring up the remaining containers:**
+
    ```bash
    docker compose up -d
    ```
