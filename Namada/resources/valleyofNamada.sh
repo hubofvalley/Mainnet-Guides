@@ -264,6 +264,12 @@ function show_validator_node_status() {
     menu
 }
 
+function apply_snapshot() {
+    echo -e "${CYAN}Applying snapshot...${RESET}"
+    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Namada/resources/apply_snapshot.sh)
+    menu
+}
+
 function update_namada() {
     bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Namada/resources/namada_update.sh)
     menu
