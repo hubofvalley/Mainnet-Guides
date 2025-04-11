@@ -43,15 +43,16 @@ method1() {
     download_url=$2
     namada_file_name="namada-$version-Linux-x86_64"
 
-    echo -e "\nStarting installation for version $version..."
-    sudo systemctl stop $SERVICE_NAME
-
+    echo -e "\nStarting download for version $version..."
     temp_dir=$(mktemp -d -t namada-XXXXXX)
 
     if ! wget -P "$temp_dir" "$download_url/$namada_file_name.tar.gz"; then
         echo "Failed to download the binary. Exiting."
         exit 1
     fi
+
+    echo "Download complete. Stopping Namada service..."
+    sudo systemctl stop $SERVICE_NAME
 
     tar -xvf "$temp_dir/$namada_file_name.tar.gz" -C "$temp_dir"
     sudo chmod +x "$temp_dir/$namada_file_name/namada"*
@@ -65,7 +66,6 @@ method1() {
 method2() {
     echo -e "\n\033[1mMethod 2: Building from source\033[0m"
     version=$1
-    sudo systemctl stop $SERVICE_NAME
 
     sudo apt update -y
     sudo apt install -y libssl-dev pkg-config protobuf-compiler \
@@ -79,6 +79,9 @@ method2() {
     git fetch --all --tags
     git checkout "$version"
     cargo build --release
+
+    echo "Build complete. Stopping Namada service..."
+    sudo systemctl stop $SERVICE_NAME
     sudo cp target/release/namada* /usr/local/bin/
 
     echo "Source build completed successfully"
