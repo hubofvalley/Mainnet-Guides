@@ -41,7 +41,8 @@ ${YELLOW}| Category  | Requirements     |
 
 - validator node service file name: ${CYAN}namadad.service${RESET}
 - current chain: ${CYAN}namada.5f5de2dd1b88cba30586420${RESET}
-- current namada node version: ${CYAN}v1.0.0 - v1.1.1${RESET}
+- current namada node version: ${CYAN}v1.0.0 - v1.1.1 - v1.1.5${RESET}
+- current cometbft version: ${CYAN}v0.37.15${RESET}
 - current namada indexer version: ${CYAN}v2.3.0${RESET}
 - current namada masp-indexer version: ${CYAN}v1.2.0${RESET}
 "
@@ -277,9 +278,9 @@ function update_namada() {
 
 function install_namada_app() {
     echo -e "${YELLOW}This option is only for those who want to execute the transactions without running the node.${RESET}"
-    wget https://github.com/anoma/namada/releases/download/v1.1.1/namada-v1.1.1-Linux-x86_64.tar.gz
-    tar -xvf namada-v1.1.1-Linux-x86_64.tar.gz
-    cd namada-v1.1.1-Linux-x86_64
+    wget https://github.com/anoma/namada/releases/download/v1.1.5/namada-v1.1.5-Linux-x86_64.tar.gz
+    tar -xvf namada-v1.1.5-Linux-x86_64.tar.gz
+    cd namada-v1.1.5-Linux-x86_64
     mv namad* /usr/local/bin/
     export NAMADA_CHAIN_ID="namada.5f5de2dd1b88cba30586420"
     export NAMADA_NETWORK_CONFIGS_SERVER="https://github.com/anoma/namada-mainnet-genesis/releases/download/mainnet-genesis/"
@@ -1791,7 +1792,7 @@ function show_guidelines() {
     echo "   l. Delete Namada MASP Indexer: Removes shielded assets tracker"
 
     echo -e "${GREEN}Install Namada App:${RESET}"
-    echo "   - Install Namada App (v1.1.1) to execute transactions without running a node"
+    echo "   - Install Namada App (v1.1.5) to execute transactions without running a node"
 
     echo -e "${GREEN}Monitoring Tools:${RESET}"
     echo "   - Cubic Slashing Rate (CSR) Monitoring Tool: Track validator slashing risks"
@@ -1860,7 +1861,7 @@ function menu() {
     echo "   j. Delete Validator Node (BACKUP YOUR SEEDS PHRASE AND priv_validator_key.json BEFORE YOU DO THIS)"
     echo "   k. Delete Namada Indexer"
     echo "   l. Delete Namada MASP Indexer"
-    echo -e "${GREEN}6. Install the Namada App (v1.1.1) only to execute transactions without running a node${RESET}"
+    echo -e "${GREEN}6. Install the Namada App (v1.1.5) only to execute transactions without running a node${RESET}"
     echo -e "${YELLOW}7. Open Cubic Slashing Rate (CSR) Monitoring Tool${RESET}"
     echo -e "${GREEN}8. Show Grand Valley's Endpoints${RESET}"
     echo -e "${YELLOW}9. Show Guidelines${RESET}"
