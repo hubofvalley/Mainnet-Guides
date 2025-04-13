@@ -95,3 +95,4 @@ sudo systemctl daemon-reload
 sudo systemctl restart story
 
 echo "Cosmovisor migration completed successfully."
+echo "Let's Buidl Story Together"

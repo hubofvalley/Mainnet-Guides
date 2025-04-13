@@ -214,3 +214,4 @@ fi
 
 # show the full logs
 echo "sudo journalctl -u story-geth -u story -fn 100"
+echo "Let's Buidl Story Together"

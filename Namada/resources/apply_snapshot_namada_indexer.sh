@@ -45,3 +45,5 @@ docker compose up -d
 
 echo "8. Monitoring..."
 docker logs --tail 50 -f namada-indexer-transactions-1
+
+echo "Let's Buidl Namada Together"

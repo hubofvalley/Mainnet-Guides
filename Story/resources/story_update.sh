@@ -239,3 +239,5 @@ case $choice in
         exit 1
         ;;
 esac
+
+echo "Let's Buidl Story Together"

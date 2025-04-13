@@ -48,4 +48,4 @@ Check the folders for step-by-step instructions. Scripts and endpoints are the s
 
 ---
 
-`let's buidl together`
+`Let's Buidl Together`

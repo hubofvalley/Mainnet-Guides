@@ -1871,7 +1871,7 @@ function menu() {
     echo -e "\n${YELLOW}Please run the following command to apply the changes after exiting the script:${RESET}"
     echo -e "${GREEN}source ~/.bash_profile${RESET}"
     echo -e "${YELLOW}This ensures the environment variables are set in your current bash session.${RESET}"
-    echo -e "${GREEN}Let's Buidl Namada Together, Let's Shiedl Together. - Grand Valley${RESET}"
+    echo -e "${GREEN}Let's Buidl Namada Together${RESET}"
     read -p "Choose an option (e.g., 1a or 1 then a): " OPTION
 
     if [[ $OPTION =~ ^[1-8][a-z]$ ]]; then

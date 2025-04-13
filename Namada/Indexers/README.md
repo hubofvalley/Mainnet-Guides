@@ -1,4 +1,4 @@
-# Namada Indexer Snapshot Service Guide
+'s # Namada Indexer Snapshot Service Guide
 
 Snapshots are provided by **Grand Valley for the Namada Community**. The snapshot service updates (rotates) the snapshots once a day at **2AM UTC**. The snapshot file names are static—each new snapshot overwrites the previous one.
 
@@ -138,3 +138,5 @@ Every day at **2AM UTC** a new snapshot is generated. Since the file names remai
 - Ensure your environment is properly set up with Docker and Docker Compose.
 - The snapshot service is maintained by Grand Valley for the Namada Community.
 - For further support or issues, please refer to the community forums or contact the maintainers.
+
+### Let's Buidl Namada Together

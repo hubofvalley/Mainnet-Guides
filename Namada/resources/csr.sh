@@ -40,7 +40,7 @@ display_explanation() {
     echo -e "${WHITE}5. Don’t put all your ${MAGENTA}marbles${RESET} in one ${MAGENTA}jar${RESET} – spread them for ${YELLOW}safety${RESET}!${RESET}"
     echo -e "${GREEN}------------------------------------${RESET}"
     echo ""
-    echo -e "${GREEN}Let's Buidl Namada Together, Let's Shiedl Together. - Grand Valley${RESET}"
+    echo -e "${GREEN}Let's Buidl Namada Together${RESET}"
     echo ""
 }
 

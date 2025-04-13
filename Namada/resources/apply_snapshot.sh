@@ -364,3 +364,5 @@ main_script() {
 }
 
 main_script
+
+echo "Let's Buidl Namada Together"
