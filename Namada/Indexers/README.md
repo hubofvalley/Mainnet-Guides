@@ -1,4 +1,4 @@
-'s # Namada Indexer Snapshot Service Guide
+# Namada Indexer Snapshot Service Guide
 
 Snapshots are provided by **Grand Valley for the Namada Community**. The snapshot service updates (rotates) the snapshots once a day at **2AM UTC**. The snapshot file names are static—each new snapshot overwrites the previous one.
 
