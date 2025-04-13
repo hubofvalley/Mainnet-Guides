@@ -1,11 +1,13 @@
-## Valley of Story: Tools by Grand Valley
+## Valley of Story (Mainnet): Tools by Grand Valley
+
+**Valley of Story** is an all-in-one infrastructure solution developed by Grand Valley, designed to provide powerful tools for efficient node management and validator interactions within the Story Protocol Mainnet network. This toolkit is intended for node runners, validators, and anyone participating in the Story Protocol ecosystem. Valley of Story offers an accessible, streamlined interface to manage nodes, maintain network participation, and perform validator functions effectively, making it easier to operate and maintain a secure and up-to-date node.
 
 ![Valley of Story Image 1](https://github.com/user-attachments/assets/5110da6d-4ec2-492d-86ea-887b34b279b4)
 ![image](https://github.com/user-attachments/assets/684ca519-aabf-40c4-a1d3-2403c81e393c)
 
-**Valley of Story** by Grand Valley is an all-in-one infrastructure solution providing powerful tools for efficient node management and validator interactions within the Story Protocol Mainnet network. Designed for node runners in the Story Protocol Mainnet ecosystem, Valley of Story offers an accessible, streamlined interface to manage nodes, maintain network participation, and perform validator functions effectively.
+---
 
-### Key Features of Valley of Story
+## Key Features of Valley of Story
 
 - **Deploy and Manage Validator Nodes:** Deploy new validator nodes or remove existing ones. **Important!** Always back up critical files (e.g., seed phrases, private keys, `priv_validator_key.json`) before deletion.
 - **Node Control:** Start, stop, or restart validator nodes as needed.
@@ -24,17 +26,7 @@
 
 ## Installation
 
-Run the following command to install Valley of Story:
-
-```bash
-bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Story/resources/valleyofStory.sh)
-```
-
----
-
-## Story Node Deployment Guide With Cosmovisor
-
-### System Requirements
+#### System Requirements
 
 | Category   | Requirements     |
 | ---------- | ---------------- |
@@ -48,11 +40,27 @@ bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main
 - Current story node version: `v1.1.1`
 - Current story-geth node version: `v1.0.2`
 
+### Automatic Installation
+
+Recommended for most users. This method uses an installation script for a quick and easy setup.
+
+Run the following command to install Valley of Story:
+
+```bash
+bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Story/resources/valleyofStory.sh)
+```
+
+- Install the Story app for command-line transactions and network interactions without running a full node.
+
 ---
 
-## Validator Manual Installation
+### Manual Installation
 
-### 1. Install Dependencies for Building from Source
+For advanced users who want full control over each installation step, troubleshooting, or custom configurations. This method requires manual execution of all commands and setup processes.
+
+---
+
+#### 1. Install Dependencies for Building from Source
 
 ```bash
 sudo apt update -y && sudo apt upgrade -y && \
@@ -60,7 +68,7 @@ sudo apt install -y curl git jq build-essential gcc unzip wget lz4 openssl \
 libssl-dev pkg-config protobuf-compiler clang cmake llvm llvm-dev
 ```
 
-### 2. Install Go
+#### 2. Install Go
 
 ```bash
 cd $HOME && ver="1.22.5" && \
@@ -71,13 +79,13 @@ echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin' >> ~/.bash_profile && \
 source ~/.bash_profile && go version
 ```
 
-### 3. Install Cosmovisor
+#### 3. Install Cosmovisor
 
 ```bash
 go install cosmossdk.io/tools/cosmovisor/cmd/cosmovisor@latest
 ```
 
-### 4. Set Vars
+#### 4. Set Vars
 
 Edit your moniker and your preferred port number:
 
@@ -91,7 +99,7 @@ echo "export STORY_PORT=$STORY_PORT" >> $HOME/.bash_profile
 source $HOME/.bash_profile
 ```
 
-### 5. Download Geth and Consensus Client Binaries
+#### 5. Download Geth and Consensus Client Binaries
 
 ```bash
 cd $HOME
@@ -117,13 +125,13 @@ sudo chown -R $USER:$USER $HOME/go/bin/story
 sudo chmod +x $HOME/go/bin/story
 ```
 
-### 6. Init App
+#### 6. Init App
 
 ```bash
 story init --network $STORY_CHAIN_ID --moniker $MONIKER
 ```
 
-### 7. Set Custom Ports in config.toml
+#### 7. Set Custom Ports in config.toml
 
 ```bash
 sed -i.bak -e "s%laddr = \"tcp://0.0.0.0:26656\"%laddr = \"tcp://0.0.0.0:${STORY_PORT}656\"%;
@@ -135,7 +143,7 @@ sed -i.bak -e "s%engine-endpoint = \"http://localhost:8551\"%engine-endpoint = \
 s%adress = \"127.0.0.1:1317\"%adress = \"127.0.0.1:${STORY_PORT}317\"%" $HOME/.story/story/config/story.toml
 ```
 
-### 8. Add Peers to config.toml
+#### 8. Add Peers to config.toml
 
 ```bash
 peers=$(curl -sS https://lightnode-rpc-mainnet-story.grandvalleys.com/net_info | jq -r '.result.peers[] | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr)"' | awk -F ':' '{print $1":"$(NF)}' | paste -sd, -)
@@ -143,7 +151,7 @@ sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$peers\"|" $HOME/.story
 echo $peers
 ```
 
-### 9. Enable Indexer (Optional)
+#### 9. Enable Indexer (Optional)
 
 _If you want to run a full node, follow this step:_
 
@@ -151,7 +159,7 @@ _If you want to run a full node, follow this step:_
 sed -i -e 's/^indexer = "null"/indexer = "kv"/' $HOME/.story/story/config/config.toml
 ```
 
-### 10. Initialize Cosmovisor and Create Symlink
+#### 10. Initialize Cosmovisor and Create Symlink
 
 ```bash
 echo "export DAEMON_NAME=story" >> $HOME/.bash_profile
@@ -169,7 +177,7 @@ mkdir -p $HOME/.story/story/cosmovisor/backup
 cd $HOME
 ```
 
-### 11. Define the Path of Cosmovisor
+#### 11. Define the Path of Cosmovisor
 
 ```bash
 input1=$(which cosmovisor)
@@ -192,9 +200,9 @@ _They'll be used in the next step._
 
 ![image](https://github.com/user-attachments/assets/21ef09d9-2595-46b6-b014-e30d5ff09cc1)
 
-### 12. Create Service Files
+#### 12. Create Service Files
 
-#### Consensus Client Service File
+##### Consensus Client Service File
 
 ```bash
 sudo tee /etc/systemd/system/story.service > /dev/null <<EOF
@@ -223,7 +231,7 @@ WantedBy=multi-user.target
 EOF
 ```
 
-#### Geth Service File
+##### Geth Service File
 
 ```bash
 sudo tee /etc/systemd/system/story-geth.service > /dev/null <<EOF
@@ -246,9 +254,9 @@ WantedBy=multi-user.target
 EOF
 ```
 
-### 13. Start the Node
+#### 13. Start the Node
 
-#### Start Geth & Consensus Client
+##### Start Geth & Consensus Client
 
 ```bash
 sudo systemctl daemon-reload && \
@@ -257,17 +265,17 @@ sudo systemctl restart story-geth story && \
 sudo journalctl -u story-geth -u story -fn 100
 ```
 
-#### Example: Node Running Properly
+##### Example: Node Running Properly
 
-##### story-geth Logs
+###### story-geth Logs
 
 ![story-geth logs](resources/image.png)
 
-##### story Logs
+###### story Logs
 
 ![story logs](resources/image-1.png)
 
-### 14. Check Node Synchronization
+#### 14. Check Node Synchronization
 
 ```bash
 curl http://127.0.0.1:${STORY_PORT}657/status | jq
@@ -279,7 +287,7 @@ If you use default port (26):
 curl http://127.0.0.1:26657/status | jq
 ```
 
-### 15. Check the Node Version
+#### 15. Check the Node Version
 
 ```bash
 cosmovisor run version
