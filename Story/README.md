@@ -64,7 +64,7 @@
   - [Delete the Node](#delete-the-node)
   - [Upgrade Execution Client (`story-geth`) to a User-Specified Version](#upgrade-execution-client-story-geth-to-a-user-specified-version)
   - [Upgrade the Consensus Client (`story`) to a User-Specified Version at a User-Specified Block Height](#upgrade-the-consensus-client-story-to-a-user-specified-version-at-a-user-specified-block-height)
-- [Let's BUIDL Story Together](#lets-buidl-story-together)
+- [Let's Buidl Story Together](#lets-buidl-story-together)
 
 ---
 
@@ -570,4 +570,4 @@ cosmovisor add-upgrade $CONSENSUS_VERSION $STORY_INSTALL_DIR/$STORY_FILE_NAME --
 
 ---
 
-# Let's BUIDL Story Together
+# Let's Buidl Story Together
