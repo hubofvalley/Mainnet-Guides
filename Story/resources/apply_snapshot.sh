@@ -474,6 +474,8 @@ main_script() {
            # Display snapshot details
            display_snapshot_details $TTT_API_URL
 
+           GETH_SNAPSHOT_URL=$TTT_GETH_SNAPSHOT_URL
+           STORY_SNAPSHOT_URL=$TTT_STORY_SNAPSHOT_URL
            GETH_SNAPSHOT_FILE="story_geth_latest.tar.lz4"
            STORY_SNAPSHOT_FILE="story_latest.tar.lz4"
 
@@ -511,30 +513,30 @@ main_script() {
     sudo systemctl stop story-geth story
     sudo systemctl disable story-geth story
 
-    # Back up your validator state
-    mv $HOME/.story/story/data/priv_validator_state.json $HOME/.story/priv_validator_state.json.backup
 
     # Delete previous geth chaindata and story data folders
     sudo rm -rf $HOME/.story/geth/story/geth/chaindata $HOME/.story/story/data
 
-    # Download and decompress snapshots based on the provider
-    if [[ $provider_choice -eq 1 || $provider_choice -eq 2 || $provider_choice -eq 4 ]]; then
+    # Download and decompress snapshots
+    cd $download_location
+    if [[ $provider_choice -eq 1 || $provider_choice -eq 2 || $provider_choice -eq 3 ]]; then
         wget -O $GETH_SNAPSHOT_FILE $GETH_SNAPSHOT_URL
         wget -O $STORY_SNAPSHOT_FILE $STORY_SNAPSHOT_URL
         decompress_snapshots
-    elif [[ $provider_choice -eq 3 || $provider_choice -eq 5 ]]; then
+    elif [[ $provider_choice -eq 4 || $provider_choice -eq 5 ]]; then
         wget -O $SNAPSHOT_FILE $SNAPSHOT_URL
         decompress_crouton_originstake_snapshot
     fi
+
 
     # Change ownership of the .story directory
     sudo chown -R $USER:$USER $HOME/.story
 
     # Delete downloaded snapshot files if the user chose to do so
     if [[ $delete_choice == "y" || $delete_choice == "Y" ]]; then
-        if [[ $provider_choice -eq 1 || $provider_choice -eq 2 || $provider_choice -eq 4 ]]; then
+        if [[ $provider_choice -eq 1 || $provider_choice -eq 2 || $provider_choice -eq 3 ]]; then
             sudo rm -v $GETH_SNAPSHOT_FILE $STORY_SNAPSHOT_FILE
-        elif [[ $provider_choice -eq 3 || $provider_choice -eq 5 ]]; then
+        elif [[ $provider_choice -eq 4 || $provider_choice -eq 5 ]]; then
             sudo rm -v $SNAPSHOT_FILE
         fi
         echo -e "${GREEN}Downloaded snapshot files have been deleted.${NC}"
