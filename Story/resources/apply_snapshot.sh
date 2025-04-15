@@ -13,8 +13,12 @@ MAND_PRUNED_STORY_SNAPSHOT_URL="https://snapshots2.mandragora.io/story/story_sna
 MAND_ARCHIVE_GETH_SNAPSHOT_URL="https://snapshots.mandragora.io/geth_snapshot.lz4"
 MAND_ARCHIVE_STORY_SNAPSHOT_URL="https://snapshots.mandragora.io/story_snapshot.lz4"
 
+TTT_GETH_SNAPSHOT_URL="https://snapshots.tienthuattoan.com/mainnet/story/story_geth_latest.tar.lz4"
+TTT_STORY_SNAPSHOT_URL="https://snapshots.tienthuattoan.com/mainnet/story/story_latest.tar.lz4"
+
 MAND_PRUNED_API_URL="https://snapshots2.mandragora.io/story/info.json"
 MAND_ARCHIVE_API_URL="https://snapshots.mandragora.io/info.json"
+TTT_API_URL="https://snapshots.tienthuattoan.com/mainnet/story/info.json"
 
 ITR_PRUNED_API_URL_1="https://server-1.itrocket.net/testnet/story/.current_state.json"
 ITR_ARCHIVE_API_URL_1="https://server-5.itrocket.net/testnet/story/.current_state.json"
@@ -40,10 +44,11 @@ show_menu() {
     echo -e "${GREEN}Choose a snapshot provider:${NC}"
     echo "1. Josephtran (J•Node)"
     echo "2. Mandragora"
-    #echo "3. ITRocket"
-    #echo "4. CroutonDigital"
-    #echo "5. OriginStake"
-    echo "3. Exit"
+    echo "3. TTT VN"
+    #echo "4. ITRocket"
+    #echo "5. CroutonDigital"
+    #echo "6. OriginStake"
+    echo "4. Exit"
 }
 
 # Function to check if a URL is available
@@ -69,7 +74,7 @@ display_snapshot_details() {
         snapshot_height=$(echo "$snapshot_info" | jq -r '.height')
     elif [[ $api_url == *"j-node"* ]]; then
         snapshot_height=$(echo "$snapshot_info" | grep -oP '"block_height":\s*\K\d+')
-    elif [[ $api_url == *"crouton"* ]]; then
+    elif [[ $api_url == *"crouton"* ]] || [[ $api_url == *"tienthuattoan"* ]]; then
         snapshot_height=$(echo "$snapshot_info" | grep -oP '"latest_block_height":\s*"\K\d+')
     else
         snapshot_height=$(echo "$snapshot_info" | jq -r '.snapshot_height')
@@ -455,13 +460,38 @@ main_script() {
             #read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
             #;;
         3)
-            echo -e "${GREEN}Exiting.${NC}"
-            exit 0
-            ;;
-        *)
-            echo -e "${RED}Invalid choice. Exiting.${NC}"
-            exit 1
-            ;;
+           provider_name="TTT VN"
+           echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
+
+           echo -e "${GREEN}Checking availability of TTT VN snapshots:${NC}"
+           echo -n "GETH Snapshot: "
+           check_url $TTT_GETH_SNAPSHOT_URL
+           echo -n "STORY Snapshot: "
+           check_url $TTT_STORY_SNAPSHOT_URL
+
+           prompt_back_or_continue
+
+           # Display snapshot details
+           display_snapshot_details $TTT_API_URL
+
+           GETH_SNAPSHOT_FILE="story_geth_latest.tar.lz4"
+           STORY_SNAPSHOT_FILE="story_latest.tar.lz4"
+
+           # Suggest update based on snapshot block height
+           snapshot_height=$(curl -s $TTT_API_URL | grep -oP '"latest_block_height":\s*"\K\d+')
+           suggest_update $snapshot_height
+
+           # Ask the user if they want to delete the downloaded snapshot files
+           read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
+           ;;
+        4)
+           echo -e "${GREEN}Exiting.${NC}"
+           exit 0
+           ;;
+       *)
+           echo -e "${RED}Invalid choice. Exiting.${NC}"
+           exit 1
+           ;;
     esac
 
     # Prompt the user for the download location
