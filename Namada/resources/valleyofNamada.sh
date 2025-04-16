@@ -66,7 +66,7 @@ ${GREEN}Disclaimer${RESET}
 - Use this script at your own risk.
 
 ${GREEN}Contact${RESET}
-- If you have any concerns or questions, please contact us at letsbuidltogether@grandvalleys.com.
+- If you have any concerns or questions, please contact us at letsbuildtogether@grandvalleys.com.
 "
 
 ENDPOINTS="${GREEN}
@@ -96,7 +96,7 @@ ${GREEN}Connect with Grand Valley:${RESET}
 - X: ${BLUE}https://x.com/bacvalley${RESET}
 - GitHub: ${BLUE}https://github.com/hubofvalley${RESET}
 - Namada Mainnet Guide on GitHub by Grand Valley: ${BLUE}https://github.com/hubofvalley/Mainnet-Guides/tree/main/Namada${RESET}
-- Email: ${BLUE}letsbuidltogether@grandvalleys.com${RESET}
+- Email: ${BLUE}letsbuildtogether@grandvalleys.com${RESET}
 "
 
 # Display LOGO and wait for user input to continue
@@ -126,15 +126,15 @@ function create_validator() {
     DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
     read -p "Enter the name for your validator: " NAME
 
-    read -p "Enter the commission rate: (e.g. 0.05) " COMMISION_RATE
+    read -p "Enter the commission rate: (e.g. 0.05) " COMMISSION_RATE
 
-    read -p "Enter the max commission rate change: (e.g. 0.05) " MAX_COMMISION_RATE_CHANGE
+    read -p "Enter the max commission rate change: (e.g. 0.05) " MAX_COMMISSION_RATE_CHANGE
 
     read -p "Enter the email for your validator security contact: " EMAIL
 
     read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
 
-    namadac init-validator --email "$EMAIL" --commission-rate "$COMMISION_RATE" --name "$NAME" --max-commission-rate-change "$MAX_COMMISION_RATE_CHANGE" --account-keys $WALLET_NAME --signing-keys $WALLET_NAME --chain-id $NAMADA_CHAIN_ID
+    namadac init-validator --email "$EMAIL" --commission-rate "$COMMISSION_RATE" --name "$NAME" --max-commission-rate-change "$MAX_COMMISSION_RATE_CHANGE" --account-keys $WALLET_NAME --signing-keys $WALLET_NAME --chain-id $NAMADA_CHAIN_ID
     menu
 }
 
