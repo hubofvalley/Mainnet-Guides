@@ -37,7 +37,7 @@
 
 - Service file names: `story.service`, `story-geth.service`
 - Current chain: `story`
-- Current story node version: `v1.1.1`
+- Current story node version: `v1.1.0 - v1.1.1`
 - Current story-geth node version: `v1.0.2`
 
 ### Automatic Installation
