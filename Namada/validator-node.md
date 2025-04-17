@@ -43,7 +43,7 @@ Accelerate node setup and recovery by applying the latest network snapshot. This
 
 ### 7. Namada App Installation
 
-Install the Namada app (v1.0.0) for command-line transactions and network interactions without running a full node. This lightweight client allows you to interact with the Namada blockchain, send transactions, and manage your accounts efficiently.
+Install the Namada app (v1.1.5) for command-line transactions and network interactions without running a full node. This lightweight client allows you to interact with the Namada blockchain, send transactions, and manage your accounts efficiently.
 
 ### 8. Cubic Slashing Rate (CSR) Monitoring Tool
 
