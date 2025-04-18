@@ -133,7 +133,6 @@ deploy() {
     LATEST_TAG="v1.2.0"
     git checkout $LATEST_TAG
     git reset --hard $LATEST_TAG
-    git pull
 
     read -p "Enter RPC URL [https://lightnode-rpc-mainnet-namada.grandvalleys.com]: " TENDERMINT_URL
     TENDERMINT_URL=${TENDERMINT_URL:-"https://lightnode-rpc-mainnet-namada.grandvalleys.com"}
