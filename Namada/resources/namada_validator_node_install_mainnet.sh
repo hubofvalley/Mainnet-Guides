@@ -82,9 +82,9 @@ source $HOME/.bash_profile
 
 # 6. Download Namada binaries
 cd $HOME
-wget https://github.com/anoma/namada/releases/download/v1.0.0/namada-v1.0.0-Linux-x86_64.tar.gz
-tar -xvf namada-v1.0.0-Linux-x86_64.tar.gz
-cd namada-v1.0.0-Linux-x86_64
+wget https://github.com/anoma/namada/releases/download/v1.1.0/namada-v1.1.0-Linux-x86_64.tar.gz
+tar -xvf namada-v1.1.0-Linux-x86_64.tar.gz
+cd namada-v1.1.0-Linux-x86_64
 sudo mv namad* /usr/local/bin/
 
 # 7. Initialize the app

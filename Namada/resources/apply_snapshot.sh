@@ -190,11 +190,11 @@ suggest_update() {
     echo -e "${YELLOW}Current Namada binary version: $current_version${NC}"
 
     if [[ $snapshot_height -ge 1604223 ]]; then
-        required_version="Namada v1.1.3"
+        required_version="Namada v1.1.5"
     elif [[ $snapshot_height -ge 894000 ]]; then
         required_version="Namada v1.1.1"
     else
-        required_version="Namada v1.0.0"
+        required_version="Namada v1.1.0"
     fi
 
     echo -e "${YELLOW}Required version for snapshot block height $snapshot_height: $required_version${NC}"
@@ -202,14 +202,14 @@ suggest_update() {
     read -p "Do you want to update the Namada binary version? (y/n): " update_choice
     if [[ $update_choice =~ ^[Yy]$ ]]; then
         case $required_version in
-            "Namada v1.0.0")
-                echo -e "${YELLOW}When the update prompt appears after decompression, please choose option 1 to update to v1.0.0.${NC}"
+            "Namada v1.1.0")
+                echo -e "${YELLOW}When the update prompt appears after decompression, please choose option 1 to update to v1.1.0.${NC}"
                 ;;
             "Namada v1.1.1")
                 echo -e "${YELLOW}When the update prompt appears after decompression, please choose option 2 to update to v1.1.1.${NC}"
                 ;;
-            "Namada v1.1.3")
-                echo -e "${YELLOW}When the update prompt appears after decompression, please choose option 3 to update to v1.1.3.${NC}"
+            "Namada v1.1.5")
+                echo -e "${YELLOW}When the update prompt appears after decompression, please choose option 3 to update to v1.1.5.${NC}"
                 ;;
         esac
         read -p "Press Enter to continue..."

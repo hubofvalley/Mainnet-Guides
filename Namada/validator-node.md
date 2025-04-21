@@ -86,7 +86,7 @@ By using the CSR Monitoring Tool, both stakers and validators can better underst
 | Storage   | 1+ TB NVMe SSD                 |
 | Bandwidth | 100 MBps for Download / Upload |
 
-- Guide's current binaries version: `v1.0.0 - v1.1.1 - v1.1.5`
+- Guide's current binaries version: `v1.1.0 - v1.1.1 - v1.1.5`
 - Service file name: `namadad.service`
 - Current chain: `namada.5f5de2dd1b88cba30586420`
 
@@ -169,9 +169,9 @@ source $HOME/.bash_profile
 
 ```bash
 cd $HOME
-wget https://github.com/anoma/namada/releases/download/v1.0.0/namada-v1.0.0-Linux-x86_64.tar.gz
-tar -xvf namada-v1.0.0-Linux-x86_64.tar.gz
-cd namada-v1.0.0-Linux-x86_64
+wget https://github.com/anoma/namada/releases/download/v1.1.0/namada-v1.1.0-Linux-x86_64.tar.gz
+tar -xvf namada-v1.1.0-Linux-x86_64.tar.gz
+cd namada-v1.1.0-Linux-x86_64
 mv namad* /usr/local/bin/
 ```
 
