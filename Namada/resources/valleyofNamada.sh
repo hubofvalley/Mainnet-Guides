@@ -66,7 +66,7 @@ ${GREEN}Disclaimer${RESET}
 - Use this script at your own risk.
 
 ${GREEN}Contact${RESET}
-- If you have any concerns or questions, please contact us at letsbuildtogether@grandvalleys.com.
+- If you have any concerns or questions, please contact us at letsbuidltogether@grandvalleys.com.
 "
 
 ENDPOINTS="${GREEN}
@@ -96,7 +96,7 @@ ${GREEN}Connect with Grand Valley:${RESET}
 - X: ${BLUE}https://x.com/bacvalley${RESET}
 - GitHub: ${BLUE}https://github.com/hubofvalley${RESET}
 - Namada Mainnet Guide on GitHub by Grand Valley: ${BLUE}https://github.com/hubofvalley/Mainnet-Guides/tree/main/Namada${RESET}
-- Email: ${BLUE}letsbuildtogether@grandvalleys.com${RESET}
+- Email: ${BLUE}letsbuidltogether@grandvalleys.com${RESET}
 "
 
 # Display LOGO and wait for user input to continue
