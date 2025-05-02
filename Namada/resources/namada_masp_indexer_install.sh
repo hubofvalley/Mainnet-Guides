@@ -130,7 +130,7 @@ deploy() {
     git clone https://github.com/anoma/namada-masp-indexer.git "${INDEXER_DIR}"
     cd "${INDEXER_DIR}"
     git fetch --all
-    LATEST_TAG="v1.2.0"
+    LATEST_TAG="v1.3.0"
     git checkout $LATEST_TAG
     git reset --hard $LATEST_TAG
 
@@ -141,6 +141,8 @@ deploy() {
 COMETBFT_URL="${TENDERMINT_URL}"
 PORT="${WEBSERVER_PORT}"
 EOF
+
+    export POSTGRES_PORT="5435"
 
     docker compose -f "${COMPOSE_FILE}" --env-file $ENV_FILE up -d --pull always --build --force-recreate
 }

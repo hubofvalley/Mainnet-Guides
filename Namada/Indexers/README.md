@@ -58,7 +58,7 @@ Every day at **2AM UTC** a new snapshot is generated. Since the file names remai
 6. **Restore the database from the snapshot:**
 
    ```bash
-   docker compose exec postgres pg_restore -p 5433 -d namada-indexer --clean /tmp/indexer_snapshot.sql --verbose
+   docker compose exec -u postgres postgres pg_restore -U postgres -d namada-indexer --clean /tmp/indexer_snapshot.sql --verbose
    ```
 
 7. **Remove the snapshot file from the container:**
@@ -113,7 +113,7 @@ Every day at **2AM UTC** a new snapshot is generated. Since the file names remai
 6. **Restore the database from the snapshot:**
 
    ```bash
-   docker compose exec postgres pg_restore -d masp_indexer_local --clean /tmp/masp_indexer_snapshot.sql --verbose
+   docker compose exec -u postgres postgres pg_restore -U postgres -d masp_indexer_local --clean /tmp/masp_indexer_snapshot.sql --verbose
    ```
 
 7. **Remove the snapshot file from the container:**

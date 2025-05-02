@@ -101,15 +101,15 @@ validate_non_empty() {
 read -p "Please input RPC you want to use (leave empty for Grand Valley's RPC): " input_tendermint_url
 TENDERMINT_URL_INPUT="${input_tendermint_url:-https://lightnode-rpc-mainnet-namada.grandvalleys.com}"
 
-POSTGRES_USER=$(validate_non_empty "" "Enter postgres username (can't be empty): ")
 POSTGRES_PASSWORD=$(validate_non_empty "" "Enter postgres password (can't be empty): ")
 
 ###############################################################################
 # Export Environment Variables
 ###############################################################################
+export POSTGRES_PASSWORD
 export WIPE_DB=${WIPE_DB:-false}
-export POSTGRES_PORT="5433"
-export DATABASE_URL="postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:$POSTGRES_PORT/namada-indexer"
+export POSTGRES_PORT="5432"
+export DATABASE_URL="postgres://postgres:${POSTGRES_PASSWORD}@postgres:$POSTGRES_PORT/namada-indexer"
 export TENDERMINT_URL="$TENDERMINT_URL_INPUT"
 export CHAIN_ID="namada.5f5de2dd1b88cba30586420"
 export CACHE_URL="redis://dragonfly:6379"
@@ -119,7 +119,7 @@ export PORT="$WEBSERVER_PORT"
 echo -e "\nProceeding with:
 CHAIN_ID: $CHAIN_ID
 TENDERMINT_URL: $TENDERMINT_URL
-POSTGRES_USER: $POSTGRES_USER
+POSTGRES_USER: postgres
 POSTGRES_PASSWORD: *******"
 
 read -p "Confirm to proceed? (y/n) " -n 1 -r
@@ -140,50 +140,9 @@ git checkout "$LATEST_TAG"
 git reset --hard "$LATEST_TAG"
 
 ###############################################################################
-# Generate docker-compose-db.yml
+# Fix the postgres-data to postgres_data in the docker-compose.yml file
 ###############################################################################
-cat > docker-compose-db.yml << EOF
-services:
-  postgres:
-    image: postgres:16-alpine
-    command: ["postgres", "-c", "listen_addresses=0.0.0.0", "-c", "max_connections=200", "-p", "$POSTGRES_PORT"]
-    expose:
-      - "$POSTGRES_PORT"
-    ports:
-      - "$POSTGRES_PORT:$POSTGRES_PORT"
-    environment:
-      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
-      POSTGRES_USER: $POSTGRES_USER
-      PGUSER: $POSTGRES_USER
-      POSTGRES_DB: namada-indexer
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d namada-indexer -h localhost -p $POSTGRES_PORT"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
-    volumes:
-      - type: volume
-        source: postgres-data
-        target: /var/lib/postgresql/data
-
-  dragonfly:
-    image: docker.dragonflydb.io/dragonflydb/dragonfly
-    command: --logtostderr --cache_mode=true --port 6379 -dbnum 1
-    ulimits:
-      memlock: -1
-    ports:
-      - "6379:6379"
-    healthcheck:
-      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
-
-volumes:
-  postgres-data:
-EOF
+sed -i 's/postgres-data/postgres_data/g' $HOME/namada-indexer/docker-compose.yml
 
 docker system prune -f
 
@@ -199,7 +158,6 @@ WEBSERVER_PORT="$WEBSERVER_PORT"
 PORT="$PORT"
 WIPE_DB="$WIPE_DB"
 POSTGRES_PORT="$POSTGRES_PORT"
-POSTGRES_USER="$POSTGRES_USER"
 POSTGRES_PASSWORD="$POSTGRES_PASSWORD"
 EOF
 
@@ -216,20 +174,23 @@ docker image rm --force $(docker image ls --all | grep '<none>' | awk '{print $3
 ###############################################################################
 # Start Docker Compose in Steps to Save RAM
 ###############################################################################
-echo -e "\n🚀 Starting services step-by-step to avoid memory overload..."
+echo -e "🚀 Starting services step-by-step to avoid memory overload..."
 
-docker compose -f docker-compose.yml --env-file "$ENV_FILE" up -d postgres
+docker compose -f $HOME/namada-indexer/docker-compose.yml --env-file "$ENV_FILE" build postgres
 sleep 10
 
-docker compose -f docker-compose.yml --env-file "$ENV_FILE" up -d dragonfly
+docker compose -f $HOME/namada-indexer/docker-compose.yml --env-file "$ENV_FILE" build dragonfly
 sleep 5
 
-docker compose -f docker-compose.yml --env-file "$ENV_FILE" up -d chain governance pos
+docker compose -f $HOME/namada-indexer/docker-compose.yml --env-file "$ENV_FILE" build chain governance pos
 sleep 5
 
-docker compose -f docker-compose.yml --env-file "$ENV_FILE" up -d rewards parameters transactions
+docker compose -f $HOME/namada-indexer/docker-compose.yml --env-file "$ENV_FILE" build rewards parameters transactions
 sleep 5
 
-docker compose -f docker-compose.yml --env-file "$ENV_FILE" up -d webserver
+docker compose -f $HOME/namada-indexer/docker-compose.yml --env-file "$ENV_FILE" build webserver
+sleep 5
 
-echo -e "\n✅ Installation complete. Services are running with the custom database configuration."
+docker compose -f $HOME/namada-indexer/docker-compose.yml --env-file "$ENV_FILE" up -d
+
+echo -e "✅ Installation complete. Services are running with the custom database configuration."
