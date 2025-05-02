@@ -32,23 +32,18 @@ install_if_missing "wget" "wget"
 # -------------------------------
 # Docker + Compose Plugin Setup
 # -------------------------------
-
-# Check if Docker is installed
 if ! command -v docker &> /dev/null; then
     echo "Docker not found. Installing Docker and Compose plugin from Docker’s official APT repo..."
 
-    # Install prerequisites
     install_if_missing "ca-certificates" "update-ca-certificates"
     install_if_missing "curl" "curl"
     install_if_missing "gnupg" "gpg"
     install_if_missing "lsb-release" "lsb_release"
 
-    # Add Docker's GPG key
     sudo mkdir -p /etc/apt/keyrings
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg \
         | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 
-    # Add Docker’s APT repo if not present
     if ! grep -q "download.docker.com" /etc/apt/sources.list /etc/apt/sources.list.d/* 2>/dev/null; then
         echo \
           "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
@@ -63,7 +58,6 @@ else
     echo "Docker is already installed."
 fi
 
-# Fix for missing `docker compose` command
 if ! docker compose version &>/dev/null; then
     echo "Trying to manually link docker compose plugin..."
     if [ -f /usr/libexec/docker/cli-plugins/docker-compose ]; then
@@ -71,7 +65,6 @@ if ! docker compose version &>/dev/null; then
     fi
 fi
 
-# Final check
 if ! docker --version &>/dev/null || ! docker compose version &>/dev/null; then
     echo "❌ Docker or docker compose is still missing. Please install manually and retry."
     exit 1
@@ -79,13 +72,11 @@ else
     echo "✅ Docker and docker compose are available."
 fi
 
-# Start Docker if not running
 if ! pgrep -f dockerd > /dev/null; then
     echo "Docker is not running. Attempting to start it..."
     sudo systemctl start docker || sudo service docker start || echo "Please start Docker manually."
 fi
 
-# Add user to docker group
 if ! groups "$USER" | grep -q '\bdocker\b'; then
     echo "Adding $USER to docker group..."
     sudo usermod -aG docker "$USER"
@@ -149,7 +140,7 @@ git checkout "$LATEST_TAG"
 git reset --hard "$LATEST_TAG"
 
 ###############################################################################
-# Generate docker-compose-db.yml using the exported environment variables
+# Generate docker-compose-db.yml
 ###############################################################################
 cat > docker-compose-db.yml << EOF
 services:
@@ -208,6 +199,8 @@ WEBSERVER_PORT="$WEBSERVER_PORT"
 PORT="$PORT"
 WIPE_DB="$WIPE_DB"
 POSTGRES_PORT="$POSTGRES_PORT"
+POSTGRES_USER="$POSTGRES_USER"
+POSTGRES_PASSWORD="$POSTGRES_PASSWORD"
 EOF
 
 INDEXER_DIR="$HOME/namada-indexer"
@@ -220,6 +213,23 @@ docker container rm --force $(docker container ls --all | grep 'namada-indexer' 
 docker image rm --force $(docker image ls --all | grep -E '^namada/.*-indexer.*$' | awk '{print $3}') || true
 docker image rm --force $(docker image ls --all | grep '<none>' | awk '{print $3}') || true
 
-docker compose -f docker-compose.yml --env-file $ENV_FILE up -d --pull always --force-recreate
+###############################################################################
+# Start Docker Compose in Steps to Save RAM
+###############################################################################
+echo -e "\n🚀 Starting services step-by-step to avoid memory overload..."
+
+docker compose -f docker-compose.yml --env-file "$ENV_FILE" up -d postgres
+sleep 10
+
+docker compose -f docker-compose.yml --env-file "$ENV_FILE" up -d dragonfly
+sleep 5
+
+docker compose -f docker-compose.yml --env-file "$ENV_FILE" up -d chain governance pos
+sleep 5
+
+docker compose -f docker-compose.yml --env-file "$ENV_FILE" up -d rewards parameters transactions
+sleep 5
+
+docker compose -f docker-compose.yml --env-file "$ENV_FILE" up -d webserver
 
 echo -e "\n✅ Installation complete. Services are running with the custom database configuration."
