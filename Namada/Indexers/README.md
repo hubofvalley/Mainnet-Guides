@@ -11,11 +11,11 @@ Snapshots are provided by **Grand Valley for the Namada Community**. The snapsho
 
 - **Namada Indexer Snapshot:**  
   The current snapshot has been tested and applied to the Namada indexer corresponding to commit  
-  `f780eee94faccb82687a9fad1936856cc47fe591` (HEAD, tag: `v2.5.2`).
+  `8920fdb864b0d6ba74a6ec8faf186bf8bccf4e90` (HEAD, tag: `v2.5.2`).
 
 - **MASP Indexer Snapshot:**  
   The current snapshot has been tested and applied to the MASP indexer corresponding to commit  
-  `38093aca7bc8cd3bb03ef06ce139fe4e672b20ff` (HEAD, tag: `v1.2.1`, origin/master, origin/HEAD, master).
+  `6d6d022588a56f7c836e485de257e93646cd7847` (HEAD, tag: `v1.2.1`, origin/master, origin/HEAD, master).
 
 ## How It Works
 
