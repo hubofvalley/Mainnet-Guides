@@ -92,7 +92,7 @@ INDEXER_DIR="$HOME/namada-masp-indexer"
 COMPOSE_FILE="${INDEXER_DIR}/docker-compose.yml"
 ENV_FILE="${INDEXER_DIR}/.env"
 WEBSERVER_PORT="8000"
-PROJECT_NAME="namada-masp"
+PROJECT_NAME="namada-masp-indexer"
 POSTGRES_PORT="5435"
 
 trap 'echo "Error occurred at line $LINENO. Aborting."; exit 1' ERR
@@ -131,7 +131,7 @@ deploy() {
     git clone https://github.com/anoma/namada-masp-indexer.git "${INDEXER_DIR}"
     cd "${INDEXER_DIR}"
     git fetch --all
-    LATEST_TAG="v1.2.0"
+    LATEST_TAG="v1.2.1"
     git checkout $LATEST_TAG
     git reset --hard $LATEST_TAG
 
