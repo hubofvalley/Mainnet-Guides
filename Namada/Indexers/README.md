@@ -15,7 +15,7 @@ Snapshots are provided by **Grand Valley for the Namada Community**. The snapsho
 
 - **MASP Indexer Snapshot:**  
   The current snapshot has been tested and applied to the MASP indexer corresponding to commit  
-  `38093aca7bc8cd3bb03ef06ce139fe4e672b20ff` (HEAD, tag: `v1.3.0`, origin/master, origin/HEAD, master).
+  `38093aca7bc8cd3bb03ef06ce139fe4e672b20ff` (HEAD, tag: `v1.2.0`, origin/master, origin/HEAD, master).
 
 ## How It Works
 
@@ -113,7 +113,7 @@ Every day at **2AM UTC** a new snapshot is generated. Since the file names remai
 6. **Restore the database from the snapshot:**
 
    ```bash
-   docker compose exec -u postgres postgres pg_restore -U postgres -d masp_indexer_local --clean /tmp/masp_indexer_snapshot.sql --verbose
+   docker compose exec postgres pg_restore -d masp_indexer_local --clean /tmp/masp_indexer_snapshot.sql --verbose
    ```
 
 7. **Remove the snapshot file from the container:**

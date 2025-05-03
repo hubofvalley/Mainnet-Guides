@@ -65,10 +65,10 @@ install_dependencies() {
     fi
 
     if ! docker --version &>/dev/null || ! docker compose version &>/dev/null; then
-        echo "? Docker or docker compose is still missing. Please install manually and retry."
+        echo "❌ Docker or docker compose is still missing. Please install manually and retry."
         exit 1
     else
-        echo "? Docker and docker compose are available."
+        echo "✅ Docker and docker compose are available."
     fi
 
     # Start Docker if not running
@@ -93,7 +93,6 @@ COMPOSE_FILE="${INDEXER_DIR}/docker-compose.yml"
 ENV_FILE="${INDEXER_DIR}/.env"
 WEBSERVER_PORT="8000"
 PROJECT_NAME="namada-masp"
-POSTGRES_PORT="5435"
 
 trap 'echo "Error occurred at line $LINENO. Aborting."; exit 1' ERR
 
@@ -141,14 +140,9 @@ deploy() {
     cat > "${ENV_FILE}" <<EOF
 COMETBFT_URL="${TENDERMINT_URL}"
 PORT="${WEBSERVER_PORT}"
-POSTGRES_PORT="5435"
 EOF
+
     export POSTGRES_PORT="5435"
-    sed -i.bak \
-    -e 's/5432/5435/g' \
-    -e '/command:/ s/$/ -p 5435/' \
-    -e '/environment:/a\      PGPORT: 5435' \
-    $HOME/namada-masp-indexer/docker-compose.yml
 
     docker compose -f "${COMPOSE_FILE}" --env-file $ENV_FILE up -d --pull always --build --force-recreate
 }
@@ -167,7 +161,7 @@ verify_deployment() {
 
     echo -e "\nAccess points:"
     echo "Webserver: http://localhost:${WEBSERVER_PORT}"
-    echo "PostgreSQL: localhost:5435"
+    echo "PostgreSQL: localhost:5432"
 }
 
 main() {
