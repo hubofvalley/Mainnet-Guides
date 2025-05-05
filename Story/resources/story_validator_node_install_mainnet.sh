@@ -107,7 +107,7 @@ s%address = \"127.0.0.1:1317\"%address = \"127.0.0.1:${STORY_PORT}317\"%" $HOME/
 
 # 8. Add peers to the config.toml
 peers=$(curl -sS https://lightnode-rpc-mainnet-story.grandvalleys.com/net_info | jq -r '.result.peers[] | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr)"' | awk -F ':' '{print $1":"$(NF)}' | paste -sd, -)
-sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$peers\"|" $HOME/.story/story/config/config.toml
+sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"fffb1a0dc2b6af331c65328c1ed9afad0bf107de@peer-mainnet-story.grandvalleys.com:38656,$peers\"|" $HOME/.story/story/config/config.toml
 echo $peers
 
 # 9. Enable or disable indexer based on user input
