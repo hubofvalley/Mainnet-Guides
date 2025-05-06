@@ -1635,11 +1635,14 @@ function backup_namada_indexer() {
 function delete_namada_indexer() {
     echo "Deleting Namada Indexer:"
     cd $HOME/namada-indexer
-    docker stop $(docker container ls --all | grep 'namada-indexer' | awk '{print $1}')
-    docker container rm --force $(docker container ls --all | grep 'namada-indexer' | awk '{print $1}')
-    docker image rm --force $(docker image ls --all | grep -E '^namada/.*-indexer.*$' | awk '{print $3}')
-    docker image rm --force $(docker image ls --all | grep '<none>' | awk '{print $3}')
-    docker volume prune -fa
+    
+    # Stop and remove all resources using docker compose
+    docker compose down --volumes --rmi all 2>/dev/null
+    
+    # Additional cleanup for any remaining components
+    docker rmi -f $(docker images -q "namada/*-indexer*") 2>/dev/null
+    docker volume prune -f --filter "label=com.docker.compose.project=namada-indexer" 2>/dev/null
+    
     cd $HOME
     rm -rf $HOME/namada-indexer
     menu
@@ -1685,15 +1688,20 @@ function backup_namada_masp_indexer() {
     menu
 }
 
-function delete_namada_masp_indexer() {
+function delete_namada_indexer() {
     echo "Deleting Namada MASP Indexer:"
     cd $HOME/namada-masp-indexer
-    docker compose -f docker-compose.yml down --volumes
-    docker stop $(docker container ls --all | grep 'namada-masp-' | awk '{print $1}')
-    docker container rm --force $(docker container ls --all | grep 'namada-masp-' | awk '{print $1}')
-    docker image rm --force $(docker image ls --all | grep 'namada-masp-' | awk '{print $3}')
-    docker image rm --force $(docker image ls --all | grep '<none>' | awk '{print $3}')
-    docker volume prune -fa
+    
+    # Stop and remove all containers with namada-masp-indexer prefix
+    docker stop $(docker ps -aq --filter "name=namada-masp-indexer-*") 2>/dev/null
+    docker rm -f $(docker ps -aq --filter "name=namada-masp-indexer-*") 2>/dev/null
+    
+    # Remove related images
+    docker rmi -f $(docker images -q "namada/*-indexer*") 2>/dev/null
+    
+    # Remove related volumes
+    docker volume rm $(docker volume ls -q --filter "name=namada-masp-indexer-*") 2>/dev/null
+    
     cd $HOME
     rm -rf $HOME/namada-masp-indexer
     menu

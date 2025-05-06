@@ -166,10 +166,25 @@ ENV_FILE="${INDEXER_DIR}/.env"
 
 wget -q https://indexer-snapshot-mainnet-namada.grandvalleys.com/checksums.json || echo "Warning: Failed to download checksums"
 
-docker stop $(docker container ls --all | grep 'namada-indexer' | awk '{print $1}') || true
-docker container rm --force $(docker container ls --all | grep 'namada-indexer' | awk '{print $1}') || true
-docker image rm --force $(docker image ls --all | grep -E '^namada/.*-indexer.*$' | awk '{print $3}') || true
-docker image rm --force $(docker image ls --all | grep '<none>' | awk '{print $3}') || true
+###############################################################################
+# Delete existing Namada Indexer stack ONLY
+###############################################################################
+
+# Bring down the Namada Indexer docker-compose project (with associated volumes and images)
+docker compose -p namada-indexer down --volumes --remove-orphans --rmi all 2>/dev/null
+
+# Stop and remove all containers whose names start with "namada-indexer-"
+docker stop $(docker ps -a --filter "name=^/namada-indexer-" --format "{{.ID}}") 2>/dev/null || true
+docker rm -f $(docker ps -a --filter "name=^/namada-indexer-" --format "{{.ID}}") 2>/dev/null || true
+
+# Remove all images matching "namada/*-indexer"
+docker rmi -f $(docker images "namada/*-indexer" --format "{{.ID}}") 2>/dev/null || true
+
+# Remove any <none> (dangling) images
+docker rmi -f $(docker images -f "dangling=true" -q) 2>/dev/null || true
+
+# Prune volumes associated with this compose project
+docker volume prune -f --filter "label=com.docker.compose.project=namada-indexer" 2>/dev/null
 
 ###############################################################################
 # Start Docker Compose in Steps to Save RAM
