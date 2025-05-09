@@ -271,7 +271,6 @@ function show_validator_node_status() {
     if (( block_difference < 0 )); then
         echo -e "${GREEN}Note:${NC} A negative value is normal - this means Grand Valley's Namada Mainnet RPC block height is currently behind your node's height"
     fi
-    echo -e "\n${YELLOW}Press Enter to go back to main menu${RESET}"
 
     echo -e "\n${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -r
