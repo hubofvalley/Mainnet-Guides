@@ -260,6 +260,19 @@ function show_validator_node_logs() {
 function show_validator_node_status() {
     port=$(grep -oP 'laddr = "tcp://(0.0.0.0|127.0.0.1):\K[0-9]+57' "$HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml")
     curl -s http://127.0.0.1:$port/status | jq
+    realtime_block_height=$(curl -s https://lightnode-rpc-mainnet-namada.grandvalleys.com/status | jq -r '.result.sync_info.latest_block_height')
+    node_height=$(curl -s http://127.0.0.1:$port/status | jq -r '.result.sync_info.latest_block_height')
+    echo "Namada node block height: $node_height"
+    block_difference=$(( realtime_block_height - node_height ))
+    echo "Real-time Block Height: $realtime_block_height"
+    echo -e "${YELLOW}Block Difference:${NC} $block_difference"
+
+    # Add explanation for negative values
+    if (( block_difference < 0 )); then
+        echo -e "${GREEN}Note:${NC} A negative value is normal - this means Grand Valley's Namada Mainnet RPC block height is currently behind your node's height"
+    fi
+    echo -e "\n${YELLOW}Press Enter to go back to main menu${RESET}"
+
     echo -e "\n${YELLOW}Press Enter to go back to Valley of Namada main menu${RESET}"
     read -r
     menu
