@@ -561,6 +561,8 @@ main_script() {
     sudo systemctl stop story-geth story
     sudo systemctl disable story-geth story
 
+    # Back up your validator state
+    cp $HOME/.story/story/data/priv_validator_state.json $HOME/.story/priv_validator_state.json.backup
 
     # Delete previous geth chaindata and story data folders
     sudo rm -rf $HOME/.story/geth/story/geth/chaindata $HOME/.story/story/data
