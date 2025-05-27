@@ -86,7 +86,7 @@ By using the CSR Monitoring Tool, both stakers and validators can better underst
 | Storage   | 1+ TB NVMe SSD                 |
 | Bandwidth | 100 MBps for Download / Upload |
 
-- Guide's current binaries version: `v1.0.0 - v1.1.1 - v1.1.5`
+- Guide's current binaries version: `v1.0.0 - v1.1.1 - v1.1.5 - v101.0.0`
 - Service file name: `namadad.service`
 - Current chain: `namada.5f5de2dd1b88cba30586420`
 
