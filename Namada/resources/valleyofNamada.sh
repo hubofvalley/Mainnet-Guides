@@ -1700,7 +1700,7 @@ function backup_namada_masp_indexer() {
     menu
 }
 
-function delete_namada_indexer() {
+function delete_masp_namada_indexer() {
     echo "Deleting Namada MASP Indexer:"
     cd $HOME/namada-masp-indexer
     
