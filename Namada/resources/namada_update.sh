@@ -19,7 +19,7 @@ declare -A versions=(
     ["v1.0.0"]="0-893999 https://github.com/anoma/namada/releases/download/v1.0.0"
     ["v1.1.1"]="894000-next https://github.com/anoma/namada/releases/download/v1.1.1"
     ["v1.1.5"]="1604223-next https://github.com/anoma/namada/releases/download/v1.1.5"
-    ["v101.0.0"]="2176000-next https://github.com/anoma/namada/releases/download/v101.0.0"
+    ["v101.1.1"]="2176000-next https://github.com/anoma/namada/releases/download/v101.1.1"
 )
 
 # Function to show version options
@@ -27,7 +27,7 @@ show_version_options() {
     echo -e "\n\033[1mChoose the version to install:\033[0m"
     local index=1
 
-    for version in "v1.0.0" "v1.1.1" "v1.1.5" "v101.0.0"; do
+    for version in "v1.0.0" "v1.1.1" "v1.1.5" "v101.1.1"; do
         details=(${versions[$version]})
         block_height_range=${details[0]}
         echo "$index. Namada $version (Block height: $block_height_range)"
@@ -98,7 +98,7 @@ while true; do
         exit 0
     fi
 
-    version_map=("v1.0.0" "v1.1.1" "v1.1.5" "v101.0.0")
+    version_map=("v1.0.0" "v1.1.1" "v1.1.5" "v101.1.1")
     selected_version=${version_map[$version_choice-1]}
 
     if [[ -z $selected_version ]]; then
