@@ -11,7 +11,7 @@ Snapshots are provided by **Grand Valley for the Namada Community**. The snapsho
 
 - **Namada Indexer Snapshot:**  
   The current snapshot has been tested and applied to the Namada indexer corresponding to commit  
-  `c95c923d870f2d356d546b255d8cb9a628e22901` (HEAD, tag: `v3.0.2`).
+  `c95c923d870f2d356d546b255d8cb9a628e22901` (HEAD, tag: `v3.1.0`).
 
 - **MASP Indexer Snapshot:**  
   The current snapshot has been tested and applied to the MASP indexer corresponding to commit  
