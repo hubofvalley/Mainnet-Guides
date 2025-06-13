@@ -570,7 +570,7 @@ function query_balance() {
 }
 
 function transfer_transparent() {
-    DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
+    DEFAULT_WALLET=$WALLET_NAME # Diasumsikan di-set di luar fungsi
 
     while true; do
         echo "Choose an option:"
@@ -587,22 +587,24 @@ function transfer_transparent() {
         if [ "$CHOICE" == "1" ]; then
             echo "Available Wallets:"
             echo
-            namadaw list | grep Implicit | grep -vE 'consensus-key|tendermint-node-key'
+            namadaw list | grep -E 'Implicit:|Established:'
             echo
 
-            # Prompt for source wallet alias (always default wallet for transparent transfer)
-            read -p "Enter source wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " SOURCE_WALLET_NAME
+            # Prompt for source wallet alias (default to current wallet)
+            read -p "Enter source wallet name/alias (leave empty to use default wallet --> $DEFAULT_WALLET): " SOURCE_WALLET_NAME
             if [ -z "$SOURCE_WALLET_NAME" ]; then
                 SOURCE_WALLET_NAME=$DEFAULT_WALLET
             fi
-            SOURCE_WALLET_ADDRESS=$(namadaw find --alias $SOURCE_WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+
+            # Extract implicit address
+            SOURCE_WALLET_ADDRESS=$(namadaw find --alias "$SOURCE_WALLET_NAME" | grep -oP '(Implicit:|Established:)\s\K[^ ]+')
 
             if [ -z "$SOURCE_WALLET_ADDRESS" ]; then
-                echo "Source wallet name not found. Please check the wallet name/alias and try again."
+                echo "Source wallet not found or has no valid Implicit/Established address. Please try again."
                 continue
             fi
-            echo "Using source wallet: $SOURCE_WALLET_NAME ($SOURCE_WALLET_ADDRESS)"
 
+            echo "Using source wallet: $SOURCE_WALLET_NAME ($SOURCE_WALLET_ADDRESS)"
         else
             echo "Invalid choice. Please enter 1 or 2."
             continue
@@ -615,18 +617,14 @@ function transfer_transparent() {
             continue
         fi
 
-        # Prompt for amount to transfer
+        # Prompt for amount
         read -p "Enter the amount to transfer: " AMOUNT
 
-        # Prompt for RPC choice
+        # Choose RPC
         read -p "Use your own RPC or Grand Valley's? (own/gv, leave empty for gv): " RPC_CHOICE
+        [ -z "$RPC_CHOICE" ] && RPC_CHOICE="gv"
 
-        # Default to Grand Valley's RPC if empty
-        if [ -z "$RPC_CHOICE" ]; then
-            RPC_CHOICE="gv"
-        fi
-
-        # Prompt for token choice
+        # Choose token
         read -p "Which token do you want to interact with? (1: NAM, 2: OSMO): " TOKEN_CHOICE
         if [ "$TOKEN_CHOICE" == "1" ]; then
             TOKEN="NAM"
@@ -637,11 +635,22 @@ function transfer_transparent() {
             TOKEN="NAM"
         fi
 
-        # Execute the transparent transfer
+        # Execute transfer
         if [ "$RPC_CHOICE" == "gv" ]; then
-            namadac transparent-transfer --source $SOURCE_WALLET_ADDRESS --target $TARGET_TRANSPARENT_WALLET_ADDRESS --token $TOKEN --amount $AMOUNT --signing-keys $SOURCE_WALLET_NAME --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+            namadac transparent-transfer \
+                --source "$SOURCE_WALLET_ADDRESS" \
+                --target "$TARGET_TRANSPARENT_WALLET_ADDRESS" \
+                --token "$TOKEN" \
+                --amount "$AMOUNT" \
+                --signing-keys "$SOURCE_WALLET_NAME" \
+                --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
         else
-            namadac transparent-transfer --source $SOURCE_WALLET_ADDRESS --target $TARGET_TRANSPARENT_WALLET_ADDRESS --token $TOKEN --amount $AMOUNT --signing-keys $SOURCE_WALLET_NAME
+            namadac transparent-transfer \
+                --source "$SOURCE_WALLET_ADDRESS" \
+                --target "$TARGET_TRANSPARENT_WALLET_ADDRESS" \
+                --token "$TOKEN" \
+                --amount "$AMOUNT" \
+                --signing-keys "$SOURCE_WALLET_NAME"
         fi
 
         echo -e "${GREEN}Transparent transfer completed successfully.${RESET}"
