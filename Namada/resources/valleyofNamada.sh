@@ -570,7 +570,7 @@ function query_balance() {
 }
 
 function transfer_transparent() {
-    DEFAULT_WALLET=$WALLET_NAME # Diasumsikan di-set di luar fungsi
+    DEFAULT_WALLET=$WALLET_NAME # Assumed to be set outside this function
 
     while true; do
         echo "Choose an option:"
@@ -585,22 +585,21 @@ function transfer_transparent() {
         fi
 
         if [ "$CHOICE" == "1" ]; then
-            echo "Available Wallets:"
             echo
+            echo "Available Wallets:"
             namadaw list | grep -E 'Implicit:|Established:'
             echo
 
-            # Prompt for source wallet alias (default to current wallet)
-            read -p "Enter source wallet name/alias (leave empty to use default wallet --> $DEFAULT_WALLET): " SOURCE_WALLET_NAME
+            # Prompt for source wallet alias (default to DEFAULT_WALLET)
+            read -p "Enter the source wallet name/alias (leave empty to use default --> $DEFAULT_WALLET): " SOURCE_WALLET_NAME
             if [ -z "$SOURCE_WALLET_NAME" ]; then
                 SOURCE_WALLET_NAME=$DEFAULT_WALLET
             fi
 
-            # Extract implicit address
+            # Extract the address
             SOURCE_WALLET_ADDRESS=$(namadaw find --alias "$SOURCE_WALLET_NAME" | grep -oP '(Implicit:|Established:)\s\K[^ ]+')
-
             if [ -z "$SOURCE_WALLET_ADDRESS" ]; then
-                echo "Source wallet not found or has no valid Implicit/Established address. Please try again."
+                echo "The source wallet alias was not found or has no valid address. Please try again."
                 continue
             fi
 
@@ -620,12 +619,8 @@ function transfer_transparent() {
         # Prompt for amount
         read -p "Enter the amount to transfer: " AMOUNT
 
-        # Choose RPC
-        read -p "Use your own RPC or Grand Valley's? (own/gv, leave empty for gv): " RPC_CHOICE
-        [ -z "$RPC_CHOICE" ] && RPC_CHOICE="gv"
-
-        # Choose token
-        read -p "Which token do you want to interact with? (1: NAM, 2: OSMO): " TOKEN_CHOICE
+        # Prompt for token selection
+        read -p "Which token do you want to use? (1: NAM, 2: OSMO): " TOKEN_CHOICE
         if [ "$TOKEN_CHOICE" == "1" ]; then
             TOKEN="NAM"
         elif [ "$TOKEN_CHOICE" == "2" ]; then
@@ -635,14 +630,30 @@ function transfer_transparent() {
             TOKEN="NAM"
         fi
 
-        # Execute transfer
+        echo
+        echo "Available keys for signing:"
+        namadaw list | grep Implicit | grep -vE 'consensus-key|tendermint-node-key'
+        echo
+
+        # Ask user to select signing key
+        read -p "Enter the wallet alias you want to use as the signing key: " SIGNING_KEY_ALIAS
+        if [ -z "$SIGNING_KEY_ALIAS" ]; then
+            echo "Signing key alias cannot be empty. Please try again."
+            continue
+        fi
+
+        # Choose RPC source
+        read -p "Use your own RPC or Grand Valley's? (own/gv, leave empty for gv): " RPC_CHOICE
+        [ -z "$RPC_CHOICE" ] && RPC_CHOICE="gv"
+
+        # Execute the transparent transfer
         if [ "$RPC_CHOICE" == "gv" ]; then
             namadac transparent-transfer \
                 --source "$SOURCE_WALLET_ADDRESS" \
                 --target "$TARGET_TRANSPARENT_WALLET_ADDRESS" \
                 --token "$TOKEN" \
                 --amount "$AMOUNT" \
-                --signing-keys "$SOURCE_WALLET_NAME" \
+                --signing-keys "$SIGNING_KEY_ALIAS" \
                 --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
         else
             namadac transparent-transfer \
@@ -650,11 +661,11 @@ function transfer_transparent() {
                 --target "$TARGET_TRANSPARENT_WALLET_ADDRESS" \
                 --token "$TOKEN" \
                 --amount "$AMOUNT" \
-                --signing-keys "$SOURCE_WALLET_NAME"
+                --signing-keys "$SIGNING_KEY_ALIAS"
         fi
 
         echo -e "${GREEN}Transparent transfer completed successfully.${RESET}"
-        echo -e "${YELLOW}Press Enter to go back to the Valley of Namada main menu${RESET}"
+        echo -e "${YELLOW}Press Enter to return to the Valley of Namada main menu.${RESET}"
         read -r
         menu
         return
