@@ -196,7 +196,7 @@ echo "Choose the version to update to:"
 echo -e "a. ${YELLOW}v1.1.0${RESET} (${GREEN}Virgil${RESET} Upgrade height: 640,000)"
 echo -e "b. ${YELLOW}v1.1.1${RESET} (${GREEN}Additional update for validator CLI interaction${RESET} Upgrade height: 1,398,904)"
 echo -e "c. ${YELLOW}v1.2.0${RESET} (${GREEN}Ovid${RESET} Upgrade height: 4,000,000)"
-echo -e "d. ${YELLOW}v1.2.1${RESET} (${GREEN}Validator operations CLI improvements${RESET} Upgrade height: 5,233,000)"
+echo -e "d. ${YELLOW}v1.2.1${RESET} (${GREEN}Validator operations CLI improvements${RESET} Upgrade height: 5,262,400)"
 read -p "Enter the letter corresponding to the version: " choice
 
 case $choice in
@@ -210,7 +210,7 @@ case $choice in
         update_version "v1.2.0" "https://github.com/piplabs/story/releases/download/v1.2.0" 4000000
         ;;
     d)
-        update_version "v1.2.1" "https://github.com/piplabs/story/releases/download/v1.2.1" 5233000
+        update_version "v1.2.1" "https://github.com/piplabs/story/releases/download/v1.2.1" 5262400
         ;;
     *)
         echo "Invalid choice. Exiting."
