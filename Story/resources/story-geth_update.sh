@@ -73,9 +73,9 @@ case $choice in
     a)
         update_version "v1.0.2" "https://github.com/piplabs/story-geth/releases/download/v1.0.2"
         ;;
-        b)
-            update_version "v1.1.1" "https://github.com/piplabs/story-geth/releases/download/v1.1.1"
-            ;;
+    b)
+        update_version "v1.1.1" "https://github.com/piplabs/story-geth/releases/download/v1.1.1"
+        ;;
     # Uncomment and add more versions as needed
     # b)
     #     update_version "v0.11.0" "https://github.com/piplabs/story-geth/releases/download/v0.11.0"
