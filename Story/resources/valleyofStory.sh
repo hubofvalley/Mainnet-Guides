@@ -77,6 +77,7 @@ Grand Valley Story Protocol public endpoints:${RESET}
 - peer: ${BLUE}fffb1a0dc2b6af331c65328c1ed9afad0bf107de@peer-mainnet-story.grandvalleys.com:38656${RESET}
 
 ${GREEN}Grand Valley Story Mainnet validator profile links:${RESET}
+    - ${ORANGE}https://staking.story.foundation/validators/0x0298d2dda1506a0587eb279972Cf7c0e66C51A6f${RESET}
     - ${ORANGE}https://storyscan.app/validators/storyvaloper1q2vd9hdp2p4qtplty7vh9nmupenv2xn0turd4p${RESET}
     - ${ORANGE}https://story.explorers.guru/validator/storyvaloper1q2vd9hdp2p4qtplty7vh9nmupenv2xn0turd4p${RESET}
 
@@ -690,7 +691,7 @@ function menu() {
     realtime_block_height=$(curl -s -X POST "https://mainnet.storyrpc.io" -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' | jq -r '.result' | xargs printf "%d\n")
     echo -e "${ORANGE}Valley of Story Mainnet${RESET}"
     echo -e "${CYAN}Story Validator Node = Consensus Client Service + Execution Client Service (geth/story-geth)${RESET}"
-    echo "Main Menu:"
+    echo "Main Menu:"   
     echo -e "${GREEN}1. Node Interactions:${RESET}"
     echo "   a. Deploy/re-Deploy Validator Node (includes Cosmovisor deployment)"
     echo "   b. Manage Consensus Client (Migrate to Cosmovisor or Update Version)"
@@ -726,6 +727,7 @@ function menu() {
     echo -e "\n${YELLOW}Please run the following command to apply the changes after exiting the script:${RESET}"
     echo -e "${GREEN}source ~/.bash_profile${RESET}"
     echo -e "${YELLOW}This ensures the environment variables are set in your current bash session.${RESET}"
+    echo -e "Stake your IP with Grand Valley: ${ORANGE}https://staking.story.foundation/validators/0x0298d2dda1506a0587eb279972Cf7c0e66C51A6f${RESET}"
     echo -e "${GREEN}Let's Buidl Story Together - Grand Valley${RESET}"
     read -p "Choose an option (e.g., 1a or 1 then a): " OPTION
 

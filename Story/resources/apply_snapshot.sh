@@ -573,11 +573,11 @@ main_script() {
 
     # Download and decompress snapshots
     cd $download_location
-    if [[ $provider_choice -eq 1 || $provider_choice -eq 2 || $provider_choice -eq 3 ]]; then
+    if [[ $provider_choice -eq 1 || $provider_choice -eq 2 || $provider_choice -eq 3 || $provider_choice -eq 4 ]]; then
         wget -O $GETH_SNAPSHOT_FILE $GETH_SNAPSHOT_URL
         wget -O $STORY_SNAPSHOT_FILE $STORY_SNAPSHOT_URL
         decompress_snapshots
-    elif [[ $provider_choice -eq 4 || $provider_choice -eq 5 ]]; then
+    elif [[ $provider_choice -eq 5 ]]; then
         wget -O $SNAPSHOT_FILE $SNAPSHOT_URL
         decompress_crouton_originstake_snapshot
     fi
@@ -588,9 +588,9 @@ main_script() {
 
     # Delete downloaded snapshot files if the user chose to do so
     if [[ $delete_choice == "y" || $delete_choice == "Y" ]]; then
-        if [[ $provider_choice -eq 1 || $provider_choice -eq 2 || $provider_choice -eq 3 ]]; then
+        if [[ $provider_choice -eq 1 || $provider_choice -eq 2 || $provider_choice -eq 3 || $provider_choice -eq 4 ]]; then
             sudo rm -v $GETH_SNAPSHOT_FILE $STORY_SNAPSHOT_FILE
-        elif [[ $provider_choice -eq 4 || $provider_choice -eq 5 ]]; then
+        elif [[ $provider_choice -eq 5 ]]; then
             sudo rm -v $SNAPSHOT_FILE
         fi
         echo -e "${GREEN}Downloaded snapshot files have been deleted.${NC}"

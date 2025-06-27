@@ -1851,7 +1851,6 @@ function show_guidelines() {
 # Menu function
 function menu() {
     realtime_block_height=$(curl -s https://lightnode-rpc-mainnet-namada.grandvalleys.com/status | jq -r '.result.sync_info.latest_block_height')
-    echo -e "Show your support for Grand Valley by staking with us!: ${CYAN}tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6${RESET}"
     echo -e "${ORANGE}Valley of Namada Mainnet${RESET}"
     echo "Main Menu:"
     echo -e "${GREEN}1. Node Interactions:${RESET}"
@@ -1912,6 +1911,7 @@ function menu() {
     echo -e "${GREEN}source ~/.bash_profile${RESET}"
     echo -e "${YELLOW}This ensures the environment variables are set in your current bash session.${RESET}"
     echo -e "${GREEN}Let's Buidl Namada Together${RESET}"
+    echo -e "Stake your NAM with Grand Valley! ${ORANGE}tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6${RESET}"
     read -p "Choose an option (e.g., 1a or 1 then a): " OPTION
 
     if [[ $OPTION =~ ^[1-8][a-z]$ ]]; then
