@@ -1911,9 +1911,8 @@ function menu() {
     echo -e "${GREEN}source ~/.bash_profile${RESET}"
     echo -e "${YELLOW}This ensures the environment variables are set in your current bash session.${RESET}"
     echo -e "${GREEN}Let's Buidl Namada Together${RESET}"
+    echo -e "Stake your NAM with Grand Valley! ${ORANGE}tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6${RESET}"
     read -p "Choose an option (e.g., 1a or 1 then a): " OPTION
-        echo -e "Stake your NAM with Grand Valley! ${ORANGE}tnam1qyplu8gruqmmvwp7x7kd92m6x4xpyce265fa05r6${RESET}"
-
     if [[ $OPTION =~ ^[1-8][a-z]$ ]]; then
         MAIN_OPTION=${OPTION:0:1}
         SUB_OPTION=${OPTION:1:1}
