@@ -75,6 +75,7 @@ Grand Valley Story Protocol public endpoints:${RESET}
 - cosmos ws: ${BLUE}wss://lightnode-rpc-mainnet-story.grandvalleys.com/websocket${RESET}
 - evm ws: ${BLUE}wss://lightnode-wss-mainnet-story.grandvalleys.com${RESET}
 - peer: ${BLUE}fffb1a0dc2b6af331c65328c1ed9afad0bf107de@peer-mainnet-story.grandvalleys.com:38656${RESET}
+- seed: ${BLUE}68205aae335cffa1e1995f59a6fc8832e434d98a@seed-mainnet-story.grandvalleys.com:38656${RESET}
 
 ${GREEN}Grand Valley Story Mainnet validator profile links:${RESET}
     - ${ORANGE}https://staking.story.foundation/validators/0x0298d2dda1506a0587eb279972Cf7c0e66C51A6f${RESET}
