@@ -548,10 +548,10 @@ function query_balance() {
             2)
                 if [ "$WALLET_CHOICE" == "1" ]; then
                     if [ "$RPC_CHOICE" == "gv" ]; then
-                        namadac shielded-sync --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+                        namadac shielded-sync --node https://lightnode-rpc-mainnet-namada.grandvalleys.com --with-indexer https://masp-indexer-mainnet-namada.grandvalleys.com
                         namadac balance --owner ${WALLET_ADDRESS} --token NAM --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
                     else
-                        namadac shielded-sync --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+                        namadac shielded-sync --node https://lightnode-rpc-mainnet-namada.grandvalleys.com --with-indexer https://masp-indexer-mainnet-namada.grandvalleys.com
                         namadac balance --owner ${WALLET_ADDRESS} --token NAM
                     fi
                 else
@@ -1297,7 +1297,7 @@ function transfer_shielding() {
 
 function transfer_shielded_to_shielded() {
     DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
-    namadac shielded-sync --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+    namadac shielded-sync --node https://lightnode-rpc-mainnet-namada.grandvalleys.com --with-indexer https://masp-indexer-mainnet-namada.grandvalleys.com
 
     # Get source shielded key (from the stored shielded key)
     while true; do
@@ -1409,7 +1409,7 @@ function transfer_shielded_to_shielded() {
 
 function transfer_unshielding() {
     DEFAULT_WALLET=$WALLET_NAME # Assuming $WALLET_NAME is set elsewhere in your script
-    namadac shielded-sync --node https://lightnode-rpc-mainnet-namada.grandvalleys.com
+    namadac shielded-sync --node https://lightnode-rpc-mainnet-namada.grandvalleys.com --with-indexer https://masp-indexer-mainnet-namada.grandvalleys.com
     
     while true; do
         # Show available shielded wallets (stored shielded key addresses only)
