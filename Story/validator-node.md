@@ -333,7 +333,7 @@ story validator stake --private-key <your private key> --stake 10240000000000000
 
 #### Delegate to Grand Valley
 
-[<img src="https://github.com/hubofvalley/Mainnet-Guides/assets/100946299/e8704cc4-2319-4a21-9138-0264e75e3a82" alt="GRAND VALLEY" width="50" height="50">](https://Mainnet.storyscan.app/validators/storyvaloper1cvsdp0tsz25fhedd7cjvntq42347astvar06v8)
+[<img src="https://github.com/hubofvalley/Mainnet-Guides/assets/100946299/e8704cc4-2319-4a21-9138-0264e75e3a82" alt="GRAND VALLEY" width="50" height="50">](https://staking.story.foundation/validators/0x0298d2dda1506a0587eb279972Cf7c0e66C51A6f)
 
 ```bash
 story validator stake --private-key <your private key> --stake 1024000000000000000000 --validator-pubkey 022199ce81e29408b87c60ee57a25090fcf19514ed35ab85b4549196316c419858
