@@ -345,6 +345,8 @@ suggest_update() {
         echo -e "${YELLOW}If an update is required, choose option 'c' at the consensus client update prompt.${NC}"
     elif [[ $required_version == "v1.2.1-stable" ]]; then
         echo -e "${YELLOW}If an update is required, choose option 'd' at the consensus client update prompt.${NC}"
+    elif [[ $required_version == "v1.3.1-stable" ]]; then
+        echo -e "${YELLOW}If an update is required, choose option 'e' at the consensus client update prompt.${NC}"
     fi
 
     read -p "Do you want to update the consensus client version? (y/n): " update_choice
