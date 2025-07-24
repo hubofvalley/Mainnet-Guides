@@ -142,6 +142,7 @@ update_version() {
     sudo chmod +x $HOME/story-$version/story && \
     sudo chmod +x $HOME/go/bin/story && \
     sudo rm -f $HOME/.story/story/data/upgrade-info.json
+    sudo rm -r $HOME/.story/story/cosmovisor/upgrades/$version
 
     # Copy the updated binary to the cosmovisor genesis directory
     GENESIS_DIR="$HOME/.story/story/cosmovisor/genesis/bin"
