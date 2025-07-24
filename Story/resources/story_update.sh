@@ -47,12 +47,19 @@ init_cosmovisor() {
 # Ask the user if cosmovisor is installed
 read -p "Do you have cosmovisor installed? (y/n): " cosmovisor_installed
 
-if [ "$cosmovisor_installed" == "y" ]; then
-    echo "Cosmovisor is already installed. Skipping installation and initialization."
-else
-    install_cosmovisor
-    init_cosmovisor
-fi
+case "$cosmovisor_installed" in
+    [yY])
+        echo "Cosmovisor is already installed. Skipping installation and initialization."
+        ;;
+    [nN])
+        install_cosmovisor
+        init_cosmovisor
+        ;;
+    *)
+        echo "Invalid input. Please enter y or n."
+        exit 1
+        ;;
+esac
 
 # Define variables
 input1=$(which cosmovisor)
