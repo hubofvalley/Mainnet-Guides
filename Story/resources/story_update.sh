@@ -22,14 +22,14 @@ init_cosmovisor() {
     echo "Initializing cosmovisor..."
 
     # Download genesis story version
-    mkdir -p story-v1.2.0
-    if ! wget -p $HOME/story-v1.2.0 https://github.com/piplabs/story/releases/download/v1.2.0/story-linux-amd64 -O $HOME/story-v1.1.1/story; then
+    mkdir -p story-v1.3.1
+    if ! wget -p $HOME/story-v1.3.1 https://github.com/piplabs/story/releases/download/v1.3.1/story-linux-amd64 -O $HOME/story-v1.3.1/story; then
         echo "Failed to download the genesis binary. Exiting."
         exit 1
     fi
 
     # Initialize cosmovisor
-    if ! cosmovisor init $HOME/story-v1.2.0/story; then
+    if ! cosmovisor init $HOME/story-v1.3.1/story; then
         echo "Failed to initialize cosmovisor. Exiting."
         exit 1
     fi
@@ -164,7 +164,17 @@ batch_update_version() {
     local upgrade_height3=2065886
     
     # Get current block height and add 50 blocks for v1.3.1 upgrade
-    realtime_block_height=$(curl -s -X POST "https://mainnet.storyrpc.io" -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' | jq -r '.result' | xargs printf "%d\n")
+    # Query current block height from RPC endpoint (required)
+    echo "Querying current block height from Story RPC..."
+    rpc_response=$(curl -s -X POST "https://mainnet.storyrpc.io" -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}')
+    realtime_block_height=$(echo "$rpc_response" | jq -r '.result' | xargs printf "%d")
+    
+    if [ -z "$realtime_block_height" ]; then
+        echo "Error: Failed to query block height (Response: $rpc_response)"
+        echo "Upgrade cannot proceed without current block height"
+        exit 1
+    fi
+    echo "Current block height: $realtime_block_height"
     local upgrade_height4=$((realtime_block_height + 50))
 
     # Create directories and download the binaries
@@ -210,13 +220,15 @@ batch_update_version() {
 }
 
 # Menu for selecting the version
+rpc_response=$(curl -s -X POST "https://mainnet.storyrpc.io" -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}')
+realtime_block_height=$(echo "$rpc_response" | jq -r '.result' | xargs printf "%d")
 echo "Choose the version to update to:"
 #read -p "There are currently no new versions available."
 echo -e "a. ${YELLOW}v1.1.0${RESET} (${GREEN}Virgil${RESET} Upgrade height: 640,000)"
 echo -e "b. ${YELLOW}v1.1.1${RESET} (${GREEN}Additional update for validator CLI interaction${RESET} Upgrade height: 1,398,904)"
 echo -e "c. ${YELLOW}v1.2.0${RESET} (${GREEN}Ovid${RESET} Upgrade height: 4,000,000)"
 echo -e "d. ${YELLOW}v1.2.1${RESET} (${GREEN}Validator operations CLI improvements${RESET} Upgrade height: 5,262,400)"
-echo -e "e. ${YELLOW}v1.3.1${RESET} (${GREEN}Residual rewards fix${RESET} Upgrade height: ~$((realtime_block_height + 50)))"
+echo -e "e. ${YELLOW}v1.3.1${RESET} (${GREEN}Residual rewards fix${RESET} Upgrade height: $(LC_NUMERIC='en_US.UTF-8' printf "%'d" $((realtime_block_height + 50))))"
 read -p "Enter the letter corresponding to the version: " choice
 
 case $choice in
@@ -233,7 +245,7 @@ case $choice in
         update_version "v1.2.1" "https://github.com/piplabs/story/releases/download/v1.2.1" 5262400
         ;;
     e)
-        update_version "v1.3.1" "https://github.com/piplabs/story/releases/download/v1.3.1" 4100000
+        update_version "v1.3.1" "https://github.com/piplabs/story/releases/download/v1.3.1" $((realtime_block_height + 50))
         ;;
     *)
         echo "Invalid choice. Exiting."
