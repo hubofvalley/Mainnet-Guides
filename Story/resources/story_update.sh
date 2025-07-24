@@ -143,7 +143,7 @@ update_version() {
     sudo chmod +x "$GENESIS_DIR/story"
 
     # Add the upgrade to cosmovisor
-    if ! cosmovisor add-upgrade $version $HOME/story-$version/story --upgrade-height $upgrade_height --force; then
+    if ! cosmovisor add-upgrade $version $HOME/story-$version/story --upgrade-height $upgrade_height ; then
         echo "Failed to add upgrade to cosmovisor. Exiting."
         exit 1
     fi
@@ -162,7 +162,10 @@ batch_update_version() {
     local upgrade_height1=640000
     local upgrade_height2=1398904
     local upgrade_height3=2065886
-    local upgrade_height4=4188998
+    
+    # Get current block height and add 50 blocks for v1.3.1 upgrade
+    realtime_block_height=$(curl -s -X POST "https://mainnet.storyrpc.io" -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}' | jq -r '.result' | xargs printf "%d\n")
+    local upgrade_height4=$((realtime_block_height + 50))
 
     # Create directories and download the binaries
     cd $HOME
@@ -213,7 +216,7 @@ echo -e "a. ${YELLOW}v1.1.0${RESET} (${GREEN}Virgil${RESET} Upgrade height: 640,
 echo -e "b. ${YELLOW}v1.1.1${RESET} (${GREEN}Additional update for validator CLI interaction${RESET} Upgrade height: 1,398,904)"
 echo -e "c. ${YELLOW}v1.2.0${RESET} (${GREEN}Ovid${RESET} Upgrade height: 4,000,000)"
 echo -e "d. ${YELLOW}v1.2.1${RESET} (${GREEN}Validator operations CLI improvements${RESET} Upgrade height: 5,262,400)"
-echo -e "e. ${YELLOW}v1.3.1${RESET} (${GREEN}Residual rewards fix${RESET} Upgrade height: 4,188,998)"
+echo -e "e. ${YELLOW}v1.3.1${RESET} (${GREEN}Residual rewards fix${RESET} Upgrade height: ~$((realtime_block_height + 50)))"
 read -p "Enter the letter corresponding to the version: " choice
 
 case $choice in
