@@ -37,7 +37,7 @@
 
 - Service file names: `story.service`, `story-geth.service`
 - Current chain: `story`
-- Current story node version: `v1.1.0 - v1.1.1`
+- Current story node version: `v1.1.0 - v1.1.1 - v1.2.0 - v1.2.1 - v1.3.1`
 - Current story-geth node version: `v1.0.2`
 
 ### Automatic Installation
@@ -117,10 +117,10 @@ sudo chmod +x $HOME/go/bin/geth
 cd $HOME
 
 # consensus client binary
-mkdir -p story-v1.1.1
-wget -O story-v1.1.1/story-linux-amd64 https://github.com/piplabs/story/releases/download/v1.1.1/story-linux-amd64
+mkdir -p story-v1.3.1
+wget -O story-v1.3.1/story-linux-amd64 https://github.com/piplabs/story/releases/download/v1.3.1/story-linux-amd64
 story_file_name=story-linux-amd64
-cp story-v1.1.1/$story_file_name $HOME/go/bin/story
+cp story-v1.3.1/$story_file_name $HOME/go/bin/story
 sudo chown -R $USER:$USER $HOME/go/bin/story
 sudo chmod +x $HOME/go/bin/story
 ```
@@ -388,7 +388,7 @@ sudo systemctl restart story-geth
 
 ```bash
 # Prompt user for input
-read -p "Enter the consensus client version (e.g., v1.1.1): " CONSENSUS_VERSION
+read -p "Enter the consensus client version (e.g., v1.3.1): " CONSENSUS_VERSION
 read -p "Enter the upgrade block height (e.g., 322000): " UPGRADE_HEIGHT
 read -p "Enter the installation directory (e.g., $HOME/story-$CONSENSUS_VERSION): " STORY_INSTALL_DIR
 
