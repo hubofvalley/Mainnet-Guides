@@ -42,7 +42,7 @@ ${YELLOW}| Category  | Requirements     |
 - geth service file name: ${CYAN}story-geth.service${RESET}
 - current chain: ${CYAN}story${RESET}
 - current story node version: ${CYAN}v1.1.0 - v1.1.1 - v1.2.0 - v1.2.1 - v1.3.1${RESET}
-- current story-geth node version: ${CYAN}v1.0.2 - v1.1.1${RESET}
+- current story-geth node version: ${CYAN}v1.1.1${RESET}
 "
 
 PRIVACY_SAFETY_STATEMENT="
@@ -843,5 +843,3 @@ function menu() {
 
 # Start menu
 menu
-
-echo "Let's Buidl Story Together"

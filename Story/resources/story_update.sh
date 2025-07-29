@@ -165,7 +165,7 @@ batch_update_version() {
     local version4="v1.3.1"
     local download_url1="https://github.com/piplabs/story/releases/download/v1.1.0"
     local download_url2="https://github.com/piplabs/story/releases/download/v1.2.0"
-    local download_url3="https://github.com/piplabs/story/releases/download/v1.3.0"
+    local download_url3="https://github.com/piplabs/story/releases/download/v1.2.1"
     local download_url4="https://github.com/piplabs/story/releases/download/v1.3.1"
     local upgrade_height1=640000
     local upgrade_height2=1398904
@@ -183,10 +183,14 @@ batch_update_version() {
         exit 1
     fi
     echo "Current block height: $realtime_block_height"
-    local upgrade_height4=$((realtime_block_height + 50))
+    local upgrade_height4=4188898
 
-    # Create directories and download the binaries
+    # Delete existing version upgrade directories, Create new version upgrade directories and download the binaries
     cd $HOME
+    sudo rm -r $HOME/story-$version1
+    sudo rm -r $HOME/story-$version2
+    sudo rm -r $HOME/story-$version3
+    sudo rm -r $HOME/story-$version4
     mkdir -p $HOME/story-$version1
     mkdir -p $HOME/story-$version2
     mkdir -p $HOME/story-$version3
