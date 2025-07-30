@@ -35,8 +35,8 @@ fi
 
 # Stop and remove existing Namada node
 sudo systemctl daemon-reload
-sudo systemctl stop namadad
-sudo systemctl disable namadad
+sudo systemctl stop namadad  2>/dev/null || true
+sudo systemctl disable namadad  2>/dev/null || true
 sudo rm -rf /etc/systemd/system/namadad.service
 sudo rm /usr/local/bin/namad*
 sudo rm -r namada
