@@ -37,12 +37,12 @@ fi
 sudo systemctl daemon-reload
 sudo systemctl stop namadad  2>/dev/null || true
 sudo systemctl disable namadad  2>/dev/null || true
-sudo rm -rf /etc/systemd/system/namadad.service
-sudo rm /usr/local/bin/namad*
-sudo rm -r namada
-sudo rm -rf $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac
-sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420
-sed -i "/NAMADA_/d" $HOME/.bash_profile
+sudo rm -rf /etc/systemd/system/namadad.service  2>/dev/null || true
+sudo rm /usr/local/bin/namad*  2>/dev/null || true
+sudo rm -r namada  2>/dev/null || true
+sudo rm -rf $HOME/.local/share/namada/namada-dryrun.abaaeaf7b78cb3ac  2>/dev/null || true
+sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420  2>/dev/null || true
+sed -i "/NAMADA_/d" $HOME/.bash_profile  2>/dev/null || true
 
 # 1. Install dependencies for building from source
 sudo apt update -y && sudo apt upgrade -y
