@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 # ==== CONFIG ====
 echo -e "\n--- Story Mainnet Validator Node Setup ---"
 
