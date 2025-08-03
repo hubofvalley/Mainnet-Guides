@@ -380,7 +380,7 @@ main_script() {
             STORY_SNAPSHOT_FILE="story_snapshot.lz4"
 
             # Suggest update based on snapshot block height
-            snapshot_height=$(curl -s $SNAPSHOT_API_URL | grep -oP '"snapshot_height":\s*\K\d+')
+            snapshot_height=$(curl -s $SNAPSHOT_API_URL | jq -r '.snapshot_height')
             suggest_update $snapshot_height
 
             # Ask the user if they want to delete the downloaded snapshot files
