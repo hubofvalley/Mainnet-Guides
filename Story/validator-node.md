@@ -3,7 +3,7 @@
 **Valley of Story** is an all-in-one infrastructure solution developed by Grand Valley, designed to provide powerful tools for efficient node management and validator interactions within the Story Protocol Mainnet network. This toolkit is intended for node runners, validators, and anyone participating in the Story Protocol ecosystem. Valley of Story offers an accessible, streamlined interface to manage nodes, maintain network participation, and perform validator functions effectively, making it easier to operate and maintain a secure and up-to-date node.
 
 ![Valley of Story Image 1](https://github.com/user-attachments/assets/5110da6d-4ec2-492d-86ea-887b34b279b4)
-![image](https://github.com/user-attachments/assets/684ca519-aabf-40c4-a1d3-2403c81e393c)
+![vos menu](resources/vos_menu.png)
 
 ---
 
