@@ -317,7 +317,6 @@ main_script() {
             DB_SNAPSHOT_FILE="db.lz4"
             DATA_SNAPSHOT_FILE="data.lz4"
 
-
             # Suggest update based on snapshot block height
             snapshot_height=$(curl -s $SHIELD_API_URL | jq -r '.latest_block_height')
             suggest_update $snapshot_height
