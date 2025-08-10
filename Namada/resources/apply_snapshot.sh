@@ -23,13 +23,19 @@ ITR_API_URL="https://server-5.itrocket.net/mainnet/namada/.current_state.json"
 CRD_API_URL="https://storage.crouton.digital/mainnet/namada/snapshots/block_status.json"
 CRD_SNAPSHOT_URL="https://storage.crouton.digital/mainnet/namada/snapshots/namada_latest.tar.lz4"
 
+# Snapshot URLs for Shield Crypto
+SHIELD_DB_SNAPSHOT_URL="https://namada-snapshot.shield-crypto.com/db.lz4"
+SHIELD_DATA_SNAPSHOT_URL="https://namada-snapshot.shield-crypto.com/data.lz4"
+SHIELD_API_URL="https://namada-snapshot.shield-crypto.com/snapshot-details.json"
+
 # Function to display the menu
 show_menu() {
     echo -e "${GREEN}Choose a snapshot provider:${NC}"
     echo "1. Mandragora"
     echo "2. ITRocket"
     echo "3. CroutonDigital"
-    echo "4. Exit"
+    echo "4. Shield Crypto"
+    echo "5. Exit"
 }
 
 # Function to check if a URL is available
@@ -56,6 +62,8 @@ display_snapshot_details() {
             return 1
         fi
     elif [[ $api_url == *"crouton"* ]]; then
+        snapshot_height=$(echo "$snapshot_info" | jq -r '.latest_block_height')
+    elif [[ $api_url == *"shield"* ]]; then
         snapshot_height=$(echo "$snapshot_info" | jq -r '.latest_block_height')
     else
         snapshot_height=$(echo "$snapshot_info" | jq -r '.snapshot_height')
@@ -107,16 +115,16 @@ choose_mandragora_snapshot() {
 
 # Function to choose snapshot type for ITRocket
 choose_itrocket_snapshot() {
+    FILE_NAME=$(curl -s $ITR_API_URL | jq -r '.snapshot_name')
+    SNAPSHOT_URL="https://server-5.itrocket.net/mainnet/namada/$FILE_NAME"
     echo -e "${GREEN}Checking availability of ITRocket snapshot:${NC}"
     echo -n "Snapshot: "
-    check_url $ITR_API_URL
+    check_url $SNAPSHOT_URL
 
     display_snapshot_details $ITR_API_URL
 
     prompt_back_or_continue
 
-    FILE_NAME=$(curl -s $ITR_API_URL | jq -r '.snapshot_name')
-    SNAPSHOT_URL="https://server-5.itrocket.net/mainnet/namada/$FILE_NAME"
 }
 
 # Function to choose snapshot type for CroutonDigital
@@ -130,6 +138,22 @@ choose_croutondigital_snapshot() {
     prompt_back_or_continue
 
     SNAPSHOT_FILE="namada_latest.tar.lz4"
+}
+
+# Function to choose snapshot type for Shield Crypto
+choose_shield_snapshot() {
+    echo -e "${GREEN}Checking availability of Shield Crypto snapshots:${NC}"
+    echo -n "DB Snapshot: "
+    check_url $SHIELD_DB_SNAPSHOT_URL
+    echo -n "Data Snapshot: "
+    check_url $SHIELD_DATA_SNAPSHOT_URL
+
+    display_snapshot_details $SHIELD_API_URL
+
+    prompt_back_or_continue
+
+    DB_SNAPSHOT_URL=$SHIELD_DB_SNAPSHOT_URL
+    DATA_SNAPSHOT_URL=$SHIELD_DATA_SNAPSHOT_URL
 }
 
 # Function to decompress Mandragora snapshots
@@ -146,6 +170,12 @@ decompress_itrocket_snapshot() {
 # Function to decompress CroutonDigital snapshot
 decompress_croutondigital_snapshot() {
     lz4 -c -d $SNAPSHOT_FILE | tar -xv -C $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420
+}
+
+# Function to decompress Shield Crypto snapshots
+decompress_shield_snapshots() {
+    lz4 -c -d $DB_SNAPSHOT_FILE | tar -xv -C $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420
+    lz4 -c -d $DATA_SNAPSHOT_FILE | tar -xv -C $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/cometbft
 }
 
 # Function to prompt user to back or continue
@@ -171,11 +201,9 @@ prompt_delete_snapshots() {
 # Function to delete snapshot files
 delete_snapshot_files() {
     if [[ $delete_snapshots == true ]]; then
-        if [[ $provider_choice -eq 1 ]]; then
+        if [[ $provider_choice -eq 1 || $provider_choice -eq 4 ]]; then
             sudo rm -v $DB_SNAPSHOT_FILE $DATA_SNAPSHOT_FILE
-        elif [[ $provider_choice -eq 2 ]]; then
-            sudo rm -v $SNAPSHOT_FILE
-        elif [[ $provider_choice -eq 3 ]]; then
+        elif [[ $provider_choice -eq 2 || $provider_choice -eq 3 ]]; then
             sudo rm -v $SNAPSHOT_FILE
         fi
         echo -e "${GREEN}Downloaded snapshot files have been deleted.${NC}"
@@ -282,6 +310,23 @@ main_script() {
             read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
             ;;
         4)
+            provider_name="Shield Crypto"
+            echo -e "Grand Valley extends its gratitude to ${YELLOW}$provider_name${NC} for providing snapshot support."
+
+            choose_shield_snapshot
+            DB_SNAPSHOT_FILE="db.lz4"
+            DATA_SNAPSHOT_FILE="data.lz4"
+
+            prompt_back_or_continue
+
+            # Suggest update based on snapshot block height
+            snapshot_height=$(curl -s $SHIELD_API_URL | jq -r '.latest_block_height')
+            suggest_update $snapshot_height
+
+            # Ask the user if they want to delete the downloaded snapshot files
+            read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
+            ;;
+        5)
             echo -e "${GREEN}Exiting.${NC}"
             exit 0
             ;;
@@ -311,13 +356,10 @@ main_script() {
     cp $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/cometbft/data/priv_validator_state.json $HOME/.local/share/namada/priv_validator_state.json.backup
 
     # Delete previous namada data folders
-    if [[ $provider_choice -eq 1 ]]; then
+    if [[ $provider_choice -eq 1 || $provider_choice -eq 4 ]]; then
         sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/db
         sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/cometbft/data
-    elif [[ $provider_choice -eq 2 ]]; then
-        sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/cometbft/data
-        sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/{db,wasm}
-    elif [[ $provider_choice -eq 3 ]]; then
+    elif [[ $provider_choice -eq 2 || $provider_choice -eq 3 ]]; then
         sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/cometbft/data
         sudo rm -rf $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/{db,wasm}
     fi
@@ -333,6 +375,10 @@ main_script() {
     elif [[ $provider_choice -eq 3 ]]; then
         wget -O $SNAPSHOT_FILE $CRD_SNAPSHOT_URL
         decompress_croutondigital_snapshot
+    elif [[ $provider_choice -eq 4 ]]; then
+        wget -O $DB_SNAPSHOT_FILE $DB_SNAPSHOT_URL
+        wget -O $DATA_SNAPSHOT_FILE $DATA_SNAPSHOT_URL
+        decompress_shield_snapshots
     fi
 
     # Change ownership of the .local/share/namada directory
@@ -340,7 +386,7 @@ main_script() {
 
     # Delete downloaded snapshot files if the user chose to do so
     if [[ $delete_choice == "y" || $delete_choice == "Y" ]]; then
-        if [[ $provider_choice -eq 1 ]]; then
+        if [[ $provider_choice -eq 1 || $provider_choice -eq 4 ]]; then
             sudo rm -v $DB_SNAPSHOT_FILE $DATA_SNAPSHOT_FILE
         elif [[ $provider_choice -eq 2 || $provider_choice -eq 3 ]]; then
             sudo rm -v $SNAPSHOT_FILE
