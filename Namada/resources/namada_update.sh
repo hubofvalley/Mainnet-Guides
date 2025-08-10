@@ -17,8 +17,8 @@ echo "Detected OS: $NAME $VERSION_ID"
 
 declare -A versions=(
     ["v1.0.0"]="0-893999 https://github.com/anoma/namada/releases/download/v1.0.0"
-    ["v1.1.1"]="894000-next https://github.com/anoma/namada/releases/download/v1.1.1"
-    ["v1.1.5"]="1604223-next https://github.com/anoma/namada/releases/download/v1.1.5"
+    ["v1.1.1"]="894000-1604223 https://github.com/anoma/namada/releases/download/v1.1.1"
+    ["v1.1.5"]="1604223-2176000 https://github.com/anoma/namada/releases/download/v1.1.5"
     ["v101.1.1"]="2176000-next https://github.com/anoma/namada/releases/download/v101.1.1"
 )
 
