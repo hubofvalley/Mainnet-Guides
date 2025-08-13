@@ -261,7 +261,7 @@ case $choice in
         update_version "v1.3.1" "https://github.com/piplabs/story/releases/download/v1.3.1" $((realtime_block_height + 100))
         ;;
     f)
-        update_version "v1.3.2" "https://github.com/piplabs/story/releases/download/v1.3.1" $((realtime_block_height + 100))
+        update_version "v1.3.2" "https://github.com/piplabs/story/releases/download/v1.3.2" $((realtime_block_height + 100))
         ;;
     *)
         echo "Invalid choice. Exiting."
