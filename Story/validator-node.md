@@ -295,6 +295,73 @@ cosmovisor run version
 
 ---
 
+## Applying Grand Valley Snapshots
+
+Grand Valley provides fast, reliable snapshots to quickly sync your validator node. Our snapshots include SHA256 verification for security.
+
+### Method 1: Using Valley of Story (Recommended)
+1. Run the snapshot script:
+   ```bash
+   bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Story/resources/apply_snapshot.sh)
+   ```
+
+2. Select Grand Valley's snapshot service (option 1)
+   ![choose provider](resources/snapshot_providers.png.)
+
+3. The script will handle:
+   - Download and verification
+   - SHA256 hash display
+   - Proper decompression
+
+### Method 2: Manual Application
+1. Install dependencies
+   ```bash
+   sudo apt install curl tmux jq lz4 unzip -y
+   ```
+
+2. Ensure your node is stopped:
+  ```bash
+  sudo systemctl stop story-geth story
+  sudo systemctl disable story-geth story
+  ```
+
+3. Get latest snapshot info:
+   ```bash
+   SNAPSHOT_INFO=$(curl -s https://pruned-snapshot-mainnet-story.grandvalleys.com/pruned_snapshot_state.json)
+   STORY_URL="https://pruned-snapshot-mainnet-story.grandvalleys.com/$(echo "$SNAPSHOT_INFO" | jq -r '.story_snapshot_file_name')"
+   GETH_URL="https://pruned-snapshot-mainnet-story.grandvalleys.com/$(echo "$SNAPSHOT_INFO" | jq -r '.story_geth_snapshot_file_name')"
+   ```
+
+4. Backup validator state:
+   ```bash
+   cp story/data/priv_validator_state.json $HOME/.story/priv_validator_state.json.backup $HOME/.story/
+   ```
+
+5. Delete Story and Story-Geth data
+   ```bash
+   sudo rm -r $HOME/.story/story/data $HOME/.story/geth/story/geth/chaindata
+   ```
+
+6. Download and decompress:
+   ```bash
+   # Story chain data
+   curl -o - -L "$STORY_URL" | lz4 -c -d | tar -x -C "$HOME/.story/story"
+   
+   # Story-Geth chain data
+   curl -o - -L "$GETH_URL" | lz4 -c -d | tar -x -C "$HOME/.story/geth/story/geth"
+   ```
+
+7. Restore validator state:
+   ```bash
+   cp $HOME/.story/priv_validator_state.json.backup $HOME/.story/story/data/priv_validator_state.json
+   ```
+
+8. Restart services:
+   ```bash
+   sudo systemctl stop story-geth story
+   sudo systemctl enable story-geth story
+   ```
+
 ## Validator and Key Commands
 
 ### 1. Export EVM Public Key and Private Key
