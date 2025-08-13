@@ -308,7 +308,8 @@ Grand Valley provides fast, reliable snapshots to quickly sync your validator no
 2. Input `1c` at the main menu prompt to enter "Apply Snapshot" feature
 
 3. Select Grand Valley's snapshot service (option 1)
-   ![choose provider](resources/snapshot_providers.png.)
+
+![choose provider](resources/snapshot_providers.png)
 
 4. The script will handle:
    - Download and verification
