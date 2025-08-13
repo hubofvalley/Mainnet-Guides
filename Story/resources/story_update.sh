@@ -241,7 +241,7 @@ echo -e "b. ${YELLOW}v1.1.1${RESET} (${GREEN}Additional update for validator CLI
 echo -e "c. ${YELLOW}v1.2.0${RESET} (${GREEN}Ovid${RESET} Upgrade height: 4,000,000)"
 echo -e "d. ${YELLOW}v1.2.1${RESET} (${GREEN}Validator operations CLI improvements${RESET} Upgrade height: 5,262,400)"
 echo -e "e. ${YELLOW}v1.3.1${RESET} (${GREEN}Residual rewards fix${RESET} Upgrade height: $(LC_NUMERIC='en_US.UTF-8' printf "%'d" $((realtime_block_height + 100))))"
-echo -e "e. ${YELLOW}v1.3.2${RESET} (${GREEN}Polybius${RESET} Upgrade height: $(LC_NUMERIC='en_US.UTF-8' printf "%'d" $((realtime_block_height + 100))))"
+echo -e "f. ${YELLOW}v1.3.2${RESET} (${GREEN}Polybius${RESET} Upgrade height: $(LC_NUMERIC='en_US.UTF-8' printf "%'d" $((realtime_block_height + 100))))"
 read -p "Enter the letter corresponding to the version: " choice
 
 case $choice in
