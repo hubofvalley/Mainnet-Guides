@@ -300,15 +300,17 @@ cosmovisor run version
 Grand Valley provides fast, reliable snapshots to quickly sync your validator node. Our snapshots include SHA256 verification for security.
 
 ### Method 1: Using Valley of Story (Recommended)
-1. Run the snapshot script:
+1. Run Valley of Story (VoS):
    ```bash
-   bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Story/resources/apply_snapshot.sh)
+   bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Story/resources/valleyofStory.sh)
    ```
 
-2. Select Grand Valley's snapshot service (option 1)
+2. Input `1c` at the main menu prompt to enter "Apply Snapshot" feature
+
+3. Select Grand Valley's snapshot service (option 1)
    ![choose provider](resources/snapshot_providers.png.)
 
-3. The script will handle:
+4. The script will handle:
    - Download and verification
    - SHA256 hash display
    - Proper decompression
