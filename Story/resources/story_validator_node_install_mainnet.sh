@@ -68,8 +68,8 @@ if [ "$VERSION_ID" = "22.04" ]; then
     echo "Installing Geth using method 2 (Ubuntu 22.04 detected)"
     mkdir -p story-geth
     cd story-geth
-    wget -O v1.1.1.tar.gz https://github.com/piplabs/story-geth/archive/refs/tags/v1.1.1.tar.gz
-    tar -xzf v1.1.1.tar.gz
+    wget -O v1.1.2.tar.gz https://github.com/piplabs/story-geth/archive/refs/tags/v1.1.2.tar.gz
+    tar -xzf v1.1.2.tar.gz
     cd story-geth-1.0.2
     make geth
     cp $HOME/story-geth/story-geth-1.0.2/build/bin/geth $HOME/go/bin/
@@ -79,9 +79,9 @@ if [ "$VERSION_ID" = "22.04" ]; then
 elif dpkg --compare-versions "$VERSION_ID" "gt" "22.04"; then
     # Install Geth using method 1 (pre-built binary)
     echo "Installing Geth using method 1 (Ubuntu version higher than 22.04 detected)"
-    mkdir -p story-geth-v1.1.1
-    wget -O story-geth-v1.1.1/geth-linux-amd64 https://github.com/piplabs/story-geth/releases/download/v1.1.1/geth-linux-amd64
-    cp story-geth-v1.1.1/geth-linux-amd64 $HOME/go/bin/geth
+    mkdir -p story-geth-v1.1.2
+    wget -O story-geth-v1.1.2/geth-linux-amd64 https://github.com/piplabs/story-geth/releases/download/v1.1.2/geth-linux-amd64
+    cp story-geth-v1.1.2/geth-linux-amd64 $HOME/go/bin/geth
     sudo chown -R $USER:$USER $HOME/go/bin/geth
     sudo chmod +x $HOME/go/bin/geth
 else

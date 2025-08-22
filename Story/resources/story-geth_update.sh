@@ -63,7 +63,7 @@ update_version() {
 # Menu for selecting the version
 echo "Choose the version to update to:"
 echo "a. v1.0.2"
-echo "b. v1.1.1 (Cosmas)"
+echo "b. v1.1.2 (Cosmas)"
 # Uncomment and add more versions as needed
 # echo "b. v0.11.0"
 
@@ -74,7 +74,7 @@ case $choice in
         update_version "v1.0.2" "https://github.com/piplabs/story-geth/releases/download/v1.0.2"
         ;;
     b)
-        update_version "v1.1.1" "https://github.com/piplabs/story-geth/releases/download/v1.1.1"
+        update_version "v1.1.2" "https://github.com/piplabs/story-geth/releases/download/v1.1.2"
         ;;
     # Uncomment and add more versions as needed
     # b)
