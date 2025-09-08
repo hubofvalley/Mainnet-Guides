@@ -660,7 +660,7 @@ main_script() {
     # Download and decompress snapshots
     cd $download_location
     if [[ $provider_choice -eq 1 ]]; then
-         Grand Valley: stream directly to destination
+        # Grand Valley: stream directly to destination
         echo -e "${GREEN}Downloading and decompressing Story snapshot...${NC}"
         curl -o - -L "$STORY_SNAPSHOT_URL" | lz4 -c -d | tar -x -C "$HOME/.story/story"
         echo -e "${GREEN}Downloading and decompressing Story-geth snapshot...${NC}"
