@@ -70,9 +70,9 @@ if [ "$VERSION_ID" = "22.04" ]; then
     cd story-geth
     wget -O v1.1.2.tar.gz https://github.com/piplabs/story-geth/archive/refs/tags/v1.1.2.tar.gz
     tar -xzf v1.1.2.tar.gz
-    cd story-geth-1.0.2
+    cd story-geth-1.1.2
     make geth
-    cp $HOME/story-geth/story-geth-1.0.2/build/bin/geth $HOME/go/bin/
+    cp $HOME/story-geth/story-geth-1.1.2/build/bin/geth $HOME/go/bin/
     sudo chown -R $USER:$USER $HOME/go/bin/geth
     sudo chmod +x $HOME/go/bin/geth
     cd $HOME
