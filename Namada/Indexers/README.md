@@ -89,7 +89,7 @@ Every day at **2AM UTC** a new snapshot is generated. Since the file names remai
 2. **Download the snapshot:**
 
    ```bash
-   wget -O masp_indexer_snapshot.sql https://masp-indexer-snapshot-mainnet-namada.grandvalleys.com/public/masp_indexer_snapshot.sql
+   wget -O masp_indexer_snapshot.sql https://masp-indexer-snapshot-mainnet-namada.grandvalleys.com/masp_indexer_snapshot.sql
    ```
 
 3. **Stop the containers:**

@@ -1758,7 +1758,7 @@ function restart_namada_masp_indexer() {
     echo "Restart Namada MASP Indexer:"
     docker stop $(docker container ls --all | grep 'namada-masp-' | awk '{print $1}')
     sleep 3
-    docker start $(docker container ls --all | grep 'namada-masp-' | awk '{print $1}')
+    cd $HOME/namada-masp-indexer && docker compose up -d
     menu
 }
 
