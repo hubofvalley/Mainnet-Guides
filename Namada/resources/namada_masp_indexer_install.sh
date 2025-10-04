@@ -131,7 +131,7 @@ deploy() {
     git clone https://github.com/anoma/namada-masp-indexer.git "${INDEXER_DIR}"
     cd "${INDEXER_DIR}"
     git fetch --all
-    LATEST_TAG="v1.3.0"
+    LATEST_TAG="v1.4.4"
     git checkout $LATEST_TAG
     git reset --hard $LATEST_TAG
 
