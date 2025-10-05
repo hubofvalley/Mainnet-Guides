@@ -3,7 +3,7 @@ set -euo pipefail
 
 # Configuration
 INDEXER_DIR="$HOME/namada-indexer"
-SNAPSHOT_URL="https://indexer-snapshot-mainnet-namada.grandvalleys.com/public/indexer_snapshot.sql"
+SNAPSHOT_URL="https://indexer-snapshot-mainnet-namada.grandvalleys.com/indexer_snapshot.sql"
 
 # User confirmation
 echo "Indexer Snapshot Update Script"
