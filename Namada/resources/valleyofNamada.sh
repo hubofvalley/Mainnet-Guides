@@ -1702,7 +1702,7 @@ function restart_namada_indexer() {
     echo "Restarting Namada Indexer:"
     docker stop $(docker container ls --all | grep 'namada-indexer' | awk '{print $1}')
     sleep 3
-    docker start $(docker container ls --all | grep 'namada-indexer' | awk '{print $1}')
+    cd $HOME/namada-indexer && docker compose up -d
     menu
 }
 
