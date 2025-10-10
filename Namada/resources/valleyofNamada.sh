@@ -457,7 +457,7 @@ function show_wallet() {
     namadaw list --keys --transparent
     echo
     echo "Implicit addresses:"
-    namadaw list --addr | grep "Implicit"
+    namadaw list | grep -E 'Implicit|Established' | grep -v 'tnam1q9gr66cvu4hrzm0sd5kmlnjje82gs3xlfg3v6nu7'
     echo
     namadaw list --keys --shielded
     echo
@@ -477,7 +477,7 @@ function delete_wallets() {
     namadaw list --keys --transparent
     echo
     echo "Implicit Addresses:"
-    namadaw list --addr | grep "Implicit"
+    namadaw list | grep -E 'Implicit|Established' | grep -v 'tnam1q9gr66cvu4hrzm0sd5kmlnjje82gs3xlfg3v6nu7'
     echo
     echo "Shielded Keys:"
     namadaw list --keys --shielded
@@ -543,7 +543,7 @@ function query_balance() {
             echo "Available Wallets:"
             echo
             echo "Implicit addresses:"
-            namadaw list --addr | grep "Implicit"
+            namadaw list | grep -E 'Implicit|Established' | grep -v 'tnam1q9gr66cvu4hrzm0sd5kmlnjje82gs3xlfg3v6nu7'
             echo
             namadaw list --keys
             echo
@@ -637,7 +637,7 @@ function transfer_transparent() {
         if [ "$CHOICE" == "1" ]; then
             echo
             echo "Available Wallets:"
-            namadaw list | grep -E 'Implicit:|Established:'
+            namadaw list | grep -E 'Implicit|Established' | grep -v 'tnam1q9gr66cvu4hrzm0sd5kmlnjje82gs3xlfg3v6nu7'
             echo
 
             # Prompt for source wallet alias (default to DEFAULT_WALLET)
@@ -754,7 +754,7 @@ function stake_tokens() {
     # Prompt for wallet name/alias after selecting the delegate option
     echo "Available implicit wallets:"
     echo
-    namadaw list | grep Implicit
+    namadaw list | grep -E 'Implicit|Established' | grep -v 'tnam1q9gr66cvu4hrzm0sd5kmlnjje82gs3xlfg3v6nu7'
     echo
 
     while true; do
@@ -764,7 +764,7 @@ function stake_tokens() {
         fi
 
         # Get wallet address
-        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*|(?<=Established: ).*')
 
         if [ -n "$WALLET_ADDRESS" ]; then
             break
@@ -895,7 +895,7 @@ function unstake_tokens() {
     # Prompt for wallet name/alias after selecting undelegation choice
     echo "Available implicit wallets:"
     echo
-    namadaw list | grep Implicit
+    namadaw list | grep -E 'Implicit|Established' | grep -v 'tnam1q9gr66cvu4hrzm0sd5kmlnjje82gs3xlfg3v6nu7'
     echo
 
     while true; do
@@ -905,7 +905,7 @@ function unstake_tokens() {
         fi
 
         # Get wallet address
-        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+        WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*|(?<=Established: ).*')
 
         if [ -n "$WALLET_ADDRESS" ]; then
             break
@@ -973,7 +973,7 @@ function redelegate_tokens() {
             # Show available wallets
             echo "Fetching available wallet aliases..."
             echo
-            namadaw list | grep Implicit
+            namadaw list | grep -E 'Implicit|Established' | grep -v 'tnam1q9gr66cvu4hrzm0sd5kmlnjje82gs3xlfg3v6nu7'
             echo
 
             while true; do
@@ -983,7 +983,7 @@ function redelegate_tokens() {
                 fi
 
                 # Get wallet address
-                WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+                WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*|(?<=Established: ).*')
 
                 if [ -n "$WALLET_ADDRESS" ]; then
                     break
@@ -1097,7 +1097,7 @@ function withdraw_unbonded_tokens() {
             # Show available wallets
             echo "Fetching available wallet aliases..."
             echo
-            namadaw list | grep Implicit
+            namadaw list | grep -E 'Implicit|Established' | grep -v 'tnam1q9gr66cvu4hrzm0sd5kmlnjje82gs3xlfg3v6nu7'
             echo
 
             while true; do
@@ -1107,7 +1107,7 @@ function withdraw_unbonded_tokens() {
                 fi
 
                 # Get wallet address
-                WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+                WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*|(?<=Established: ).*')
 
                 if [ -n "$WALLET_ADDRESS" ]; then
                     break
@@ -1191,15 +1191,15 @@ function claim_rewards() {
             # Wallet selection flow
             echo "Fetching available wallet aliases..."
             echo
-            namadaw list | grep Implicit
+            namadaw list | grep -E 'Implicit|Established' | grep -v 'tnam1q9gr66cvu4hrzm0sd5kmlnjje82gs3xlfg3v6nu7'
             echo
 
             while true; do
                 read -p "Enter wallet name/alias (leave empty to use current default wallet --> $DEFAULT_WALLET): " WALLET_NAME
-                [ -z "$WALLET_NAME" ] && WALLET_NAME=$DEFAULT_WALLE
+                [ -z "$WALLET_NAME" ] && WALLET_NAME=$DEFAULT_WALLET
                 
                 # Verify wallet exists
-                WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+                WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*|(?<=Established: ).*')
                 [ -n "$WALLET_ADDRESS" ] && break
                 echo "Wallet name not found. Please try again."
             done
@@ -1267,7 +1267,7 @@ function transfer_shielding() {
         if [ "$CHOICE" == "1" ]; then
             echo "Available Wallets:"
             echo
-            namadaw list | grep Implicit | grep -vE 'consensus-key|tendermint-node-key'
+            namadaw list | grep -E 'Implicit|Established' | grep -vE 'consensus-key|tendermint-node-key' | grep -v 'tnam1q9gr66cvu4hrzm0sd5kmlnjje82gs3xlfg3v6nu7' 
             echo
 
             # Prompt for source wallet alias (always default wallet for shielding)
@@ -1604,7 +1604,7 @@ function vote_proposal() {
                 fi
 
                 # Get wallet address
-                WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*')
+                WALLET_ADDRESS=$(namadaw find --alias $WALLET_NAME | grep -oP '(?<=Implicit: ).*|(?<=Established: ).*')
 
                 if [ -z "$WALLET_ADDRESS" ]; then
                     echo "Wallet alias not found. Please check the input and try again."
