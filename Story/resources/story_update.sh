@@ -175,7 +175,7 @@ batch_update_version() {
     
     # Get current block height (used to schedule the latest patch upgrades)
     echo "Querying current block height from Story RPC..."
-    rpc_response=$(curl -s -X POST "https://mainnet.storyrpc.io" -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}')
+    rpc_response=$(curl -s -X POST "https://aeneid.storyrpc.io" -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}')
     realtime_block_height=$(echo "$rpc_response" | jq -r '.result' | xargs printf "%d")
     
     if [ -z "$realtime_block_height" ]; then
@@ -242,7 +242,7 @@ batch_update_version() {
 }
 
 # Menu for selecting the version
-rpc_response=$(curl -s -X POST "https://mainnet.storyrpc.io" -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}')
+rpc_response=$(curl -s -X POST "https://aeneid.storyrpc.io" -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}')
 realtime_block_height=$(echo "$rpc_response" | jq -r '.result' | xargs printf "%d")
 echo "Choose the version to update to:"
 #read -p "There are currently no new versions available."
