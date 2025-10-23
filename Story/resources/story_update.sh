@@ -22,8 +22,8 @@ init_cosmovisor() {
     echo "Initializing cosmovisor..."
 
     # Download genesis story version
-    mkdir -p story-v1.3.1
-    if ! wget -p $HOME/story-v1.3.1 https://github.com/piplabs/story/releases/download/v1.3.1/story-linux-amd64 -O $HOME/story-v1.3.1/story; then
+    mkdir -p story-v1.3.3
+    if ! wget -p $HOME/story-v1.3.3 https://github.com/piplabs/story/releases/download/v1.3.3/story-linux-amd64 -O $HOME/story-v1.3.3/story; then
         echo "Failed to download the genesis binary. Exiting."
         exit 1
     fi
@@ -163,16 +163,17 @@ batch_update_version() {
     local version2="v1.2.0"
     local version3="v1.3.0"
     local version4="v1.3.1"
+    local version5="v1.3.3"
     local download_url1="https://github.com/piplabs/story/releases/download/v1.1.0"
     local download_url2="https://github.com/piplabs/story/releases/download/v1.2.0"
     local download_url3="https://github.com/piplabs/story/releases/download/v1.2.1"
     local download_url4="https://github.com/piplabs/story/releases/download/v1.3.1"
+    local download_url5="https://github.com/piplabs/story/releases/download/v1.3.3"
     local upgrade_height1=640000
     local upgrade_height2=1398904
     local upgrade_height3=2065886
     
-    # Get current block height and add 50 blocks for v1.3.1 upgrade
-    # Query current block height from RPC endpoint (required)
+    # Get current block height (used to schedule the latest patch upgrades)
     echo "Querying current block height from Story RPC..."
     rpc_response=$(curl -s -X POST "https://mainnet.storyrpc.io" -H "Content-Type: application/json" -d '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":1}')
     realtime_block_height=$(echo "$rpc_response" | jq -r '.result' | xargs printf "%d")
@@ -184,6 +185,7 @@ batch_update_version() {
     fi
     echo "Current block height: $realtime_block_height"
     local upgrade_height4=4188898
+    local upgrade_height5=$((realtime_block_height + 100))
 
     # Delete existing version upgrade directories, Create new version upgrade directories and download the binaries
     cd $HOME
@@ -191,10 +193,12 @@ batch_update_version() {
     sudo rm -r $HOME/story-$version2
     sudo rm -r $HOME/story-$version3
     sudo rm -r $HOME/story-$version4
+    sudo rm -r $HOME/story-$version5
     mkdir -p $HOME/story-$version1
     mkdir -p $HOME/story-$version2
     mkdir -p $HOME/story-$version3
     mkdir -p $HOME/story-$version4
+    mkdir -p $HOME/story-$version5
     if ! wget -P $HOME/story-$version1 $download_url1/$story_file_name -O $HOME/story-$version1/story; then
         echo "Failed to download the binary for $version1. Exiting."
         exit 1
@@ -211,6 +215,10 @@ batch_update_version() {
         echo "Failed to download the binary for $version4. Exiting."
         exit 1
     fi
+    if ! wget -P $HOME/story-$version5 $download_url5/$story_file_name -O $HOME/story-$version5/story; then
+        echo "Failed to download the binary for $version5. Exiting."
+        exit 1
+    fi
 
     # Set ownership and permissions
     sudo chown -R $USER:$USER $HOME/.story && \
@@ -218,14 +226,16 @@ batch_update_version() {
     sudo chown -R $USER:$USER $HOME/story-$version2/story && \
     sudo chown -R $USER:$USER $HOME/story-$version3/story && \
     sudo chown -R $USER:$USER $HOME/story-$version4/story && \
+    sudo chown -R $USER:$USER $HOME/story-$version5/story && \
     sudo chmod +x $HOME/story-$version1/story && \
     sudo chmod +x $HOME/story-$version2/story && \
     sudo chmod +x $HOME/story-$version3/story && \
     sudo chmod +x $HOME/story-$version4/story && \
+    sudo chmod +x $HOME/story-$version5/story && \
     sudo rm -f $HOME/.story/story/data/upgrade-info.json
 
     # Add the batch upgrade to cosmovisor
-    if ! cosmovisor add-batch-upgrade --upgrade-list $version1:$HOME/story-$version1/story:$upgrade_height1,$version2:$HOME/story-$version2/story:$upgrade_height2,$version3:$HOME/story-$version3/story:$upgrade_height3,$version4:$HOME/story-$version4/story:$upgrade_height4; then
+    if ! cosmovisor add-batch-upgrade --upgrade-list $version1:$HOME/story-$version1/story:$upgrade_height1,$version2:$HOME/story-$version2/story:$upgrade_height2,$version3:$HOME/story-$version3/story:$upgrade_height3,$version4:$HOME/story-$version4/story:$upgrade_height4,$version5:$HOME/story-$version5/story:$upgrade_height5; then
         echo "Failed to add batch upgrade to cosmovisor. Exiting."
         exit 1
     fi
@@ -242,6 +252,7 @@ echo -e "c. ${YELLOW}v1.2.0${RESET} (${GREEN}Ovid${RESET} Upgrade height: 4,000,
 echo -e "d. ${YELLOW}v1.2.1${RESET} (${GREEN}Validator operations CLI improvements${RESET} Upgrade height: 5,262,400)"
 echo -e "e. ${YELLOW}v1.3.1${RESET} (${GREEN}Residual rewards fix${RESET} Upgrade height: $(LC_NUMERIC='en_US.UTF-8' printf "%'d" $((realtime_block_height + 100))))"
 echo -e "f. ${YELLOW}v1.3.2${RESET} (${GREEN}Polybius${RESET} Upgrade height: $(LC_NUMERIC='en_US.UTF-8' printf "%'d" $((realtime_block_height + 100))))"
+echo -e "g. ${YELLOW}v1.3.3${RESET} (${GREEN}Latest patch${RESET} Upgrade height: $(LC_NUMERIC='en_US.UTF-8' printf "%'d" $((realtime_block_height + 100))))"
 read -p "Enter the letter corresponding to the version: " choice
 
 case $choice in
@@ -262,6 +273,9 @@ case $choice in
         ;;
     f)
         update_version "v1.3.2" "https://github.com/piplabs/story/releases/download/v1.3.2" $((realtime_block_height + 100))
+        ;;
+    g)
+        update_version "v1.3.3" "https://github.com/piplabs/story/releases/download/v1.3.3" $((realtime_block_height + 100))
         ;;
     *)
         echo "Invalid choice. Exiting."

@@ -41,7 +41,7 @@ ${YELLOW}| Category  | Requirements     |
 - consensus client service file name: ${CYAN}story.service${RESET}
 - geth service file name: ${CYAN}story-geth.service${RESET}
 - current chain: ${CYAN}story${RESET}
-- current story node version: ${CYAN}v1.1.0 - v1.1.1 - v1.2.0 - v1.2.1 - v1.3.1 -v1.3.2${RESET}
+- current story node version: ${CYAN}v1.1.0 - v1.1.1 - v1.2.0 - v1.2.1 - v1.3.1 - v1.3.2 - v1.3.3${RESET}
 - current story-geth node version: ${CYAN}v1.1.2${RESET}
 "
 
@@ -726,7 +726,7 @@ function show_guidelines() {
     echo "      - Guide: This option will backup your validator key to your home directory. Ensure you keep this key secure."
     echo "   h. Delete Validator Node: Deletes the validator node. Ensure you backup your seeds phrase/EVM-private key and priv_validator_key.json before doing this."
     echo "      - Guide: Use this option to delete your validator node. Make sure to backup all important data before proceeding."
-    echo -e "${GREEN}Install Story App only: Installs the Story app (v1.3.1) for executing transactions without running the node.${RESET}"
+    echo -e "${GREEN}Install Story App only: Installs the Story app (v1.3.2) for executing transactions without running the node.${RESET}"
     echo "      - Guide: Use this option to install the Story app if you only need to execute transactions without running a full node."
     echo -e "${GREEN}Show Grand Valley's Endpoints:${RESET}"
     echo "   Displays Grand Valley's public endpoints."
