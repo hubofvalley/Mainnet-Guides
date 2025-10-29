@@ -847,6 +847,11 @@ function show_ai_alignment_logs() {
     menu
 }
 
+function stop_ai_alignment_node() {
+    sudo systemctl stop 0g-alignment-node
+    menu
+}
+
 function delete_ai_alignment_node() {
     sudo systemctl stop 0g-alignment-node
     sudo systemctl disable 0g-alignment-node
