@@ -30,12 +30,6 @@ choose_json_rpc_endpoint() {
         echo "Available public JSON-RPC endpoints:"
         echo "1. https://lightnode-json-rpc-0g.grandvalleys.com [$(query_block_number https://lightnode-json-rpc-0g.grandvalleys.com)]"
         echo "2. https://evmrpc.0g.ai [$(query_block_number https://evmrpc.0g.ai)]"
-        echo "3. https://rpc.ankr.com/0g_newton [$(query_block_number https://rpc.ankr.com/0g_newton)]"
-        echo "4. https://0g-json-rpc-public.originstake.com [$(query_block_number https://0g-json-rpc-public.originstake.com)]"
-        echo "5. https://og-jsonrpc.itrocket.net:443 [$(query_block_number https://og-jsonrpc.itrocket.net:443)]"
-        echo "6. https://0g-evmrpc-zstake.xyz [$(query_block_number https://0g-evmrpc-zstake.xyz)]"
-        echo "7. https://zerog-json-rpc.contributiondao.com [$(query_block_number https://zerog-json-rpc.contributiondao.com)]"
-        echo "8. https://16600.rpc.thirdweb.com [$(query_block_number https://16600.rpc.thirdweb.com)]"
         read -p "Enter the number of your chosen public JSON-RPC endpoint: " PUBLIC_RPC_CHOICE
 
         if [ -n "$PUBLIC_RPC_CHOICE" ]; then

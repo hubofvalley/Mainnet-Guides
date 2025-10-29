@@ -50,7 +50,7 @@ function setup_environment {
             echo "export ETH_RPC_URL=\"$ETH_RPC_URL\""
             echo "export BLOCK_NUM=\"$BLOCK_NUM\""
         fi
-        echo 'export PATH=$PATH:$HOME/aristotle-v2.0.4/bin'
+        echo 'export PATH=$PATH:$HOME/aristotle/bin'
     } >> ~/.bash_profile
     source ~/.bash_profile
 }
@@ -122,54 +122,16 @@ EOF
     fi
 }
 
-BASE_URL="https://github.com/0gfoundation/0gchain-NG/releases/download"
+BASE_URL="https://github.com/0gfoundation/0gchain-Aristotle/releases/download"
 
 # Display menu
 echo "Select version to update:"
-echo "a) v1.2.1"
-echo "b) v2.0.4"
+echo "a) v1.0.2"
 
 read -p "Enter the letter corresponding to the version: " choice
 
 case $choice in
     a)
-        VERSION="v1.2.1"
-        ZIP_URL="https://0gchain-archive.grandvalleys.com/aristotle-v1.2.1.zip"
-        BACKUP_DIR="$HOME/backups"
- 
-        echo "Updating to version $VERSION (special ZIP process)..."
- 
-        # Stop services
-        sudo systemctl stop 0g-geth.service || { echo "Failed to stop 0g-geth"; exit 1; }
-        sudo systemctl stop 0gchaind.service || { echo "Failed to stop 0gchaind"; exit 1; }
- 
-        # Backup old binaries
-        TIMESTAMP=$(date +%Y%m%d%H%M%S)
-        mkdir -p $BACKUP_DIR
-        [ -f $HOME/go/bin/0g-geth ] && cp $HOME/go/bin/0g-geth $BACKUP_DIR/0g-geth.$TIMESTAMP
-        [ -f $HOME/go/bin/0gchaind ] && cp $HOME/go/bin/0gchaind $BACKUP_DIR/0gchaind.$TIMESTAMP
- 
-        # Download and install new version
-        cd $HOME
-        wget -O aristotle-v1.2.1.zip "$ZIP_URL" || { echo "Download failed"; exit 1; }
-        unzip -o aristotle-v1.2.1.zip || { echo "Extraction failed"; exit 1; }
- 
-        cp -f aristotle-v1.2.1/bin/geth $HOME/go/bin/0g-geth
-        cp -f aristotle-v1.2.1/bin/0gchaind $HOME/go/bin/0gchaind
-        sudo chmod +x $HOME/go/bin/0g-geth
-        sudo chmod +x $HOME/go/bin/0gchaind
-
-        # rollback
-        0gchaind rollback --home $HOME/.0gchaind/0g-home/0gchaind-home/
-
-        # Restart services
-        sudo systemctl daemon-reload
-        sudo systemctl start 0g-geth.service || { echo "Failed to start 0g-geth"; exit 1; }
-        sudo systemctl start 0gchaind.service || { echo "Failed to start 0gchaind"; exit 1; }
-
-        echo "Update to $VERSION completed!"
-        ;;
-    b)
         while true; do
             read -p "Deploy type? (validator/rpc): " NODE_TYPE
             NODE_TYPE=$(echo "$NODE_TYPE" | tr '[:upper:]' '[:lower:]')
@@ -202,7 +164,7 @@ case $choice in
         setup_environment "$NODE_TYPE" "$ETH_RPC_URL" "$BLOCK_NUM"
         create_service_file "$NODE_TYPE" "$ETH_RPC_URL" "$BLOCK_NUM" "$OG_PORT"
         
-        update_version "v2.0.4" "$BASE_URL/v2.0.4"
+        update_version "v1.0.2" "$BASE_URL/1.0.2"
         ;;
     *)
         echo "Invalid choice. Exiting."
