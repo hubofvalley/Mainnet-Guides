@@ -89,11 +89,11 @@ go version
 
 # ==== DOWNLOAD ARISTOTLE v1.0.2 ====
 cd $HOME
-rm -rf aristotle
+sudo rm -rf aristotle
 wget -q https://github.com/0gfoundation/0gchain-Aristotle/releases/download/1.0.2/aristotle-v1.0.2.tar.gz -O aristotle-v1.0.2.tar.gz
 tar -xzvf aristotle-v1.0.2.tar.gz
 mv aristotle-v1.0.2 aristotle
-rm aristotle-v1.0.2.tar.gz
+sudo rm aristotle-v1.0.2.tar.gz
 sudo chmod +x $HOME/aristotle/bin/geth
 sudo chmod +x $HOME/aristotle/bin/0gchaind
 
@@ -104,13 +104,17 @@ cp $HOME/aristotle/bin/0gchaind $HOME/go/bin/0gchaind
 # ==== INIT CHAIN ====
 mkdir -p $HOME/.0gchaind/
 cp -r $HOME/aristotle/* $HOME/.0gchaind/
-0g-geth init --datadir $HOME/.0gchaind/0g-home/geth-home $HOME/.0gchaind/genesis.json
-0gchaind init "$MONIKER" --home $HOME/.0gchaind/tmp
+0g-geth init --datadir $HOME/.0gchaind/0g-home/geth-home $HOME/.0gchaind/geth-genesis.json
+0gchaind init "$MONIKER" --home $HOME/.0gchaind/tmp --chaincfg.chain-spec mainnet
 
 # ==== COPY KEYS ====
 cp $HOME/.0gchaind/tmp/data/priv_validator_state.json $HOME/.0gchaind/0g-home/0gchaind-home/data/
 cp $HOME/.0gchaind/tmp/config/node_key.json $HOME/.0gchaind/0g-home/0gchaind-home/config/
 cp $HOME/.0gchaind/tmp/config/priv_validator_key.json $HOME/.0gchaind/0g-home/0gchaind-home/config/
+
+# ==== Generate JWT Authentication Token ====
+0gchaind jwt generate --home $HOME/.0gchaind/0g-home/0gchaind-home --chaincfg.chain-spec mainnet
+cp -f $HOME/.0gchaind/0g-home/0gchaind-home/config/jwt.hex $HOME/.0gchaind/jwt.hex
 
 # ==== CONFIG PATCH ====
 CONFIG="$HOME/.0gchaind/0g-home/0gchaind-home/config"
@@ -159,19 +163,18 @@ After=network-online.target
 
 [Service]
 User=$USER
-Environment=CHAIN_SPEC=devnet
+Environment=CHAIN_SPEC=mainnet
 WorkingDirectory=$HOME/.0gchaind
 ExecStart=$HOME/go/bin/0gchaind start \
-  --chaincfg.chain-spec devnet \
+  --chaincfg.chain-spec mainnet \
   --chaincfg.restaking.enabled \
   --chaincfg.restaking.symbiotic-rpc-dial-url ${ETH_RPC_URL} \
   --chaincfg.restaking.symbiotic-get-logs-block-range ${BLOCK_NUM} \
   --home $HOME/.0gchaind/0g-home/0gchaind-home \
   --chaincfg.kzg.trusted-setup-path=$HOME/.0gchaind/kzg-trusted-setup.json \
-  --chaincfg.engine.jwt-secret-path=$HOME/.0gchaind/jwt-secret.hex \
+  --chaincfg.engine.jwt-secret-path=$HOME/.0gchaind/jwt.hex \
   --chaincfg.kzg.implementation=crate-crypto/go-kzg-4844 \
   --chaincfg.engine.rpc-dial-url=http://localhost:${OG_PORT}551 \
-  --p2p.seeds 85a9b9a1b7fa0969704db2bc37f7c100855a75d9@8.218.88.60:26656 \
   --p2p.external_address=${EXTERNAL_IP}:${OG_PORT}656
 Restart=always
 RestartSec=3
@@ -188,16 +191,15 @@ After=network-online.target
 
 [Service]
 User=$USER
-Environment=CHAIN_SPEC=devnet
+Environment=CHAIN_SPEC=mainnet
 WorkingDirectory=$HOME/.0gchaind
 ExecStart=$HOME/go/bin/0gchaind start \
-  --chaincfg.chain-spec devnet \
+  --chaincfg.chain-spec mainnet \
   --home $HOME/.0gchaind/0g-home/0gchaind-home \
   --chaincfg.kzg.trusted-setup-path=$HOME/.0gchaind/kzg-trusted-setup.json \
-  --chaincfg.engine.jwt-secret-path=$HOME/.0gchaind/jwt-secret.hex \
+  --chaincfg.engine.jwt-secret-path=$HOME/.0gchaind/jwt.hex \
   --chaincfg.kzg.implementation=crate-crypto/go-kzg-4844 \
   --chaincfg.engine.rpc-dial-url=http://localhost:${OG_PORT}551 \
-  --p2p.seeds 85a9b9a1b7fa0969704db2bc37f7c100855a75d9@8.218.88.60:26656 \
   --p2p.external_address=${EXTERNAL_IP}:${OG_PORT}656
 Restart=always
 RestartSec=3
@@ -223,9 +225,8 @@ ExecStart=$HOME/go/bin/0g-geth \
   --http.port ${OG_PORT}545 \
   --ws.port ${OG_PORT}546 \
   --authrpc.port ${OG_PORT}551 \
-  --bootnodes enode://de7b86d8ac452b1413983049c20eafa2ea0851a3219c2cc12649b971c1677bd83fe24c5331e078471e52a94d95e8cde84cb9d866574fec957124e57ac6056699@8.218.88.60:30303 \
   --port ${OG_PORT}303 \
-  --networkid 16601
+  --networkid 16661
 Restart=always
 RestartSec=3
 LimitNOFILE=65535

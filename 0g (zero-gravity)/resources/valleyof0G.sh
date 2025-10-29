@@ -44,7 +44,7 @@ ${YELLOW}| Category  | Requirements                   |
 validator node current binaries version: ${CYAN}v1.0.2${RESET}
 consensus client service file name: ${CYAN}0gchaind.service${RESET}
 0g-geth service file name: ${CYAN}0g-geth.service${RESET}
-current chain : ${CYAN}0gchain-16601 (Aristotle)${RESET}
+current chain : ${CYAN}0gchain-16661 (Aristotle)${RESET}
 
 ------------------------------------------------------------------
 
@@ -139,7 +139,7 @@ echo -e "${YELLOW}\nPress Enter to continue${RESET}"
 read -r
 detect_geth_service_file #(enabled as requested)
 echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin' >> ~/.bash_profile
-# echo "export OG_CHAIN_ID="0gchain-16601"" >> $HOME/.bash_profile
+# echo "export OG_CHAIN_ID="0gchain-16661"" >> $HOME/.bash_profile
 # echo "export SERVICE_FILE_NAME=\"$SERVICE_FILE_NAME\"" >> ~/.bash_profile
 # echo "export DAEMON_NAME=0gchaind" >> ~/.bash_profile
 # echo "export DAEMON_HOME=$(find $HOME -type d -name ".0gchain" -print -quit)" >> ~/.bash_profile
@@ -319,7 +319,7 @@ function query_balance() {
             \"jsonrpc\":\"2.0\",
             \"method\":\"eth_getBalance\",
             \"params\": [\"$evm_address\", \"latest\"],
-            \"id\":16601
+            \"id\":16661
         }" | jq -r '.result' | awk '{printf "Balance of %s: %0.18f A0GI\n", "'"$evm_address"'", strtonum($1)/1e18}'
 
     echo -e "\n${YELLOW}Press Enter to go back to main menu...${RESET}"
