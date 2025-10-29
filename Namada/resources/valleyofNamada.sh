@@ -44,7 +44,7 @@ ${YELLOW}| Category  | Requirements     |
 - current namada node version: ${CYAN}v1.0.0 - v1.1.1 - v1.1.5 - v101.1.1${RESET}
 - current cometbft version: ${CYAN}v0.37.15${RESET}
 - current namada indexer version: ${CYAN}v3.3.4${RESET}
-- current namada masp-indexer version: ${CYAN}v1.4.6${RESET}
+- current namada masp-indexer version: ${CYAN}v1.4.7${RESET}
 "
 
 PRIVACY_SAFETY_STATEMENT="
