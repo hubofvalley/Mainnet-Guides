@@ -851,7 +851,7 @@ function delete_ai_alignment_node() {
     sudo systemctl stop 0g-alignment-node
     sudo systemctl disable 0g-alignment-node
     sudo rm -rf /etc/systemd/system/0g-alignment-node.service
-    sudo rm -r $HOME/0g-ai-alignment-node
+    sudo rm -r $HOME/0g-alignment-node
     echo "AI Alignment Node deleted successfully."
     menu
 }
