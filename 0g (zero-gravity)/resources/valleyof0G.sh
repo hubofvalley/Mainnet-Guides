@@ -847,6 +847,12 @@ function show_ai_alignment_logs() {
     menu
 }
 
+function restart_ai_alignment_node() {
+    sudo systemctl daemon-reload
+    sudo systemctl restart 0g-alignment-node
+    menu
+}
+
 # Show Grand Valley's Endpoints
 function show_endpoints() {
     echo -e "$ENDPOINTS"
