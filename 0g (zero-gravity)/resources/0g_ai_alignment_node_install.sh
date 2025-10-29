@@ -98,7 +98,7 @@ function download_and_extract() {
     fi
     rm -rf alignment-node
   fi
-  chmod +x "./$BIN_NAME" || fail "chmod failed"
+  sudo chmod +x "./$BIN_NAME" || fail "chmod failed"
   rm -f alignment-node.tar.gz
   info "Binary ready at: $APP_DIR/$BIN_NAME"
 }
