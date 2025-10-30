@@ -35,10 +35,10 @@ read -p "Do you want to enable the indexer? (yes/no): " ENABLE_INDEXER
 
 # Extra prompts for VALIDATOR
 if [ "$NODE_TYPE" = "validator" ]; then
-  read -p "Enter Holesky ETH RPC endpoint (ETH_RPC_URL): " ETH_RPC_URL
+  read -p "Enter Mainnet ETH RPC endpoint (ETH_RPC_URL): " ETH_RPC_URL
   while [ -z "$ETH_RPC_URL" ]; do
     echo "ETH_RPC_URL cannot be empty for validator mode."
-    read -p "Enter Holesky ETH RPC endpoint (ETH_RPC_URL): " ETH_RPC_URL
+    read -p "Enter Mainnet ETH RPC endpoint (ETH_RPC_URL): " ETH_RPC_URL
   done
   read -p "Enter block range to fetch logs (BLOCK_NUM), e.g. 2000: " BLOCK_NUM
   while ! [[ "$BLOCK_NUM" =~ ^[0-9]+$ ]]; do
