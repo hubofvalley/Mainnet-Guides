@@ -43,7 +43,7 @@ ${YELLOW}| Category  | Requirements     |
 - current chain: ${CYAN}namada.5f5de2dd1b88cba30586420${RESET}
 - current namada node version: ${CYAN}v1.0.0 - v1.1.1 - v1.1.5 - v101.1.1${RESET}
 - current cometbft version: ${CYAN}v0.37.15${RESET}
-- current namada indexer version: ${CYAN}v3.3.4${RESET}
+- current namada indexer version: ${CYAN}v4.1.0${RESET}
 - current namada masp-indexer version: ${CYAN}v1.4.7${RESET}
 "
 

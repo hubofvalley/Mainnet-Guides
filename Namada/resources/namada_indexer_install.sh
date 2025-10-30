@@ -134,7 +134,7 @@ rm -rf namada-indexer
 git clone https://github.com/anoma/namada-indexer.git
 cd namada-indexer || exit 1
 
-LATEST_TAG="v3.3.4"
+LATEST_TAG="v4.1.0"
 git fetch --all
 git checkout "$LATEST_TAG"
 git reset --hard "$LATEST_TAG"

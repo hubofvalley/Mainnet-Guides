@@ -30,9 +30,9 @@ function collect_inputs() {
     fail "Private key required to configure node"
   fi
 
-  read -p "3) Enter your NFT token ID (required for registration): " NFT_TOKEN_ID
-  if [ -z "$NFT_TOKEN_ID" ]; then
-    fail "NFT token id required"
+  read -p "3) Enter NFT token IDs (comma-separated) for registration/approval: (e.g: ID1,ID2,ID3,....)" NFT_TOKEN_IDS
+  if [ -z "$NFT_TOKEN_IDS" ]; then
+    fail "At least one NFT token id is required"
   fi
 
   read -p "4) Enter RPC endpoint for registration (press Enter to use default https://arb1.arbitrum.io/rpc): " RPC
@@ -51,7 +51,7 @@ function collect_inputs() {
   echo ""
   echo -e "${GREEN}Summary of inputs:${RESET}"
   echo "  Port: $NODE_PORT"
-  echo "  NFT Token ID: $NFT_TOKEN_ID"
+  echo "  NFT Token IDs: $NFT_TOKEN_IDS"
   echo "  RPC: $RPC"
   echo "  UFW config: $ENABLE_UFW"
   echo "  Create service: $CREATE_SERVICE"
@@ -106,7 +106,7 @@ function download_and_extract() {
 # Step 3: Configure Node (.env and config.toml)
 # Uses variables collected by collect_inputs()
 function configure_env() {
-  if [ -z "${NODE_PORT:-}" ] || [ -z "${PRIVATE_KEY:-}" ] || [ -z "${NFT_TOKEN_ID:-}" ]; then
+  if [ -z "${NODE_PORT:-}" ] || [ -z "${PRIVATE_KEY:-}" ] || [ -z "${NFT_TOKEN_IDS:-}" ]; then
     fail "Required inputs not provided. Run collect_inputs first."
   fi
 
@@ -137,10 +137,11 @@ function open_port() {
   fi
 }
 
-# Step 5: Register Operator
-# Uses variables collected by collect_inputs(): CHAIN_ID, RPC, COMMISSION, NFT_TOKEN_ID
-function register_operator() {
-  info "Registering operator (NEW STEP). This requires .env created and NFT token id."
+# Step 5: Register Operator (can run per-NFT)
+# Uses variables collected by collect_inputs(): CHAIN_ID, RPC, COMMISSION, NFT_TOKEN_IDS
+function register_operator_single() {
+  local single_token_id="$1"
+  info "Registering operator for NFT token-id: ${single_token_id}"
 
   # Load env variables
   if [ -f .env ]; then
@@ -150,10 +151,57 @@ function register_operator() {
     fail ".env not found, please run configure step first"
   fi
 
-  info "Running registerOperator (this will use provided private key and NFT token id)"
+  info "Running registerOperator (this will use provided private key and single NFT token id)"
   ./"$BIN_NAME" registerOperator \
     --key "$ZG_ALIGNMENT_NODE_SERVICE_PRIVATEKEY" \
-    --token-id "$NFT_TOKEN_ID" \
+    --token-id "$single_token_id" \
+    --commission "$COMMISSION" \
+    --chain-id "$CHAIN_ID" \
+    --rpc "$RPC" \
+    --contract 0xdD158B8A76566bC0c342893568e8fd3F08A9dAac \
+    --mainnet
+}
+
+# Ask if operator is already registered; if not, register per NFT iteratively
+function maybe_register_operator() {
+  echo -e "${YELLOW}Is your address already registered as an Operator? (yes/no)${RESET}"
+  read -p "Answer: " ALREADY_REGISTERED
+  ALREADY_REGISTERED=$(echo "$ALREADY_REGISTERED" | tr '[:upper:]' '[:lower:]')
+  if [[ "$ALREADY_REGISTERED" == "yes" ]]; then
+    info "Skipping operator registration as requested."
+    return 0
+  fi
+
+  # Iterate through comma-separated token IDs, registering one by one
+  IFS=',' read -ra TOKENS <<< "$NFT_TOKEN_IDS"
+  for t in "${TOKENS[@]}"; do
+    t_trimmed=$(echo "$t" | xargs)
+    if [[ -n "$t_trimmed" ]]; then
+      register_operator_single "$t_trimmed"
+      echo -e "${GREEN}Submitted registration for token-id ${t_trimmed}.${RESET}"
+      read -p "Wait for confirmation on-chain, then press Enter to continue to the next token..." _
+    fi
+  done
+}
+
+# Step: Instruct delegation and then run approval for all tokens
+function delegate_then_approve() {
+  echo -e "${GREEN}Before approval:${RESET} Please delegate your Alignment Node NFT(s) at: ${BLUE}https://claim.0gfoundation.ai/delegation${RESET}"
+  echo -e "Use your Node Operator Address when delegating."
+  read -p "Press Enter after you finish delegating to continue to approval..." _
+
+  # Load env
+  if [ -f .env ]; then
+    # shellcheck disable=SC1091
+    source .env
+  else
+    fail ".env not found, please run configure step first"
+  fi
+
+  info "Running approval (registerOperator with multiple token-ids)"
+  ./"$BIN_NAME" registerOperator \
+    --key "$ZG_ALIGNMENT_NODE_SERVICE_PRIVATEKEY" \
+    --token-id "$NFT_TOKEN_IDS" \
     --commission "$COMMISSION" \
     --chain-id "$CHAIN_ID" \
     --rpc "$RPC" \
@@ -237,7 +285,10 @@ function run_install_flow() {
     warn "Skipping ufw configuration"
   fi
 
-  register_operator
+  maybe_register_operator
+
+  # Prompt delegation and approval
+  delegate_then_approve
 
   if [[ "${CREATE_SERVICE,,}" == "yes" ]]; then
     create_service

@@ -867,6 +867,60 @@ function restart_ai_alignment_node() {
     menu
 }
 
+# Approve AI Alignment Node delegations (bulk token-ids)
+function approve_ai_alignment_node() {
+    local APP_DIR="$HOME/0g-alignment-node"
+    local BIN_PATH="$APP_DIR/0g-alignment-node"
+
+    if [ ! -x "$BIN_PATH" ]; then
+        echo -e "${YELLOW}Alignment node binary not found at ${BIN_PATH}.${RESET}"
+        echo -e "Install it first via: Run AI Alignment Node option."
+        read -p "Press Enter to go back..." _
+        menu
+        return
+    fi
+
+    if [ -f "$APP_DIR/.env" ]; then
+        source "$APP_DIR/.env"
+        DEFAULT_KEY="$ZG_ALIGNMENT_NODE_SERVICE_PRIVATEKEY"
+    fi
+
+    read -p "Enter private key (no 0x). Leave blank to use .env: " INPUT_KEY
+    if [ -z "$INPUT_KEY" ]; then
+        INPUT_KEY="$DEFAULT_KEY"
+    fi
+    if [ -z "$INPUT_KEY" ]; then
+        echo -e "${RED}Private key is required.${RESET}"
+        return
+    fi
+
+    read -p "Enter comma-separated NFT token IDs to approve: (e.g: ID1,ID2,ID3,....)" TOKEN_IDS
+    if [ -z "$TOKEN_IDS" ]; then
+        echo -e "${RED}At least one token id is required.${RESET}"
+        return
+    fi
+
+    read -p "RPC endpoint [default https://arb1.arbitrum.io/rpc]: " RPC
+    RPC=${RPC:-https://arb1.arbitrum.io/rpc}
+    read -p "Commission [default 10]: " COMMISSION
+    COMMISSION=${COMMISSION:-10}
+    CHAIN_ID=42161
+
+    echo -e "${GREEN}Executing approval command...${RESET}"
+    (cd "$APP_DIR" && ./"$(basename "$BIN_PATH")" registerOperator \
+        --key "$INPUT_KEY" \
+        --token-id "$TOKEN_IDS" \
+        --commission "$COMMISSION" \
+        --chain-id "$CHAIN_ID" \
+        --rpc "$RPC" \
+        --contract 0xdD158B8A76566bC0c342893568e8fd3F08A9dAac \
+        --mainnet)
+
+    echo -e "${GREEN}Approval tx submitted. Verify on-chain explorers.${RESET}"
+    read -p "Press Enter to return to menu..." _
+    menu
+}
+
 # Show Grand Valley's Endpoints
 function show_endpoints() {
     echo -e "$ENDPOINTS"
@@ -985,6 +1039,7 @@ function menu() {
     echo -e "${GREEN}4. AI Alignment Node${RESET}"
     echo "    a. Run AI Alignment Node"
     echo "    b. Show AI Alignment Node Logs"
+    echo "    c. Approve AI Alignment Delegations (bulk registerOperator)"
     echo -e "${GREEN}5. Node Management:${RESET}"
     echo "    a. Restart Validator Node"
     echo "    b. Restart Storage Node"
@@ -1060,6 +1115,7 @@ function menu() {
             case $SUB_OPTION in
                 a) run_ai_alignment_node ;;
                 b) show_ai_alignment_logs ;;
+                c) approve_ai_alignment_node ;;
                 *) echo "Invalid sub-option. Please try again." ;;
             esac
             ;;
