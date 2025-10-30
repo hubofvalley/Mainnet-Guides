@@ -150,6 +150,7 @@ sed -i "s/HTTPPort = .*/HTTPPort = ${OG_PORT}545/" $GCONFIG
 sed -i "s/WSPort = .*/WSPort = ${OG_PORT}546/" $GCONFIG
 sed -i "s/AuthPort = .*/AuthPort = ${OG_PORT}551/" $GCONFIG
 sed -i "s/ListenAddr = .*/ListenAddr = \":${OG_PORT}303\"/" $GCONFIG
+sed -i "s/DiscAddr = .*/DiscAddr = \":${OG_PORT}303\"/" $GCONFIG
 sed -i "s/^# *Port = .*/# Port = ${OG_PORT}901/" $GCONFIG
 sed -i "s/^# *InfluxDBEndpoint = .*/# InfluxDBEndpoint = \"http:\/\/localhost:${OG_PORT}086\"/" $GCONFIG
 
