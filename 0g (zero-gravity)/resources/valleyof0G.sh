@@ -267,7 +267,7 @@ function install_0gchain_app() {
 
 function create_validator() {
     echo -e "${CYAN}Create 0G Validator (Mainnet / Aristotle)${RESET}"
-    echo -e "${YELLOW}Pastikan 0gchaind + 0g-geth fully synced dan wallet EVM punya ≥ 500 OG + gas.${RESET}"
+    echo -e "${YELLOW}Requirements:${RESET} Ensure 0gchaind and 0g-geth are fully synced, and your EVM wallet holds at least 500 OG plus gas."
 
     # Defaults (overridable via ENV)
     BIN_0GCHAIND="${BIN_0GCHAIND:-0gchaind}"
@@ -363,7 +363,7 @@ function create_validator() {
         echo -e "${GREEN}Submitted. Track on https://chainscan.0g.ai/${RESET}"
     else
         echo -e "${YELLOW}Manual path (ChainScan UI):${RESET}"
-        echo "  1) Open: https://chainscan.0g.ai/address/$STAKING_ADDRESS (Contracts → Write as Proxy)"
+        echo "  1) Open: https://chainscan.0g.ai/address/$STAKING_ADDRESS (Contracts -> Write as Proxy)"
         echo "  2) Call: createAndInitializeValidatorIfNecessary"
         echo "     - description.moniker         = $MONIKER"
         echo "     - description.identity        = $IDENTITY"
@@ -471,7 +471,7 @@ function delegate_to_validator() {
     else
         echo -e "${YELLOW}Manual path (Chainscan UI):${RESET}"
         echo "  1) Open https://chainscan.0g.ai/address/$VALIDATOR_ADDR"
-        echo "  2) Go to Contract → Write and select 'delegate(address)'"
+        echo "  2) Go to Contract -> Write and select 'delegate(address)'"
         echo "  3) Set 'delegator' = $DELEGATOR_ADDR"
         echo "  4) Set payable value = $AMOUNT_OG OG, connect your 0G Mainnet wallet, then submit."
     fi
