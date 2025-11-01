@@ -266,6 +266,8 @@ function install_0gchain_app() {
 }
 
 function create_validator() {
+    # Ensure EVM CLI tools (soft: proceed even if not all are available)
+    ensure_evm_cli_tools soft || true
     echo -e "${CYAN}Create 0G Validator (Mainnet / Aristotle)${RESET}"
     echo -e "${YELLOW}Requirements:${RESET} Ensure 0gchaind and 0g-geth are fully synced, and your EVM wallet holds at least 500 OG plus gas."
 
@@ -386,6 +388,8 @@ function create_validator() {
 
 # Delegate 0G to a validator (0G Mainnet / Aristotle)
 function delegate_to_validator() {
+    # Ensure EVM CLI tools (soft: manual path available if tools missing)
+    ensure_evm_cli_tools soft || true
     echo -e "${CYAN}Delegate 0G to Validator${RESET}"
     echo -e "${YELLOW}Requirements:${RESET} EVM wallet with 0G for the stake + gas. For auto mode, both 'cast' and PRIVATE_KEY must be available."
 
@@ -482,6 +486,163 @@ function delegate_to_validator() {
     echo "  # Total tokens and shares on the validator:"
     echo "  cast call $VALIDATOR_ADDR 'tokens()(uint256)' --rpc-url $OG_EVM_RPC"
     echo "  cast call $VALIDATOR_ADDR 'delegatorShares()(uint256)' --rpc-url $OG_EVM_RPC"
+}
+
+# Undelegate from a validator (0G Mainnet / Aristotle)
+function undelegate_from_validator() {
+    # Ensure EVM CLI tools (require: this flow needs cast + bc)
+    ensure_evm_cli_tools require || return 1
+  set -euo pipefail
+  echo -e "${CYAN}Undelegate from Validator${RESET}"
+  echo -e "${YELLOW}Requirements:${RESET} A small amount of 0G for gas and the validator's withdrawal fee. For auto mode, both 'cast' and PRIVATE_KEY must be available."
+
+  # Try to ensure tools; undelegation benefits from on-chain reads (tokens/shares) and math.
+  ensure_evm_cli_tools "soft"
+
+  # ===== Defaults (override via ENV if needed) =====
+  OG_EVM_RPC="${OG_EVM_RPC:-https://evmrpc.0g.ai}"       # official mainnet RPC
+  STAKING_ADDRESS="${STAKING_ADDRESS:-0xea224dBB52F57752044c0C86aD50930091F561B9}" # mainnet staking
+  GV_VALIDATOR_ADDR="${GV_VALIDATOR_ADDR:-}"             # optional: Grand Valley validator contract address
+  GV_VALIDATOR_PUBKEY="${GV_VALIDATOR_PUBKEY:-}"         # optional: 48-byte consensus pubkey (0x...)
+
+  # ===== Choose how to specify the validator =====
+  echo "Select how to specify the validator:"
+  echo "  1) Enter validator contract address (0x...)"
+  echo "  2) Enter validator PUBKEY (48-byte) and resolve via Staking.getValidator(bytes)"
+  echo "  3) Use Grand Valley defaults from ENV (GV_VALIDATOR_ADDR / GV_VALIDATOR_PUBKEY)"
+  read -rp "Choice [1/2/3]: " MODE
+
+  VALIDATOR_ADDR=""
+  case "${MODE:-3}" in
+    1)
+      read -rp "Validator contract address (0x...): " VALIDATOR_ADDR
+      ;;
+    2)
+      read -rp "Validator PUBKEY (0x... 48-byte): " VAL_PUBKEY
+      if command -v cast >/dev/null 2>&1; then
+        VALIDATOR_ADDR=$(cast call "$STAKING_ADDRESS" 'getValidator(bytes)(address)' "$VAL_PUBKEY" --rpc-url "$OG_EVM_RPC")
+      fi
+      ;;
+    3|*)
+      if [ -n "$GV_VALIDATOR_ADDR" ]; then
+        VALIDATOR_ADDR="$GV_VALIDATOR_ADDR"
+      elif [ -n "$GV_VALIDATOR_PUBKEY" ] && command -v cast >/dev/null 2>&1; then
+        VALIDATOR_ADDR=$(cast call "$STAKING_ADDRESS" 'getValidator(bytes)(address)' "$GV_VALIDATOR_PUBKEY" --rpc-url "$OG_EVM_RPC")
+      fi
+      ;;
+  esac
+
+  if [[ -z "$VALIDATOR_ADDR" || "$VALIDATOR_ADDR" == "0x0000000000000000000000000000000000000000" ]]; then
+    echo -e "${RED}Validator address not resolved. Provide a contract address or ensure 'cast' is available for PUBKEY resolution.${RESET}"
+    return 1
+  fi
+
+  # ===== Delegator address =====
+  if command -v cast >/dev/null 2>&1 && [ -n "${PRIVATE_KEY:-}" ]; then
+    set +e
+    DELEGATOR_ADDR=$(cast wallet address --private-key "$PRIVATE_KEY" 2>/dev/null || true)
+    set -e
+  fi
+  if [ -z "${DELEGATOR_ADDR:-}" ]; then
+    read -rp "Your EVM address (delegator, 0x...): " DELEGATOR_ADDR
+  fi
+
+  # ===== Optional: custom RPC =====
+  read -rp "Custom EVM RPC? [Enter to use ${OG_EVM_RPC}]: " RPC_INPUT
+  if [ -n "${RPC_INPUT}" ]; then OG_EVM_RPC="$RPC_INPUT"; fi
+
+  # ===== Input mode: default OG amount -> shares; or raw shares =====
+  echo "Select undelegation input:"
+  echo "  1) Enter target amount in OG (recommended)"
+  echo "  2) Enter raw shares (advanced)"
+  read -rp "Choice [1/2]: " AMODE
+
+  SHARES=""
+  AMOUNT_OG=""
+  if [[ "${AMODE:-1}" == "2" ]]; then
+    read -rp "Shares to undelegate (uint): " SHARES
+    if [[ -z "$SHARES" || ! "$SHARES" =~ ^[0-9]+$ ]]; then
+      echo -e "${RED}Invalid shares.${RESET}"; return 1
+    fi
+  else
+    read -rp "Target amount to withdraw (in OG, decimals allowed, e.g., 12.34): " AMOUNT_OG
+    if [[ -z "${AMOUNT_OG:-}" || ! "$AMOUNT_OG" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+      echo -e "${RED}Invalid amount.${RESET}"; return 1
+    fi
+  fi
+
+  # ===== Read pool state & compute shares if needed =====
+  if [ -z "$SHARES" ]; then
+    if ! command -v cast >/dev/null 2>&1 || ! command -v bc >/dev/null 2>&1; then
+      echo -e "${RED}On-chain reads and math require 'cast' and 'bc'. Install them or use raw shares (option 2).${RESET}"
+      return 1
+    fi
+    TOTAL_TOKENS=$(cast call "$VALIDATOR_ADDR" 'tokens()(uint256)' --rpc-url "$OG_EVM_RPC")
+    TOTAL_SHARES=$(cast call "$VALIDATOR_ADDR" 'delegatorShares()(uint256)' --rpc-url "$OG_EVM_RPC")
+    if [[ "$TOTAL_TOKENS" == "0" || "$TOTAL_SHARES" == "0" ]]; then
+      echo -e "${RED}Pool state invalid (zero tokens or shares).${RESET}"; return 1
+    fi
+    MY_SHARES=$(cast call "$VALIDATOR_ADDR" 'getDelegation(address)(address,uint256)' "$DELEGATOR_ADDR" --rpc-url "$OG_EVM_RPC" | awk '{print $2}')
+    if [[ -z "$MY_SHARES" || "$MY_SHARES" == "0" ]]; then
+      echo -e "${RED}No active delegation found for this address.${RESET}"; return 1
+    fi
+    AMOUNT_WEI=$(cast to-wei "$AMOUNT_OG" ether)
+    # sharesNeeded = ceil(amountWei * totalShares / totalTokens)
+    SHARES=$(echo "($AMOUNT_WEI * $TOTAL_SHARES + $TOTAL_TOKENS - 1) / $TOTAL_TOKENS" | bc)
+    if [[ "$SHARES" -le 0 ]]; then
+      echo -e "${RED}Computed shares <= 0. Choose a larger amount.${RESET}"; return 1
+    fi
+    if (( SHARES > MY_SHARES )); then
+      echo -e "${RED}Computed shares exceed your current shares ($MY_SHARES). Lower the amount.${RESET}"; return 1
+    fi
+  fi
+
+  # ===== Withdrawal recipient (defaults to delegator) =====
+  read -rp "Withdrawal recipient (default: $DELEGATOR_ADDR): " WITHDRAW_ADDR
+  WITHDRAW_ADDR=${WITHDRAW_ADDR:-$DELEGATOR_ADDR}
+
+  # ===== Withdrawal fee (msg.value) =====
+  if command -v cast >/dev/null 2>&1; then
+    FEE_GWEI=$(cast call "$VALIDATOR_ADDR" 'withdrawalFeeInGwei()(uint96)' --rpc-url "$OG_EVM_RPC")
+    FEE_WEI=$(cast to-wei "$FEE_GWEI" gwei)
+  else
+    # Fallback: cannot query; force manual entry
+    read -rp "Validator withdrawal fee in Gwei (cannot query without 'cast'): " FEE_GWEI
+    FEE_WEI=$(printf "%.0f" "$(awk "BEGIN{print $FEE_GWEI * 1000000000}")")
+  fi
+
+  # ===== Confirm =====
+  echo -e "\n${YELLOW}Summary:${RESET}"
+  echo "  Validator:         $VALIDATOR_ADDR"
+  echo "  Delegator:         $DELEGATOR_ADDR"
+  echo "  Withdrawal to:     $WITHDRAW_ADDR"
+  echo "  Shares to remove:  $SHARES"
+  echo "  Withdrawal fee:    ${FEE_GWEI:-unknown} gwei (${FEE_WEI} wei)"
+  echo "  RPC:               $OG_EVM_RPC"
+  read -rp "Proceed with undelegation? (yes/no): " OK
+  [[ "${OK,,}" == "yes" ]] || { echo -e "${RED}Cancelled.${RESET}"; return 1; }
+
+  # ===== Send TX or print manual steps =====
+  if command -v cast >/dev/null 2>&1 && [ -n "${PRIVATE_KEY:-}" ]; then
+    echo -e "${CYAN}Sending undelegation transaction via 'cast'...${RESET}"
+    # IValidatorContract.undelegate(address withdrawalAddress, uint shares) payable
+    cast send "$VALIDATOR_ADDR" \
+      'undelegate(address,uint256)' "$WITHDRAW_ADDR" "$SHARES" \
+      --value "$FEE_WEI" \
+      --rpc-url "$OG_EVM_RPC" \
+      --private-key "$PRIVATE_KEY"
+    echo -e "${GREEN}Undelegation submitted. A withdrawal delay applies before funds are released.${RESET}"
+    echo -e "${YELLOW}Track on Chainscan:${RESET} https://chainscan.0g.ai/address/$VALIDATOR_ADDR"
+  else
+    echo -e "${YELLOW}Manual path (Chainscan UI):${RESET}"
+    echo "  1) Open https://chainscan.0g.ai/address/$VALIDATOR_ADDR"
+    echo "  2) Contract → Write → select 'undelegate(address,uint256)'"
+    echo "  3) Set:"
+    echo "       withdrawalAddress = $WITHDRAW_ADDR"
+    echo "       shares            = $SHARES"
+    echo "  4) Set payable value = ${FEE_GWEI:-<fee in gwei>} gwei (i.e., ${FEE_WEI} wei)."
+    echo "  5) Connect your 0G Mainnet wallet and submit."
+  fi
 }
 
 function query_balance() {
@@ -671,6 +832,40 @@ function query_balance() {
 #     0gchaind keys add $WALLET_NAME --eth
 #     menu
 # }
+
+function ensure_evm_cli_tools() {
+  local mode="${1:-soft}"
+  local missing=0
+
+  # Ensure 'bc' (for integer math / ceiling)
+  if ! command -v bc >/dev/null 2>&1; then
+    echo -e "${YELLOW}'bc' not found. Attempting to install...${RESET}"
+    if command -v apt-get >/dev/null 2>&1; then
+      sudo apt-get update -y && sudo apt-get install -y bc || true
+    elif command -v brew >/dev/null 2>&1; then
+      brew install bc || true
+    else
+      echo -e "${RED}Could not install 'bc' automatically. Please install it manually.${RESET}"
+    fi
+  fi
+  command -v bc >/dev/null 2>&1 || missing=1
+
+  # Ensure 'cast' (Foundry)
+  if ! command -v cast >/dev/null 2>&1; then
+    echo -e "${YELLOW}'cast' not found. Installing Foundry (this will add ~/.foundry/bin)...${RESET}"
+    (curl -L https://foundry.paradigm.xyz | bash) || true
+    export PATH="$HOME/.foundry/bin:$PATH"
+    if command -v foundryup >/dev/null 2>&1; then
+      foundryup || true
+    fi
+  fi
+  command -v cast >/dev/null 2>&1 || missing=1
+
+  if [ "$mode" = "require" ] && [ "$missing" -ne 0 ]; then
+    echo -e "${RED}Required tools are missing ('bc' and/or 'cast'). Install them and retry.${RESET}"
+    return 1
+  fi
+}
 
 function delete_validator_node() {
     sudo systemctl stop $OG_CONSENSUS_CLIENT_SERVICE $OG_GETH_SERVICE
@@ -1220,6 +1415,7 @@ function menu() {
     echo "    i. Query Balance"
     echo "    j. Create Validator"
     echo "    k. Delegate to Validator"
+    echo "    l. Undelegate from Validator"
     echo -e "${GREEN}2. Storage Node${RESET}"
     echo "    a. Deploy Storage Node"
     echo "    b. Update Storage Node"
@@ -1261,7 +1457,7 @@ function menu() {
     read -p "Choose an option (e.g., 1a or 1 then a): " OPTION
 
     # Accept combined selections up to 9 and sub-letters up to 'l' (for Node Management extended sub-options)
-    if [[ $OPTION =~ ^[1-9][a-l]$ ]]; then
+    if [[ $OPTION =~ ^[1-9][a-m]$ ]]; then
         MAIN_OPTION=${OPTION:0:1}
         SUB_OPTION=${OPTION:1:1}
     else
@@ -1286,6 +1482,7 @@ function menu() {
                 i) query_balance ;;
                 j) create_validator ;;
                 k) delegate_to_validator ;;
+                l) undelegate_from_validator ;;
                 *) echo "Invalid sub-option. Please try again." ;;
             esac
             ;;
