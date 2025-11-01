@@ -265,31 +265,224 @@ function install_0gchain_app() {
     menu
 }
 
-# function create_validator() {
-#     read -p "Enter wallet name: " WALLET
-#     read -p "Enter validator name (moniker): " MONIKER
-#     read -p "Enter your identity: " IDENTITY
-#     read -p "Enter your website URL: " WEBSITE
-#     read -p "Enter your email: " EMAIL
-#
-#     0gchaind tx staking create-validator \
-#     --amount=1000000ua0gi \
-#     --pubkey=$(0gchaind tendermint show-validator) \
-#     --moniker=$MONIKER \
-#     --chain-id=$OG_CHAIN_ID \
-#     --commission-rate=0.10 \
-#     --commission-max-rate=0.20 \
-#     --commission-max-change-rate=0.01 \
-#     --min-self-delegation=1 \
-#     --from=$WALLET \
-#     --identity=$IDENTITY \
-#     --website=$WEBSITE \
-#     --security-contact=$EMAIL \
-#     --details="lets buidl 0g together" \
-#     --gas auto --gas-adjustment 1.5 \
-#     -y
-#     menu
-# }
+function create_validator() {
+    echo -e "${CYAN}Create 0G Validator (Mainnet / Aristotle)${RESET}"
+    echo -e "${YELLOW}Pastikan 0gchaind + 0g-geth fully synced dan wallet EVM punya ≥ 500 OG + gas.${RESET}"
+
+    # Defaults (overridable via ENV)
+    BIN_0GCHAIND="${BIN_0GCHAIND:-0gchaind}"
+    OG_HOME="${OG_HOME:-$HOME/.0gchaind/0g-home/0gchaind-home}"
+    OG_GENESIS_PATH="${OG_GENESIS_PATH:-$OG_HOME/config/genesis.json}"
+    OG_EVM_RPC="${OG_EVM_RPC:-https://evmrpc.0g.ai}"
+    STAKING_ADDRESS="${STAKING_ADDRESS:-0xea224dBB52F57752044c0C86aD50930091F561B9}"
+    DEPOSIT_MSG_AMOUNT="${DEPOSIT_MSG_AMOUNT:-500000000000}"
+    WITHDRAW_GWEI_DEFAULT="${WITHDRAW_GWEI_DEFAULT:-1}"
+
+    # Inputs
+    read -p "Enter validator name (moniker): " MONIKER
+    read -p "Enter identity (Keybase, optional): " IDENTITY
+    read -p "Enter website URL (optional): " WEBSITE
+    read -p "Enter security contact email: " EMAIL
+    read -p "Enter details (≤200 chars): " DETAILS
+
+    read -p "Commission rate in % (e.g., 5 for 5%): " COMM_PCT
+    COMM_PCT=${COMM_PCT:-5}
+    COMM_BPS=$(awk 'BEGIN{printf "%d", ('"${COMM_PCT:-0}"')*10000}')
+    if ! awk 'BEGIN{exit !('"${COMM_PCT:-0}"'>=0 && '"${COMM_PCT:-0}"'<=100)}'; then
+        echo -e "${RED}Invalid commission (0–100).${RESET}"; menu; return 1
+    fi
+
+    read -p "Withdrawal fee in Gwei [default ${WITHDRAW_GWEI_DEFAULT}]: " WITHDRAW_GWEI
+    WITHDRAW_GWEI=${WITHDRAW_GWEI:-$WITHDRAW_GWEI_DEFAULT}
+
+    read -p "Custom EVM RPC? [Enter to use ${OG_EVM_RPC}]: " RPC_INPUT
+    if [ -n "${RPC_INPUT}" ]; then OG_EVM_RPC="$RPC_INPUT"; fi
+
+    echo -e "\n${YELLOW}Summary:${RESET}"
+    echo "  Moniker:            $MONIKER"
+    echo "  Commission (bps):   $COMM_BPS  (~${COMM_PCT}%)"
+    echo "  Withdrawal fee:     ${WITHDRAW_GWEI} Gwei"
+    echo "  EVM RPC:            $OG_EVM_RPC"
+    echo "  Staking Contract:   $STAKING_ADDRESS"
+    echo "  Payable on tx:      500 OG"
+    read -p "Proceed? (yes/no): " CONFIRM
+    if [[ "${CONFIRM,,}" != "yes" ]]; then
+        echo -e "${RED}Cancelled.${RESET}"; menu; return 1
+    fi
+
+    # 1) Generate deposit message (pubkey + signature)
+    echo -e "${CYAN}Generating deposit message (pubkey + signature)...${RESET}"
+    TMP_OUT="$(mktemp)"
+    $BIN_0GCHAIND deposit create-delegation-validator \
+        "$STAKING_ADDRESS" \
+        "$DEPOSIT_MSG_AMOUNT" \
+        "$OG_GENESIS_PATH" \
+        --home "$OG_HOME" \
+        --chaincfg.chain-spec=mainnet \
+        --override-rpc-url \
+        --rpc-dial-url "$OG_EVM_RPC" | tee "$TMP_OUT"
+    RC=$?
+    if [ $RC -ne 0 ]; then
+        echo -e "${RED}Failed to create deposit message.${RESET}"; rm -f "$TMP_OUT"; menu; return 1
+    fi
+
+    PUBKEY=$(grep -Eo 'pubkey: 0x[0-9a-fA-F]+' "$TMP_OUT" | awk '{print $2}')
+    SIGNATURE=$(grep -Eo 'signature: 0x[0-9a-fA-F]+' "$TMP_OUT" | awk '{print $2}')
+    rm -f "$TMP_OUT"
+    if [ -z "$PUBKEY" ] || [ -z "$SIGNATURE" ]; then
+        echo -e "${RED}Could not parse pubkey/signature.${RESET}"; menu; return 1
+    fi
+
+    # 2) Validate signature
+    echo -e "${CYAN}Validating deposit message...${RESET}"
+    $BIN_0GCHAIND deposit validate-delegation \
+        "$PUBKEY" \
+        "$STAKING_ADDRESS" \
+        "$DEPOSIT_MSG_AMOUNT" \
+        "$SIGNATURE" \
+        "$OG_GENESIS_PATH" \
+        --home "$OG_HOME" \
+        --chaincfg.chain-spec=mainnet \
+        --override-rpc-url \
+        --rpc-dial-url "$OG_EVM_RPC"
+
+    # 3) Execute init tx via cast if available, else manual instruction
+    echo -e "${CYAN}Initializing validator on Staking Contract...${RESET}"
+    if command -v cast >/dev/null 2>&1 && [ -n "${PRIVATE_KEY:-}" ]; then
+        DESC_TUPLE=$(printf '("%s","%s","%s","%s","%s")' "$MONIKER" "$IDENTITY" "$WEBSITE" "$EMAIL" "$DETAILS")
+        cast send "$STAKING_ADDRESS" \
+            'createAndInitializeValidatorIfNecessary((string,string,string,string,string),uint32,uint96,bytes,bytes)' \
+            "$DESC_TUPLE" \
+            "$COMM_BPS" \
+            "$WITHDRAW_GWEI" \
+            "$PUBKEY" \
+            "$SIGNATURE" \
+            --value 500ether \
+            --rpc-url "$OG_EVM_RPC" \
+            --private-key "$PRIVATE_KEY"
+        echo -e "${GREEN}Submitted. Track on https://chainscan.0g.ai/${RESET}"
+    else
+        echo -e "${YELLOW}Manual path (ChainScan UI):${RESET}"
+        echo "  1) Open: https://chainscan.0g.ai/address/$STAKING_ADDRESS (Contracts → Write as Proxy)"
+        echo "  2) Call: createAndInitializeValidatorIfNecessary"
+        echo "     - description.moniker         = $MONIKER"
+        echo "     - description.identity        = $IDENTITY"
+        echo "     - description.website         = $WEBSITE"
+        echo "     - description.securityContact = $EMAIL"
+        echo "     - description.details         = $DETAILS"
+        echo "     - commissionRate (bps)        = $COMM_BPS"
+        echo "     - withdrawalFeeInGwei         = $WITHDRAW_GWEI"
+        echo "     - pubkey                      = $PUBKEY"
+        echo "     - signature                   = $SIGNATURE"
+        echo "  3) Set payable amount = 500 OG, then submit."
+    fi
+
+    echo -e "\n${YELLOW}Validator may appear active after ~30–60 minutes on the explorer:${RESET}"
+    echo "  https://explorer.0g.ai/mainnet/validators"
+    echo -e "${YELLOW}Press Enter to return to menu...${RESET}"
+    read -r
+    menu
+}
+
+# Delegate 0G to a validator (0G Mainnet / Aristotle)
+function delegate_to_validator() {
+    echo -e "${CYAN}Delegate 0G to Validator${RESET}"
+    echo -e "${YELLOW}Requirements:${RESET} EVM wallet with 0G for the stake + gas. For auto mode, both 'cast' and PRIVATE_KEY must be available."
+
+    # Defaults (override via ENV if needed)
+    OG_EVM_RPC="${OG_EVM_RPC:-https://evmrpc.0g.ai}"
+    STAKING_ADDRESS="${STAKING_ADDRESS:-0xea224dBB52F57752044c0C86aD50930091F561B9}"
+    GV_VALIDATOR_ADDR="${GV_VALIDATOR_ADDR:-}"
+    GV_VALIDATOR_PUBKEY="${GV_VALIDATOR_PUBKEY:-}"
+
+    echo "Select how to specify the validator:"
+    echo "  1) Enter validator contract address (0x...)"
+    echo "  2) Enter validator PUBKEY (48-byte) and resolve via Staking.getValidator(bytes)"
+    echo "  3) Use Grand Valley defaults from ENV (GV_VALIDATOR_ADDR / GV_VALIDATOR_PUBKEY)"
+    read -p "Choice [1/2/3]: " MODE
+
+    VALIDATOR_ADDR=""
+    case "${MODE:-3}" in
+        1)
+            read -p "Validator contract address (0x...): " VALIDATOR_ADDR
+            ;;
+        2)
+            read -p "Validator PUBKEY (0x... 48-byte): " VAL_PUBKEY
+            if ! command -v cast >/dev/null 2>&1; then
+                echo -e "${RED}'cast' is required to resolve validator address from PUBKEY.${RESET}"
+                return 1
+            fi
+            VALIDATOR_ADDR=$(cast call "$STAKING_ADDRESS" 'getValidator(bytes)(address)' "$VAL_PUBKEY" --rpc-url "$OG_EVM_RPC")
+            if [ -z "$VALIDATOR_ADDR" ] || [ "$VALIDATOR_ADDR" = "0x0000000000000000000000000000000000000000" ]; then
+                echo -e "${RED}Validator not found for the provided PUBKEY.${RESET}"
+                return 1
+            fi
+            ;;
+        3|*)
+            if [ -n "$GV_VALIDATOR_ADDR" ]; then
+                VALIDATOR_ADDR="$GV_VALIDATOR_ADDR"
+            elif [ -n "$GV_VALIDATOR_PUBKEY" ] && command -v cast >/dev/null 2>&1; then
+                VALIDATOR_ADDR=$(cast call "$STAKING_ADDRESS" 'getValidator(bytes)(address)' "$GV_VALIDATOR_PUBKEY" --rpc-url "$OG_EVM_RPC")
+                if [ -z "$VALIDATOR_ADDR" ] || [ "$VALIDATOR_ADDR" = "0x0000000000000000000000000000000000000000" ]; then
+                    echo -e "${RED}Validator not found for GV_VALIDATOR_PUBKEY.${RESET}"
+                    return 1
+                fi
+            else
+                echo -e "${RED}GV_VALIDATOR_ADDR / GV_VALIDATOR_PUBKEY not set.${RESET}"
+                return 1
+            fi
+            ;;
+    esac
+
+    read -p "Enter delegation amount in OG (decimals allowed, e.g., 123.45): " AMOUNT_OG
+    if [[ -z "${AMOUNT_OG:-}" || ! "$AMOUNT_OG" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+        echo -e "${RED}Invalid amount.${RESET}"
+        return 1
+    fi
+
+    if command -v cast >/dev/null 2>&1 && [ -n "${PRIVATE_KEY:-}" ]; then
+        set +e
+        DELEGATOR_ADDR=$(cast wallet address --private-key "$PRIVATE_KEY" 2>/dev/null || true)
+        set -e
+    fi
+    if [ -z "${DELEGATOR_ADDR:-}" ]; then
+        read -p "Your EVM address (delegator, 0x...): " DELEGATOR_ADDR
+    fi
+
+    read -p "Custom EVM RPC? [Enter to use ${OG_EVM_RPC}]: " RPC_INPUT
+    if [ -n "${RPC_INPUT}" ]; then OG_EVM_RPC="$RPC_INPUT"; fi
+
+    echo -e "\n${YELLOW}Summary:${RESET}"
+    echo "  Validator:  $VALIDATOR_ADDR"
+    echo "  Delegator:  $DELEGATOR_ADDR"
+    echo "  Amount:     $AMOUNT_OG OG"
+    echo "  RPC:        $OG_EVM_RPC"
+    read -p "Proceed with delegation? (yes/no): " OK
+    [[ "${OK,,}" == "yes" ]] || { echo -e "${RED}Cancelled.${RESET}"; return 1; }
+
+    if command -v cast >/dev/null 2>&1 && [ -n "${PRIVATE_KEY:-}" ]; then
+        echo -e "${CYAN}Sending delegation transaction via 'cast'...${RESET}"
+        cast send "$VALIDATOR_ADDR" \
+          'delegate(address)' "$DELEGATOR_ADDR" \
+          --value "${AMOUNT_OG}ether" \
+          --rpc-url "$OG_EVM_RPC" \
+          --private-key "$PRIVATE_KEY"
+        echo -e "${GREEN}Delegation submitted. Track on Chainscan:${RESET} https://chainscan.0g.ai/address/$VALIDATOR_ADDR"
+    else
+        echo -e "${YELLOW}Manual path (Chainscan UI):${RESET}"
+        echo "  1) Open https://chainscan.0g.ai/address/$VALIDATOR_ADDR"
+        echo "  2) Go to Contract → Write and select 'delegate(address)'"
+        echo "  3) Set 'delegator' = $DELEGATOR_ADDR"
+        echo "  4) Set payable value = $AMOUNT_OG OG, connect your 0G Mainnet wallet, then submit."
+    fi
+
+    echo -e "${YELLOW}Useful checks:${RESET}"
+    echo "  # Delegation info (validator address, shares):"
+    echo "  cast call $VALIDATOR_ADDR 'getDelegation(address)(address,uint256)' $DELEGATOR_ADDR --rpc-url $OG_EVM_RPC"
+    echo "  # Total tokens and shares on the validator:"
+    echo "  cast call $VALIDATOR_ADDR 'tokens()(uint256)' --rpc-url $OG_EVM_RPC"
+    echo "  cast call $VALIDATOR_ADDR 'delegatorShares()(uint256)' --rpc-url $OG_EVM_RPC"
+}
 
 function query_balance() {
     echo -e "${CYAN}Select an option:${RESET}"
@@ -1025,6 +1218,8 @@ function menu() {
     echo "    g. Show Consensus Client Logs"
     echo "    h. Show Geth Logs"
     echo "    i. Query Balance"
+    echo "    j. Create Validator"
+    echo "    k. Delegate to Validator"
     echo -e "${GREEN}2. Storage Node${RESET}"
     echo "    a. Deploy Storage Node"
     echo "    b. Update Storage Node"
@@ -1089,6 +1284,8 @@ function menu() {
                 g) show_consensus_client_logs ;;
                 h) show_geth_logs ;;
                 i) query_balance ;;
+                j) create_validator ;;
+                k) delegate_to_validator ;;
                 *) echo "Invalid sub-option. Please try again." ;;
             esac
             ;;
