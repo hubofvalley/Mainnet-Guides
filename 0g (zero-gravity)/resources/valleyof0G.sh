@@ -266,8 +266,10 @@ function install_0gchain_app() {
 }
 
 function create_validator() {
-    # Ensure EVM CLI tools (soft: proceed even if not all are available)
-    ensure_evm_cli_tools soft || true
+    # Only check; install is optional and prompted later if needed for auto path
+    ensure_evm_cli_tools check || true
+    # Offer to load/provide PRIVATE_KEY up front for auto submission
+    ensure_private_key optional || true
     echo -e "${CYAN}Create 0G Validator (Mainnet / Aristotle)${RESET}"
     echo -e "${YELLOW}Requirements:${RESET} Ensure 0gchaind and 0g-geth are fully synced, and your EVM wallet holds at least 500 OG plus gas."
 
@@ -307,10 +309,12 @@ function create_validator() {
     echo "  EVM RPC:            $OG_EVM_RPC"
     echo "  Staking Contract:   $STAKING_ADDRESS"
     echo "  Payable on tx:      500 OG"
-    read -p "Proceed? (yes/no): " CONFIRM
-    if [[ "${CONFIRM,,}" != "yes" ]]; then
-        echo -e "${RED}Cancelled.${RESET}"; menu; return 1
-    fi
+    read -p "Proceed? (y/n, b=back): " CONFIRM
+    case "${CONFIRM,,}" in
+        y|yes) ;;
+        b|back) echo -e "${YELLOW}Returning to menu...${RESET}"; menu; return 0 ;;
+        *) echo -e "${RED}Cancelled.${RESET}"; menu; return 1 ;;
+    esac
 
     # 1) Generate deposit message (pubkey + signature)
     echo -e "${CYAN}Generating deposit message (pubkey + signature)...${RESET}"
@@ -364,6 +368,35 @@ function create_validator() {
             --private-key "$PRIVATE_KEY"
         echo -e "${GREEN}Submitted. Track on https://chainscan.0g.ai/${RESET}"
     else
+        # Offer to install tools for auto path
+        if [ -z "${PRIVATE_KEY:-}" ]; then
+            echo -e "${YELLOW}PRIVATE_KEY not set; proceeding with manual path.${RESET}"
+        elif ! command -v cast >/dev/null 2>&1; then
+            echo -e "${YELLOW}'cast' not available for auto submission.${RESET}"
+            read -p "Install Foundry to enable auto submission? (y/n, b=back): " _ans
+            case "${_ans,,}" in
+              y|yes)
+                ensure_evm_cli_tools prompt || true
+                if command -v cast >/dev/null 2>&1; then
+                  DESC_TUPLE=$(printf '("%s","%s","%s","%s","%s")' "$MONIKER" "$IDENTITY" "$WEBSITE" "$EMAIL" "$DETAILS")
+                  cast send "$STAKING_ADDRESS" \
+                    'createAndInitializeValidatorIfNecessary((string,string,string,string,string),uint32,uint96,bytes,bytes)' \
+                    "$DESC_TUPLE" \
+                    "$COMM_BPS" \
+                    "$WITHDRAW_GWEI" \
+                    "$PUBKEY" \
+                    "$SIGNATURE" \
+                    --value 500ether \
+                    --rpc-url "$OG_EVM_RPC" \
+                    --private-key "$PRIVATE_KEY"
+                  echo -e "${GREEN}Submitted. Track on https://chainscan.0g.ai/${RESET}"
+                  echo -e "${YELLOW}Press Enter to return to menu...${RESET}"; read -r; menu; return 0
+                fi
+                ;;
+              b|back) echo -e "${YELLOW}Returning to menu...${RESET}"; menu; return 0 ;;
+              *) : ;;
+            esac
+        fi
         echo -e "${YELLOW}Manual path (ChainScan UI):${RESET}"
         echo "  1) Open: https://chainscan.0g.ai/address/$STAKING_ADDRESS (Contracts -> Write as Proxy)"
         echo "  2) Call: createAndInitializeValidatorIfNecessary"
@@ -388,8 +421,10 @@ function create_validator() {
 
 # Delegate 0G to a validator (0G Mainnet / Aristotle)
 function delegate_to_validator() {
-    # Ensure EVM CLI tools (soft: manual path available if tools missing)
-    ensure_evm_cli_tools soft || true
+    # Only check; installation is offered contextually if needed
+    ensure_evm_cli_tools check || true
+    # Offer to load/provide PRIVATE_KEY to enable auto mode (optional)
+    ensure_private_key optional || true
     echo -e "${CYAN}Delegate 0G to Validator${RESET}"
     echo -e "${YELLOW}Requirements:${RESET} EVM wallet with 0G for the stake + gas. For auto mode, both 'cast' and PRIVATE_KEY must be available."
 
@@ -403,7 +438,8 @@ function delegate_to_validator() {
     echo "  1) Enter validator contract address (0x...)"
     echo "  2) Enter validator PUBKEY (48-byte) and resolve via Staking.getValidator(bytes)"
     echo "  3) Use Grand Valley defaults from ENV (GV_VALIDATOR_ADDR / GV_VALIDATOR_PUBKEY)"
-    read -p "Choice [1/2/3]: " MODE
+    read -p "Choice [1/2/3, b=back]: " MODE
+    if [[ "${MODE,,}" == "b" || "${MODE,,}" == "back" ]]; then menu; return; fi
 
     VALIDATOR_ADDR=""
     case "${MODE:-3}" in
@@ -413,8 +449,14 @@ function delegate_to_validator() {
         2)
             read -p "Validator PUBKEY (0x... 48-byte): " VAL_PUBKEY
             if ! command -v cast >/dev/null 2>&1; then
-                echo -e "${RED}'cast' is required to resolve validator address from PUBKEY.${RESET}"
-                return 1
+                echo -e "${YELLOW}'cast' is required to resolve validator address from PUBKEY.${RESET}"
+                read -p "Install Foundry now? (y/n, b=back): " _ans
+                case "${_ans,,}" in
+                  y|yes) ensure_evm_cli_tools prompt || true ;;
+                  b|back) menu; return 0 ;;
+                  *) echo -e "${RED}Cannot resolve without 'cast'.${RESET}"; return 1 ;;
+                esac
+                command -v cast >/dev/null 2>&1 || { echo -e "${RED}Cast still unavailable.${RESET}"; return 1; }
             fi
             VALIDATOR_ADDR=$(cast call "$STAKING_ADDRESS" 'getValidator(bytes)(address)' "$VAL_PUBKEY" --rpc-url "$OG_EVM_RPC")
             if [ -z "$VALIDATOR_ADDR" ] || [ "$VALIDATOR_ADDR" = "0x0000000000000000000000000000000000000000" ]; then
@@ -425,7 +467,17 @@ function delegate_to_validator() {
         3|*)
             if [ -n "$GV_VALIDATOR_ADDR" ]; then
                 VALIDATOR_ADDR="$GV_VALIDATOR_ADDR"
-            elif [ -n "$GV_VALIDATOR_PUBKEY" ] && command -v cast >/dev/null 2>&1; then
+            elif [ -n "$GV_VALIDATOR_PUBKEY" ]; then
+                if ! command -v cast >/dev/null 2>&1; then
+                  echo -e "${YELLOW}'cast' is required to resolve GV_VALIDATOR_PUBKEY.${RESET}"
+                  read -p "Install Foundry now? (y/n, b=back): " _ans
+                  case "${_ans,,}" in
+                    y|yes) ensure_evm_cli_tools prompt || true ;;
+                    b|back) menu; return 0 ;;
+                    *) echo -e "${RED}Cannot resolve without 'cast'.${RESET}"; return 1 ;;
+                  esac
+                  command -v cast >/dev/null 2>&1 || { echo -e "${RED}Cast still unavailable.${RESET}"; return 1; }
+                fi
                 VALIDATOR_ADDR=$(cast call "$STAKING_ADDRESS" 'getValidator(bytes)(address)' "$GV_VALIDATOR_PUBKEY" --rpc-url "$OG_EVM_RPC")
                 if [ -z "$VALIDATOR_ADDR" ] || [ "$VALIDATOR_ADDR" = "0x0000000000000000000000000000000000000000" ]; then
                     echo -e "${RED}Validator not found for GV_VALIDATOR_PUBKEY.${RESET}"
@@ -438,7 +490,8 @@ function delegate_to_validator() {
             ;;
     esac
 
-    read -p "Enter delegation amount in OG (decimals allowed, e.g., 123.45): " AMOUNT_OG
+    read -p "Enter delegation amount in OG (decimals allowed, e.g., 123.45) [b=back]: " AMOUNT_OG
+    if [[ "${AMOUNT_OG,,}" == "b" || "${AMOUNT_OG,,}" == "back" ]]; then menu; return; fi
     if [[ -z "${AMOUNT_OG:-}" || ! "$AMOUNT_OG" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
         echo -e "${RED}Invalid amount.${RESET}"
         return 1
@@ -453,7 +506,8 @@ function delegate_to_validator() {
         read -p "Your EVM address (delegator, 0x...): " DELEGATOR_ADDR
     fi
 
-    read -p "Custom EVM RPC? [Enter to use ${OG_EVM_RPC}]: " RPC_INPUT
+    read -p "Custom EVM RPC? [Enter to use ${OG_EVM_RPC}, b=back]: " RPC_INPUT
+    if [[ "${RPC_INPUT,,}" == "b" || "${RPC_INPUT,,}" == "back" ]]; then menu; return; fi
     if [ -n "${RPC_INPUT}" ]; then OG_EVM_RPC="$RPC_INPUT"; fi
 
     echo -e "\n${YELLOW}Summary:${RESET}"
@@ -461,8 +515,12 @@ function delegate_to_validator() {
     echo "  Delegator:  $DELEGATOR_ADDR"
     echo "  Amount:     $AMOUNT_OG OG"
     echo "  RPC:        $OG_EVM_RPC"
-    read -p "Proceed with delegation? (yes/no): " OK
-    [[ "${OK,,}" == "yes" ]] || { echo -e "${RED}Cancelled.${RESET}"; return 1; }
+    read -p "Proceed with delegation? (y/n, b=back): " OK
+    case "${OK,,}" in
+        y|yes) ;;
+        b|back) echo -e "${YELLOW}Returning to menu...${RESET}"; menu; return 0 ;;
+        *) echo -e "${RED}Cancelled.${RESET}"; return 1 ;;
+    esac
 
     if command -v cast >/dev/null 2>&1 && [ -n "${PRIVATE_KEY:-}" ]; then
         echo -e "${CYAN}Sending delegation transaction via 'cast'...${RESET}"
@@ -490,14 +548,16 @@ function delegate_to_validator() {
 
 # Undelegate from a validator (0G Mainnet / Aristotle)
 function undelegate_from_validator() {
-    # Ensure EVM CLI tools (require: this flow needs cast + bc)
-    ensure_evm_cli_tools require || return 1
+  # Prompt to install missing tools only when needed; enforce before sending
+  ensure_evm_cli_tools prompt || true
+  # Offer to load/provide PRIVATE_KEY to enable auto mode (optional)
+  ensure_private_key optional || true
   set -euo pipefail
   echo -e "${CYAN}Undelegate from Validator${RESET}"
   echo -e "${YELLOW}Requirements:${RESET} A small amount of 0G for gas and the validator's withdrawal fee. For auto mode, both 'cast' and PRIVATE_KEY must be available."
 
   # Try to ensure tools; undelegation benefits from on-chain reads (tokens/shares) and math.
-  ensure_evm_cli_tools "soft"
+  ensure_evm_cli_tools check || true
 
   # ===== Defaults (override via ENV if needed) =====
   OG_EVM_RPC="${OG_EVM_RPC:-https://evmrpc.0g.ai}"       # official mainnet RPC
@@ -510,7 +570,8 @@ function undelegate_from_validator() {
   echo "  1) Enter validator contract address (0x...)"
   echo "  2) Enter validator PUBKEY (48-byte) and resolve via Staking.getValidator(bytes)"
   echo "  3) Use Grand Valley defaults from ENV (GV_VALIDATOR_ADDR / GV_VALIDATOR_PUBKEY)"
-  read -rp "Choice [1/2/3]: " MODE
+  read -rp "Choice [1/2/3, b=back]: " MODE
+  if [[ "${MODE,,}" == "b" || "${MODE,,}" == "back" ]]; then menu; return; fi
 
   VALIDATOR_ADDR=""
   case "${MODE:-3}" in
@@ -548,24 +609,28 @@ function undelegate_from_validator() {
   fi
 
   # ===== Optional: custom RPC =====
-  read -rp "Custom EVM RPC? [Enter to use ${OG_EVM_RPC}]: " RPC_INPUT
+  read -rp "Custom EVM RPC? [Enter to use ${OG_EVM_RPC}, b=back]: " RPC_INPUT
+  if [[ "${RPC_INPUT,,}" == "b" || "${RPC_INPUT,,}" == "back" ]]; then menu; return; fi
   if [ -n "${RPC_INPUT}" ]; then OG_EVM_RPC="$RPC_INPUT"; fi
 
   # ===== Input mode: default OG amount -> shares; or raw shares =====
   echo "Select undelegation input:"
   echo "  1) Enter target amount in OG (recommended)"
   echo "  2) Enter raw shares (advanced)"
-  read -rp "Choice [1/2]: " AMODE
+  read -rp "Choice [1/2, b=back]: " AMODE
+  if [[ "${AMODE,,}" == "b" || "${AMODE,,}" == "back" ]]; then menu; return; fi
 
   SHARES=""
   AMOUNT_OG=""
   if [[ "${AMODE:-1}" == "2" ]]; then
-    read -rp "Shares to undelegate (uint): " SHARES
+    read -rp "Shares to undelegate (uint) [b=back]: " SHARES
+    if [[ "${SHARES,,}" == "b" || "${SHARES,,}" == "back" ]]; then menu; return; fi
     if [[ -z "$SHARES" || ! "$SHARES" =~ ^[0-9]+$ ]]; then
       echo -e "${RED}Invalid shares.${RESET}"; return 1
     fi
   else
-    read -rp "Target amount to withdraw (in OG, decimals allowed, e.g., 12.34): " AMOUNT_OG
+    read -rp "Target amount to withdraw (in OG, decimals allowed, e.g., 12.34) [b=back]: " AMOUNT_OG
+    if [[ "${AMOUNT_OG,,}" == "b" || "${AMOUNT_OG,,}" == "back" ]]; then menu; return; fi
     if [[ -z "${AMOUNT_OG:-}" || ! "$AMOUNT_OG" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
       echo -e "${RED}Invalid amount.${RESET}"; return 1
     fi
@@ -598,7 +663,8 @@ function undelegate_from_validator() {
   fi
 
   # ===== Withdrawal recipient (defaults to delegator) =====
-  read -rp "Withdrawal recipient (default: $DELEGATOR_ADDR): " WITHDRAW_ADDR
+  read -rp "Withdrawal recipient (default: $DELEGATOR_ADDR, b=back): " WITHDRAW_ADDR
+  if [[ "${WITHDRAW_ADDR,,}" == "b" || "${WITHDRAW_ADDR,,}" == "back" ]]; then menu; return; fi
   WITHDRAW_ADDR=${WITHDRAW_ADDR:-$DELEGATOR_ADDR}
 
   # ===== Withdrawal fee (msg.value) =====
@@ -619,8 +685,12 @@ function undelegate_from_validator() {
   echo "  Shares to remove:  $SHARES"
   echo "  Withdrawal fee:    ${FEE_GWEI:-unknown} gwei (${FEE_WEI} wei)"
   echo "  RPC:               $OG_EVM_RPC"
-  read -rp "Proceed with undelegation? (yes/no): " OK
-  [[ "${OK,,}" == "yes" ]] || { echo -e "${RED}Cancelled.${RESET}"; return 1; }
+  read -rp "Proceed with undelegation? (y/n, b=back): " OK
+  case "${OK,,}" in
+    y|yes) ;;
+    b|back) echo -e "${YELLOW}Returning to menu...${RESET}"; menu; return 0 ;;
+    *) echo -e "${RED}Cancelled.${RESET}"; return 1 ;;
+  esac
 
   # ===== Send TX or print manual steps =====
   if command -v cast >/dev/null 2>&1 && [ -n "${PRIVATE_KEY:-}" ]; then
@@ -834,37 +904,160 @@ function query_balance() {
 # }
 
 function ensure_evm_cli_tools() {
-  local mode="${1:-soft}"
-  local missing=0
+  # Modes:
+  #  - check:   only check and report; never install
+  #  - prompt:  prompt to install if missing (default)
+  #  - require: prompt to install; fail if still missing
+  local mode="${1:-prompt}"
+  local missing_bc=0
+  local missing_cast=0
 
-  # Ensure 'bc' (for integer math / ceiling)
+  # Check bc
   if ! command -v bc >/dev/null 2>&1; then
-    echo -e "${YELLOW}'bc' not found. Attempting to install...${RESET}"
-    if command -v apt-get >/dev/null 2>&1; then
-      sudo apt-get update -y && sudo apt-get install -y bc || true
-    elif command -v brew >/dev/null 2>&1; then
-      brew install bc || true
-    else
-      echo -e "${RED}Could not install 'bc' automatically. Please install it manually.${RESET}"
+    missing_bc=1
+    if [ "$mode" != "check" ]; then
+      echo -e "${YELLOW}'bc' is required for calculations but not found.${RESET}"
+      read -p "Install 'bc' now? (y/n, b=back): " ans
+      case "${ans,,}" in
+        y|yes)
+          if command -v apt-get >/dev/null 2>&1; then
+            sudo apt-get update -y && sudo apt-get install -y bc || true
+          elif command -v brew >/dev/null 2>&1; then
+            brew install bc || true
+          else
+            echo -e "${RED}Automatic installation not supported on this system.${RESET}"
+          fi
+          ;;
+        b|back)
+          return 1 ;;
+        *) ;;
+      esac
+      command -v bc >/dev/null 2>&1 || missing_bc=1
+      [ $missing_bc -eq 0 ] && echo -e "${GREEN}'bc' is installed.${RESET}"
     fi
   fi
-  command -v bc >/dev/null 2>&1 || missing=1
 
-  # Ensure 'cast' (Foundry)
+  # Check cast (Foundry)
   if ! command -v cast >/dev/null 2>&1; then
-    echo -e "${YELLOW}'cast' not found. Installing Foundry (this will add ~/.foundry/bin)...${RESET}"
-    (curl -L https://foundry.paradigm.xyz | bash) || true
-    export PATH="$HOME/.foundry/bin:$PATH"
-    if command -v foundryup >/dev/null 2>&1; then
-      foundryup || true
+    missing_cast=1
+    if [ "$mode" != "check" ]; then
+      echo -e "${YELLOW}'cast' (Foundry) is required for EVM RPC and tx, but not found.${RESET}"
+      read -p "Install Foundry (provides 'cast') now? (y/n, b=back): " ans
+      case "${ans,,}" in
+        y|yes)
+          (curl -L https://foundry.paradigm.xyz | bash) || true
+          export PATH="$HOME/.foundry/bin:$PATH"
+          if command -v foundryup >/dev/null 2>&1; then
+            foundryup || true
+          fi
+          ;;
+        b|back)
+          return 1 ;;
+        *) ;;
+      esac
+      command -v cast >/dev/null 2>&1 || missing_cast=1
+      [ $missing_cast -eq 0 ] && echo -e "${GREEN}'cast' is installed.${RESET}"
     fi
   fi
-  command -v cast >/dev/null 2>&1 || missing=1
 
-  if [ "$mode" = "require" ] && [ "$missing" -ne 0 ]; then
-    echo -e "${RED}Required tools are missing ('bc' and/or 'cast'). Install them and retry.${RESET}"
-    return 1
+  # Require mode: enforce availability
+  if [ "$mode" = "require" ]; then
+    if [ $missing_bc -ne 0 ] || [ $missing_cast -ne 0 ]; then
+      echo -e "${RED}Required tools are missing ('bc' and/or 'cast').${RESET}"
+      return 1
+    fi
   fi
+
+  return 0
+}
+
+# Helper to resolve default .env file location for 0gchaind
+function _resolve_og_env_file() {
+  local home_dir
+  home_dir="${OG_HOME:-$HOME/.0gchaind/0g-home/0gchaind-home}"
+  echo "$home_dir/.env"
+}
+
+# Ensure PRIVATE_KEY is available (optionally prompt the user)
+# Modes:
+#  - optional (default): try env var, then .env file, then ask user if they want to provide; returns 0 even if not set
+#  - required: same, but if still not available after prompts, return 1
+function ensure_private_key() {
+  local mode="${1:-optional}"
+  local env_file
+  env_file=$(_resolve_og_env_file)
+
+  # If already set, nothing to do
+  if [ -n "${PRIVATE_KEY:-}" ]; then
+    return 0
+  fi
+
+  # Try to load from env file
+  if [ -f "$env_file" ]; then
+    local pk
+    pk=$(grep -E '^PRIVATE_KEY=' "$env_file" | head -n1 | sed -E 's/^PRIVATE_KEY=//')
+    if [ -n "$pk" ]; then
+      export PRIVATE_KEY="$pk"
+      return 0
+    fi
+  fi
+
+  # Interactive prompt
+  echo -e "${YELLOW}Auto-submit requires an EVM private key (hex).${RESET}"
+  read -p "Provide a private key now to enable auto submission? (y/n, b=back): " _ans
+  case "${_ans,,}" in
+    y|yes)
+      ;;
+    b|back)
+      [ "$mode" = "required" ] && return 1 || return 0 ;;
+    *)
+      [ "$mode" = "required" ] && { echo -e "${RED}PRIVATE_KEY is required for this action.${RESET}"; return 1; } || return 0 ;;
+  esac
+
+  read -p "Enter private key (0x-prefixed or 64-hex), or path to a .env file: " _input
+  if [ -z "$_input" ]; then
+    [ "$mode" = "required" ] && { echo -e "${RED}PRIVATE_KEY not provided.${RESET}"; return 1; } || return 0
+  fi
+
+  if [ -f "$_input" ]; then
+    # Treat as env file path
+    local pk
+    pk=$(grep -E '^PRIVATE_KEY=' "$_input" | head -n1 | sed -E 's/^PRIVATE_KEY=//')
+    if [ -z "$pk" ]; then
+      echo -e "${RED}No PRIVATE_KEY entry found in $_input.${RESET}"
+      [ "$mode" = "required" ] && return 1 || return 0
+    fi
+    export PRIVATE_KEY="$pk"
+  else
+    # Treat as raw key
+    local re='^(0x)?[0-9a-fA-F]{64}$'
+    if [[ ! $_input =~ $re ]]; then
+      echo -e "${RED}Input does not look like a valid 64-hex private key.${RESET}"
+      [ "$mode" = "required" ] && return 1 || return 0
+    fi
+    export PRIVATE_KEY="$_input"
+
+    # Offer to persist to default env file
+    read -p "Save PRIVATE_KEY to $(dirname "$env_file")/.env for future use? (y/n, b=back): " _save
+    case "${_save,,}" in
+      y|yes)
+        mkdir -p "$(dirname "$env_file")"
+        {
+          # Remove existing PRIVATE_KEY entries to avoid duplicates
+          if [ -f "$env_file" ]; then
+            grep -v -E '^PRIVATE_KEY=' "$env_file" || true
+          fi
+          echo "PRIVATE_KEY=$PRIVATE_KEY"
+        } > "${env_file}.tmp" && mv "${env_file}.tmp" "$env_file"
+        chmod 600 "$env_file" 2>/dev/null || true
+        echo -e "${GREEN}Saved to $env_file (permissions set to 600).${RESET}"
+        ;;
+      b|back) : ;;
+      *) : ;;
+    esac
+  fi
+
+  return 0
 }
 
 function delete_validator_node() {
