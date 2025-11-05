@@ -128,17 +128,18 @@ choose_itrocket_snapshot() {
 }
 
 main_script() {
-    echo -e "${GREEN}Choose a snapshot provider:${NC}"
-    echo "1. ITRocket"
-    echo "2. Exit"
+    #echo -e "${GREEN}Choose a snapshot provider:${NC}"
+    #echo "1. ITRocket"
+    echo -e "${GREEN}Not available at this time${NC}"
+    echo "1. Exit"
 
     read -p "Enter your choice: " choice
 
     case $choice in
-        1)
+        #1)
             choose_itrocket_snapshot
             ;;
-        2)
+        1)
             echo -e "${YELLOW}Exiting.${NC}"
             exit 0
             ;;

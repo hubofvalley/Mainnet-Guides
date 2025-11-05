@@ -419,20 +419,30 @@ function create_validator() {
     menu
 }
 
-# Delegate 0G to a validator (0G Mainnet / Aristotle)
+# Delegate to a validator (0G Mainnet / Aristotle)
 function delegate_to_validator() {
-    # Only check; installation is offered contextually if needed
-    ensure_evm_cli_tools check || true
-    # Offer to load/provide PRIVATE_KEY to enable auto mode (optional)
-    ensure_private_key optional || true
-    echo -e "${CYAN}Delegate 0G to Validator${RESET}"
-    echo -e "${YELLOW}Requirements:${RESET} EVM wallet with 0G for the stake + gas. For auto mode, both 'cast' and PRIVATE_KEY must be available."
+    set -euo pipefail
 
-    # Defaults (override via ENV if needed)
+    # Tools: Foundry (cast) optional for auto flow; PRIVATE_KEY optional
+    ensure_evm_cli_tools check || true
+    ensure_private_key optional || true
+
+    # 'bc' is not strictly required for delegation, but useful to have
+    if ! command -v bc >/dev/null 2>&1; then
+      echo -e "${YELLOW}Installing 'bc' (optional, useful for math) ...${RESET}"
+      if command -v apt-get >/dev/null 2>&1; then
+        sudo apt-get update -y && sudo apt-get install -y bc || true
+      fi
+    fi
+
+    echo -e "${CYAN}Delegate 0G to Validator${RESET}"
+    echo -e "${YELLOW}Requirements:${RESET} EVM wallet with 0G for stake + gas. For auto mode, both 'cast' and PRIVATE_KEY must be available."
+
+    # Defaults (override via ENV)
     OG_EVM_RPC="${OG_EVM_RPC:-https://evmrpc.0g.ai}"
     STAKING_ADDRESS="${STAKING_ADDRESS:-0xea224dBB52F57752044c0C86aD50930091F561B9}"
-    GV_VALIDATOR_ADDR="${GV_VALIDATOR_ADDR:-}"
-    GV_VALIDATOR_PUBKEY="${GV_VALIDATOR_PUBKEY:-}"
+    GV_VALIDATOR_ADDR="${GV_VALIDATOR_ADDR:-0x108e619dA0cdbA8A301A53948A4aCc23A3d79377}"
+    GV_VALIDATOR_PUBKEY="${GV_VALIDATOR_PUBKEY:-0xb589c0c26210a065a4c4aee068346301490efad5bfaa0578f186c6e41cc4018004f08a411ef0f056468174c260307b7e}"
 
     echo "Select how to specify the validator:"
     echo "  1) Enter validator contract address (0x...)"
@@ -443,67 +453,58 @@ function delegate_to_validator() {
 
     VALIDATOR_ADDR=""
     case "${MODE:-3}" in
-        1)
-            read -p "Validator contract address (0x...): " VALIDATOR_ADDR
-            ;;
-        2)
-            read -p "Validator PUBKEY (0x... 48-byte): " VAL_PUBKEY
-            if ! command -v cast >/dev/null 2>&1; then
-                echo -e "${YELLOW}'cast' is required to resolve validator address from PUBKEY.${RESET}"
-                read -p "Install Foundry now? (y/n, b=back): " _ans
-                case "${_ans,,}" in
-                  y|yes) ensure_evm_cli_tools prompt || true ;;
-                  b|back) menu; return 0 ;;
-                  *) echo -e "${RED}Cannot resolve without 'cast'.${RESET}"; return 1 ;;
-                esac
-                command -v cast >/dev/null 2>&1 || { echo -e "${RED}Cast still unavailable.${RESET}"; return 1; }
-            fi
-            VALIDATOR_ADDR=$(cast call "$STAKING_ADDRESS" 'getValidator(bytes)(address)' "$VAL_PUBKEY" --rpc-url "$OG_EVM_RPC")
-            if [ -z "$VALIDATOR_ADDR" ] || [ "$VALIDATOR_ADDR" = "0x0000000000000000000000000000000000000000" ]; then
-                echo -e "${RED}Validator not found for the provided PUBKEY.${RESET}"
-                return 1
-            fi
-            ;;
-        3|*)
-            if [ -n "$GV_VALIDATOR_ADDR" ]; then
-                VALIDATOR_ADDR="$GV_VALIDATOR_ADDR"
-            elif [ -n "$GV_VALIDATOR_PUBKEY" ]; then
-                if ! command -v cast >/dev/null 2>&1; then
-                  echo -e "${YELLOW}'cast' is required to resolve GV_VALIDATOR_PUBKEY.${RESET}"
-                  read -p "Install Foundry now? (y/n, b=back): " _ans
-                  case "${_ans,,}" in
-                    y|yes) ensure_evm_cli_tools prompt || true ;;
-                    b|back) menu; return 0 ;;
-                    *) echo -e "${RED}Cannot resolve without 'cast'.${RESET}"; return 1 ;;
-                  esac
-                  command -v cast >/dev/null 2>&1 || { echo -e "${RED}Cast still unavailable.${RESET}"; return 1; }
-                fi
-                VALIDATOR_ADDR=$(cast call "$STAKING_ADDRESS" 'getValidator(bytes)(address)' "$GV_VALIDATOR_PUBKEY" --rpc-url "$OG_EVM_RPC")
-                if [ -z "$VALIDATOR_ADDR" ] || [ "$VALIDATOR_ADDR" = "0x0000000000000000000000000000000000000000" ]; then
-                    echo -e "${RED}Validator not found for GV_VALIDATOR_PUBKEY.${RESET}"
-                    return 1
-                fi
-            else
-                echo -e "${RED}GV_VALIDATOR_ADDR / GV_VALIDATOR_PUBKEY not set.${RESET}"
-                return 1
-            fi
-            ;;
+      1)
+        read -p "Validator contract address (0x...): " VALIDATOR_ADDR
+        ;;
+      2)
+        read -p "Validator PUBKEY (0x... 48-byte): " VAL_PUBKEY
+        if ! command -v cast >/dev/null 2>&1; then
+          echo -e "${YELLOW}'cast' is required to resolve validator address from PUBKEY.${RESET}"
+          read -p "Install Foundry now? (y/n, b=back): " _ans
+          case "${_ans,,}" in
+            y|yes) ensure_evm_cli_tools prompt || true ;;
+            b|back) menu; return 0 ;;
+            *) echo -e "${RED}Cannot resolve without 'cast'.${RESET}"; return 1 ;;
+          esac
+        fi
+        command -v cast >/dev/null 2>&1 || { echo -e "${RED}Cast still unavailable.${RESET}"; return 1; }
+        VALIDATOR_ADDR=$(cast call "$STAKING_ADDRESS" 'getValidator(bytes)(address)' "$VAL_PUBKEY" --rpc-url "$OG_EVM_RPC" | tail -n1 | tr -d '[:space:]')
+        [[ -z "$VALIDATOR_ADDR" || "$VALIDATOR_ADDR" == "0x0000000000000000000000000000000000000000" ]] && { echo -e "${RED}Validator not found for the provided PUBKEY.${RESET}"; return 1; }
+        ;;
+      3|*)
+        if [ -n "$GV_VALIDATOR_ADDR" ]; then
+          VALIDATOR_ADDR="$GV_VALIDATOR_ADDR"
+        elif [ -n "$GV_VALIDATOR_PUBKEY" ]; then
+          if ! command -v cast >/dev/null 2>&1; then
+            echo -e "${YELLOW}'cast' is required to resolve GV_VALIDATOR_PUBKEY.${RESET}"
+            read -p "Install Foundry now? (y/n, b=back): " _ans
+            case "${_ans,,}" in
+              y|yes) ensure_evm_cli_tools prompt || true ;;
+              b|back) menu; return 0 ;;
+              *) echo -e "${RED}Cannot resolve without 'cast'.${RESET}"; return 1 ;;
+            esac
+          fi
+          command -v cast >/dev/null 2>&1 || { echo -e "${RED}Cast still unavailable.${RESET}"; return 1; }
+          VALIDATOR_ADDR=$(cast call "$STAKING_ADDRESS" 'getValidator(bytes)(address)' "$GV_VALIDATOR_PUBKEY" --rpc-url "$OG_EVM_RPC" | tail -n1 | tr -d '[:space:]')
+          [[ -z "$VALIDATOR_ADDR" || "$VALIDATOR_ADDR" == "0x0000000000000000000000000000000000000000" ]] && { echo -e "${RED}Validator not found for GV_VALIDATOR_PUBKEY.${RESET}"; return 1; }
+        else
+          echo -e "${RED}GV_VALIDATOR_ADDR / GV_VALIDATOR_PUBKEY not set.${RESET}"
+          return 1
+        fi
+        ;;
     esac
 
     read -p "Enter delegation amount in OG (decimals allowed, e.g., 123.45) [b=back]: " AMOUNT_OG
     if [[ "${AMOUNT_OG,,}" == "b" || "${AMOUNT_OG,,}" == "back" ]]; then menu; return; fi
-    if [[ -z "${AMOUNT_OG:-}" || ! "$AMOUNT_OG" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
-        echo -e "${RED}Invalid amount.${RESET}"
-        return 1
-    fi
+    [[ -z "${AMOUNT_OG:-}" || ! "$AMOUNT_OG" =~ ^[0-9]+([.][0-9]+)?$ ]] && { echo -e "${RED}Invalid amount.${RESET}"; return 1; }
 
     if command -v cast >/dev/null 2>&1 && [ -n "${PRIVATE_KEY:-}" ]; then
-        set +e
-        DELEGATOR_ADDR=$(cast wallet address --private-key "$PRIVATE_KEY" 2>/dev/null || true)
-        set -e
+      set +e
+      DELEGATOR_ADDR=$(cast wallet address --private-key "$PRIVATE_KEY" 2>/dev/null || true)
+      set -e
     fi
     if [ -z "${DELEGATOR_ADDR:-}" ]; then
-        read -p "Your EVM address (delegator, 0x...): " DELEGATOR_ADDR
+      read -p "Your EVM address (delegator, 0x...): " DELEGATOR_ADDR
     fi
 
     read -p "Custom EVM RPC? [Enter to use ${OG_EVM_RPC}, b=back]: " RPC_INPUT
@@ -517,53 +518,79 @@ function delegate_to_validator() {
     echo "  RPC:        $OG_EVM_RPC"
     read -p "Proceed with delegation? (y/n, b=back): " OK
     case "${OK,,}" in
-        y|yes) ;;
-        b|back) echo -e "${YELLOW}Returning to menu...${RESET}"; menu; return 0 ;;
-        *) echo -e "${RED}Cancelled.${RESET}"; return 1 ;;
+      y|yes) ;;
+      b|back) echo -e "${YELLOW}Returning to menu...${RESET}"; menu; return 0 ;;
+      *) echo -e "${RED}Cancelled.${RESET}"; return 1 ;;
     esac
 
     if command -v cast >/dev/null 2>&1 && [ -n "${PRIVATE_KEY:-}" ]; then
-        echo -e "${CYAN}Sending delegation transaction via 'cast'...${RESET}"
+      echo -e "${CYAN}Sending delegation transaction via 'cast'...${RESET}"
+      TX_OUT=$(
         cast send "$VALIDATOR_ADDR" \
           'delegate(address)' "$DELEGATOR_ADDR" \
           --value "${AMOUNT_OG}ether" \
           --rpc-url "$OG_EVM_RPC" \
-          --private-key "$PRIVATE_KEY"
-        echo -e "${GREEN}Delegation submitted. Track on Chainscan:${RESET} https://chainscan.0g.ai/address/$VALIDATOR_ADDR"
+          --private-key "$PRIVATE_KEY" 2>&1 | tee /dev/tty
+      )
+      # Extract transaction hash (JSON or plain)
+      TX_HASH=$(echo "$TX_OUT" | sed -n 's/.*"transactionHash"[[:space:]]*:[[:space:]]*"\(0x[0-9a-fA-F]\{64\}\)".*/\1/p' | head -n1)
+      if [ -z "$TX_HASH" ]; then
+        TX_HASH=$(echo "$TX_OUT" | sed -n 's/.*transactionHash[[:space:]]*\(0x[0-9a-fA-F]\{64\}\).*/\1/p' | head -n1)
+      fi
+      if [ -z "$TX_HASH" ]; then
+        TX_HASH=$(echo "$TX_OUT" | grep -Eo '0x[0-9a-fA-F]{64}' | head -n1)
+      fi
+
+      if [ -n "$TX_HASH" ]; then
+        echo -e "${GREEN}Delegation submitted. Track on Chainscan:${RESET} https://chainscan.0g.ai/tx/$TX_HASH"
+      else
+        echo -e "${YELLOW}Delegation submitted (tx hash not detected). Track contract:${RESET} https://chainscan.0g.ai/address/$VALIDATOR_ADDR"
+      fi
     else
-        echo -e "${YELLOW}Manual path (Chainscan UI):${RESET}"
-        echo "  1) Open https://chainscan.0g.ai/address/$VALIDATOR_ADDR"
-        echo "  2) Go to Contract -> Write and select 'delegate(address)'"
-        echo "  3) Set 'delegator' = $DELEGATOR_ADDR"
-        echo "  4) Set payable value = $AMOUNT_OG OG, connect your 0G Mainnet wallet, then submit."
+      echo -e "${YELLOW}Manual path (Chainscan UI):${RESET}"
+      echo "  1) Open https://chainscan.0g.ai/address/$VALIDATOR_ADDR"
+      echo "  2) Contract -> Write -> select 'delegate(address)'"
+      echo "  3) Set 'delegator' = $DELEGATOR_ADDR"
+      echo "  4) Set payable value = $AMOUNT_OG OG (native), connect your 0G Mainnet wallet, then submit."
     fi
 
     echo -e "${YELLOW}Useful checks:${RESET}"
-    echo "  # Delegation info (validator address, shares):"
+    echo "  # Delegation info (returns delegator, shares):"
     echo "  cast call $VALIDATOR_ADDR 'getDelegation(address)(address,uint256)' $DELEGATOR_ADDR --rpc-url $OG_EVM_RPC"
     echo "  # Total tokens and shares on the validator:"
     echo "  cast call $VALIDATOR_ADDR 'tokens()(uint256)' --rpc-url $OG_EVM_RPC"
     echo "  cast call $VALIDATOR_ADDR 'delegatorShares()(uint256)' --rpc-url $OG_EVM_RPC"
+
+    echo -e "\n${YELLOW}Press Enter to go back to main menu...${RESET}"
+    read -r
+    menu
 }
 
 # Undelegate from a validator (0G Mainnet / Aristotle)
 function undelegate_from_validator() {
-  # Prompt to install missing tools only when needed; enforce before sending
-  ensure_evm_cli_tools prompt || true
-  # Offer to load/provide PRIVATE_KEY to enable auto mode (optional)
-  ensure_private_key optional || true
   set -euo pipefail
+
+  # Tools & key (auto mode optional)
+  ensure_evm_cli_tools prompt || true
+  ensure_private_key optional || true
+
+  # Ensure 'bc' for big-int math
+  if ! command -v bc >/dev/null 2>&1; then
+    echo -e "${YELLOW}Installing 'bc' (required for share calculations) ...${RESET}"
+    if command -v apt-get >/dev/null 2>&1; then
+      sudo apt-get update -y && sudo apt-get install -y bc || true
+    fi
+    command -v bc >/dev/null 2>&1 || { echo -e "${RED}'bc' is required for the OG→shares calculation.${RESET}"; return 1; }
+  fi
+
   echo -e "${CYAN}Undelegate from Validator${RESET}"
-  echo -e "${YELLOW}Requirements:${RESET} A small amount of 0G for gas and the validator's withdrawal fee. For auto mode, both 'cast' and PRIVATE_KEY must be available."
+  echo -e "${YELLOW}Requirements:${RESET} A small amount of 0G for gas and the validator's withdrawal fee (in gwei). For auto mode, both 'cast' and PRIVATE_KEY must be available."
 
-  # Try to ensure tools; undelegation benefits from on-chain reads (tokens/shares) and math.
-  ensure_evm_cli_tools check || true
-
-  # ===== Defaults (override via ENV if needed) =====
-  OG_EVM_RPC="${OG_EVM_RPC:-https://evmrpc.0g.ai}"       # official mainnet RPC
-  STAKING_ADDRESS="${STAKING_ADDRESS:-0xea224dBB52F57752044c0C86aD50930091F561B9}" # mainnet staking
-  GV_VALIDATOR_ADDR="${GV_VALIDATOR_ADDR:-}"             # optional: Grand Valley validator contract address
-  GV_VALIDATOR_PUBKEY="${GV_VALIDATOR_PUBKEY:-}"         # optional: 48-byte consensus pubkey (0x...)
+  # ===== Defaults (override via ENV) =====
+  OG_EVM_RPC="${OG_EVM_RPC:-https://evmrpc.0g.ai}"
+  STAKING_ADDRESS="${STAKING_ADDRESS:-0xea224dBB52F57752044c0C86aD50930091F561B9}"
+  GV_VALIDATOR_ADDR="${GV_VALIDATOR_ADDR:-0x108e619dA0cdbA8A301A53948A4aCc23A3d79377}"
+  GV_VALIDATOR_PUBKEY="${GV_VALIDATOR_PUBKEY:-0xb589c0c26210a065a4c4aee068346301490efad5bfaa0578f186c6e41cc4018004f08a411ef0f056468174c260307b7e}"
 
   # ===== Choose how to specify the validator =====
   echo "Select how to specify the validator:"
@@ -581,14 +608,16 @@ function undelegate_from_validator() {
     2)
       read -rp "Validator PUBKEY (0x... 48-byte): " VAL_PUBKEY
       if command -v cast >/dev/null 2>&1; then
-        VALIDATOR_ADDR=$(cast call "$STAKING_ADDRESS" 'getValidator(bytes)(address)' "$VAL_PUBKEY" --rpc-url "$OG_EVM_RPC")
+        VALIDATOR_ADDR=$(cast call "$STAKING_ADDRESS" 'getValidator(bytes)(address)' "$VAL_PUBKEY" --rpc-url "$OG_EVM_RPC" | tail -n1 | tr -d '[:space:]')
+      else
+        echo -e "${RED}Resolving from pubkey requires 'cast'.${RESET}"; return 1
       fi
       ;;
     3|*)
       if [ -n "$GV_VALIDATOR_ADDR" ]; then
         VALIDATOR_ADDR="$GV_VALIDATOR_ADDR"
       elif [ -n "$GV_VALIDATOR_PUBKEY" ] && command -v cast >/dev/null 2>&1; then
-        VALIDATOR_ADDR=$(cast call "$STAKING_ADDRESS" 'getValidator(bytes)(address)' "$GV_VALIDATOR_PUBKEY" --rpc-url "$OG_EVM_RPC")
+        VALIDATOR_ADDR=$(cast call "$STAKING_ADDRESS" 'getValidator(bytes)(address)' "$GV_VALIDATOR_PUBKEY" --rpc-url "$OG_EVM_RPC" | tail -n1 | tr -d '[:space:]')
       fi
       ;;
   esac
@@ -613,7 +642,7 @@ function undelegate_from_validator() {
   if [[ "${RPC_INPUT,,}" == "b" || "${RPC_INPUT,,}" == "back" ]]; then menu; return; fi
   if [ -n "${RPC_INPUT}" ]; then OG_EVM_RPC="$RPC_INPUT"; fi
 
-  # ===== Input mode: default OG amount -> shares; or raw shares =====
+  # ===== Input mode: OG amount -> shares; or raw shares =====
   echo "Select undelegation input:"
   echo "  1) Enter target amount in OG (recommended)"
   echo "  2) Enter raw shares (advanced)"
@@ -625,36 +654,39 @@ function undelegate_from_validator() {
   if [[ "${AMODE:-1}" == "2" ]]; then
     read -rp "Shares to undelegate (uint) [b=back]: " SHARES
     if [[ "${SHARES,,}" == "b" || "${SHARES,,}" == "back" ]]; then menu; return; fi
-    if [[ -z "$SHARES" || ! "$SHARES" =~ ^[0-9]+$ ]]; then
-      echo -e "${RED}Invalid shares.${RESET}"; return 1
-    fi
+    [[ -z "$SHARES" || ! "$SHARES" =~ ^[0-9]+$ ]] && { echo -e "${RED}Invalid shares.${RESET}"; return 1; }
   else
     read -rp "Target amount to withdraw (in OG, decimals allowed, e.g., 12.34) [b=back]: " AMOUNT_OG
     if [[ "${AMOUNT_OG,,}" == "b" || "${AMOUNT_OG,,}" == "back" ]]; then menu; return; fi
-    if [[ -z "${AMOUNT_OG:-}" || ! "$AMOUNT_OG" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
-      echo -e "${RED}Invalid amount.${RESET}"; return 1
-    fi
+    [[ -z "${AMOUNT_OG:-}" || ! "$AMOUNT_OG" =~ ^[0-9]+([.][0-9]+)?$ ]] && { echo -e "${RED}Invalid amount.${RESET}"; return 1; }
   fi
 
   # ===== Read pool state & compute shares if needed =====
   if [ -z "$SHARES" ]; then
-    if ! command -v cast >/dev/null 2>&1 || ! command -v bc >/dev/null 2>&1; then
-      echo -e "${RED}On-chain reads and math require 'cast' and 'bc'. Install them or use raw shares (option 2).${RESET}"
+    if ! command -v cast >/dev/null 2>&1; then
+      echo -e "${RED}On-chain reads require 'cast'. Install it or use raw shares (option 2).${RESET}"
       return 1
     fi
-    TOTAL_TOKENS=$(cast call "$VALIDATOR_ADDR" 'tokens()(uint256)' --rpc-url "$OG_EVM_RPC")
-    TOTAL_SHARES=$(cast call "$VALIDATOR_ADDR" 'delegatorShares()(uint256)' --rpc-url "$OG_EVM_RPC")
-    if [[ "$TOTAL_TOKENS" == "0" || "$TOTAL_SHARES" == "0" ]]; then
+
+    TOTAL_TOKENS=$(cast call "$VALIDATOR_ADDR" 'tokens()(uint256)' --rpc-url "$OG_EVM_RPC" | tail -n1 | tr -d '[:space:]')
+    TOTAL_SHARES=$(cast call "$VALIDATOR_ADDR" 'delegatorShares()(uint256)' --rpc-url "$OG_EVM_RPC" | tail -n1 | tr -d '[:space:]')
+
+    if [[ -z "$TOTAL_TOKENS" || "$TOTAL_TOKENS" == "0" || -z "$TOTAL_SHARES" || "$TOTAL_SHARES" == "0" ]]; then
       echo -e "${RED}Pool state invalid (zero tokens or shares).${RESET}"; return 1
     fi
-    MY_SHARES=$(cast call "$VALIDATOR_ADDR" 'getDelegation(address)(address,uint256)' "$DELEGATOR_ADDR" --rpc-url "$OG_EVM_RPC" | awk '{print $2}')
+
+    # getDelegation returns (address, uint). Take the last line as shares.
+    mapfile -t _DELEG_OUT < <(cast call "$VALIDATOR_ADDR" 'getDelegation(address)(address,uint256)' "$DELEGATOR_ADDR" --rpc-url "$OG_EVM_RPC")
+    MY_SHARES="${_DELEG_OUT[-1]//[[:space:]]/}"
+
     if [[ -z "$MY_SHARES" || "$MY_SHARES" == "0" ]]; then
       echo -e "${RED}No active delegation found for this address.${RESET}"; return 1
     fi
+
     AMOUNT_WEI=$(cast to-wei "$AMOUNT_OG" ether)
     # sharesNeeded = ceil(amountWei * totalShares / totalTokens)
     SHARES=$(echo "($AMOUNT_WEI * $TOTAL_SHARES + $TOTAL_TOKENS - 1) / $TOTAL_TOKENS" | bc)
-    if [[ "$SHARES" -le 0 ]]; then
+    if [[ -z "$SHARES" || "$SHARES" -le 0 ]]; then
       echo -e "${RED}Computed shares <= 0. Choose a larger amount.${RESET}"; return 1
     fi
     if (( SHARES > MY_SHARES )); then
@@ -669,10 +701,9 @@ function undelegate_from_validator() {
 
   # ===== Withdrawal fee (msg.value) =====
   if command -v cast >/dev/null 2>&1; then
-    FEE_GWEI=$(cast call "$VALIDATOR_ADDR" 'withdrawalFeeInGwei()(uint96)' --rpc-url "$OG_EVM_RPC")
+    FEE_GWEI=$(cast call "$VALIDATOR_ADDR" 'withdrawalFeeInGwei()(uint96)' --rpc-url "$OG_EVM_RPC" | tail -n1 | tr -d '[:space:]')
     FEE_WEI=$(cast to-wei "$FEE_GWEI" gwei)
   else
-    # Fallback: cannot query; force manual entry
     read -rp "Validator withdrawal fee in Gwei (cannot query without 'cast'): " FEE_GWEI
     FEE_WEI=$(printf "%.0f" "$(awk "BEGIN{print $FEE_GWEI * 1000000000}")")
   fi
@@ -695,14 +726,28 @@ function undelegate_from_validator() {
   # ===== Send TX or print manual steps =====
   if command -v cast >/dev/null 2>&1 && [ -n "${PRIVATE_KEY:-}" ]; then
     echo -e "${CYAN}Sending undelegation transaction via 'cast'...${RESET}"
-    # IValidatorContract.undelegate(address withdrawalAddress, uint shares) payable
-    cast send "$VALIDATOR_ADDR" \
-      'undelegate(address,uint256)' "$WITHDRAW_ADDR" "$SHARES" \
-      --value "$FEE_WEI" \
-      --rpc-url "$OG_EVM_RPC" \
-      --private-key "$PRIVATE_KEY"
-    echo -e "${GREEN}Undelegation submitted. A withdrawal delay applies before funds are released.${RESET}"
-    echo -e "${YELLOW}Track on Chainscan:${RESET} https://chainscan.0g.ai/address/$VALIDATOR_ADDR"
+    TX_OUT=$(
+      cast send "$VALIDATOR_ADDR" \
+        'undelegate(address,uint256)' "$WITHDRAW_ADDR" "$SHARES" \
+        --value "$FEE_WEI" \
+        --rpc-url "$OG_EVM_RPC" \
+        --private-key "$PRIVATE_KEY" 2>&1 | tee /dev/tty
+    )
+
+    # Extract transaction hash (JSON or plain)
+    TX_HASH=$(echo "$TX_OUT" | sed -n 's/.*"transactionHash"[[:space:]]*:[[:space:]]*"\(0x[0-9a-fA-F]\{64\}\)".*/\1/p' | head -n1)
+    if [ -z "$TX_HASH" ]; then
+      TX_HASH=$(echo "$TX_OUT" | sed -n 's/.*transactionHash[[:space:]]*\(0x[0-9a-fA-F]\{64\}\).*/\1/p' | head -n1)
+    fi
+    if [ -z "$TX_HASH" ]; then
+      TX_HASH=$(echo "$TX_OUT" | grep -Eo '0x[0-9a-fA-F]{64}' | head -n1)
+    fi
+
+    if [ -n "$TX_HASH" ]; then
+      echo -e "${GREEN}Undelegation submitted. Track on Chainscan:${RESET} https://chainscan.0g.ai/tx/$TX_HASH"
+    else
+      echo -e "${YELLOW}Undelegation submitted (tx hash not detected). Track contract:${RESET} https://chainscan.0g.ai/address/$VALIDATOR_ADDR"
+    fi
   else
     echo -e "${YELLOW}Manual path (Chainscan UI):${RESET}"
     echo "  1) Open https://chainscan.0g.ai/address/$VALIDATOR_ADDR"
@@ -713,6 +758,10 @@ function undelegate_from_validator() {
     echo "  4) Set payable value = ${FEE_GWEI:-<fee in gwei>} gwei (i.e., ${FEE_WEI} wei)."
     echo "  5) Connect your 0G Mainnet wallet and submit."
   fi
+
+    echo -e "\n${YELLOW}Press Enter to go back to main menu...${RESET}"
+    read -r
+    menu
 }
 
 function query_balance() {
@@ -911,6 +960,25 @@ function ensure_evm_cli_tools() {
   local mode="${1:-prompt}"
   local missing_bc=0
   local missing_cast=0
+  local foundry_bin="$HOME/.foundry/bin"
+  local export_line='export PATH="$HOME/.foundry/bin:$PATH"'
+
+  # Persist PATH for future shells
+  _persist_foundry_path() {
+    for f in "$HOME/.bashrc" "$HOME/.bash_profile" "$HOME/.profile"; do
+      if [ -e "$f" ]; then
+        grep -qs 'foundry/bin' "$f" || echo "$export_line" >> "$f"
+      else
+        echo "$export_line" >> "$f"
+      fi
+    done
+  }
+
+  # Activate in current shell
+  _activate_foundry_in_session() {
+    export PATH="$foundry_bin:$PATH"
+    hash -r 2>/dev/null || true
+  }
 
   # Check bc
   if ! command -v bc >/dev/null 2>&1; then
@@ -928,35 +996,46 @@ function ensure_evm_cli_tools() {
             echo -e "${RED}Automatic installation not supported on this system.${RESET}"
           fi
           ;;
-        b|back)
-          return 1 ;;
-        *) ;;
+        b|back) return 1 ;;
+        *) : ;;
       esac
       command -v bc >/dev/null 2>&1 || missing_bc=1
       [ $missing_bc -eq 0 ] && echo -e "${GREEN}'bc' is installed.${RESET}"
     fi
   fi
 
+  # If Foundry exists but PATH isn't set, activate it
+  if ! command -v cast >/dev/null 2>&1 && [ -x "$foundry_bin/cast" ]; then
+    _activate_foundry_in_session
+  fi
+
   # Check cast (Foundry)
   if ! command -v cast >/dev/null 2>&1; then
     missing_cast=1
     if [ "$mode" != "check" ]; then
-      echo -e "${YELLOW}'cast' (Foundry) is required for EVM RPC and tx, but not found.${RESET}"
+      echo -e "${YELLOW}'cast' (Foundry) is required for EVM RPC/tx, but not found.${RESET}"
       read -p "Install Foundry (provides 'cast') now? (y/n, b=back): " ans
       case "${ans,,}" in
         y|yes)
-          (curl -L https://foundry.paradigm.xyz | bash) || true
-          export PATH="$HOME/.foundry/bin:$PATH"
-          if command -v foundryup >/dev/null 2>&1; then
-            foundryup || true
+          # Bootstrap Foundry if needed
+          if [ ! -x "$foundry_bin/foundryup" ]; then
+            (curl -L https://foundry.paradigm.xyz | bash) || true
           fi
+          # Activate + persist PATH
+          _activate_foundry_in_session
+          _persist_foundry_path
+          # Install/update binaries non-interactively
+          if [ -x "$foundry_bin/foundryup" ]; then
+            "$foundry_bin/foundryup" -y || true
+          fi
+          # Re-activate (in case PATH changed)
+          _activate_foundry_in_session
           ;;
-        b|back)
-          return 1 ;;
-        *) ;;
+        b|back) return 1 ;;
+        *) : ;;
       esac
       command -v cast >/dev/null 2>&1 || missing_cast=1
-      [ $missing_cast -eq 0 ] && echo -e "${GREEN}'cast' is installed.${RESET}"
+      [ $missing_cast -eq 0 ] && echo -e "${GREEN}'cast' is installed and on PATH.${RESET}"
     fi
   fi
 
