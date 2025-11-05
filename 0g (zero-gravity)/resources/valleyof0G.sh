@@ -99,7 +99,7 @@ Grand Valley 0G public endpoints:${RESET}
 - cosmos-rpc: ${BLUE}https://lightnode-rpc-mainnet-0g.grandvalleys.com${RESET}
 - evm-rpc: ${BLUE}https://lightnode-json-rpc-mainnet-0g.grandvalleys.com${RESET}
 - cosmos rest-api: ${BLUE}https://lightnode-api-0g.grandvalleys.com${RESET}
-- peer: ${BLUE}a97c8615903e795135066842e5739e30d64e2342@peer-0g.grandvalleys.com:28656${RESET}
+- peer: ${BLUE}813aeda202eae52b0d3e389a0e6e3a0354ad547a@peer-mainnet-0g.grandvalleys.com:28656${RESET}
 - Grand Valley Explorer: ${BLUE}https://explorer.grandvalleys.com${RESET}
 
 ${GREEN}Connect with Zero Gravity (0G):${RESET}

@@ -137,8 +137,8 @@ main_script() {
 
     case $choice in
         #1)
-            choose_itrocket_snapshot
-            ;;
+            #choose_itrocket_snapshot
+            #;;
         1)
             echo -e "${YELLOW}Exiting.${NC}"
             exit 0

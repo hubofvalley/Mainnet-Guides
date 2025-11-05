@@ -34,12 +34,12 @@ choose_json_rpc_endpoint() {
         fi
     elif [ "$JSON_RPC_CHOICE" == "2" ]; then
         echo "Available public JSON-RPC endpoints:"
-        echo "1. https://lightnode-json-rpc-mainnet.0g.grandvalleys.com [$(query_block_number https://lightnode-json-rpc-mainnet.0g.grandvalleys.com)]"
+        echo "1. https://lightnode-json-rpc-mainnet-0g.grandvalleys.com [$(query_block_number https://lightnode-json-rpc-mainnet-0g.grandvalleys.com)]"
         echo "2. https://evmrpc.0g.ai [$(query_block_number https://evmrpc.0g.ai)]"
         read -p "Enter the number of your chosen public JSON-RPC endpoint: " PUBLIC_RPC_CHOICE
 
         case $PUBLIC_RPC_CHOICE in
-            1) BLOCKCHAIN_RPC_ENDPOINT="https://lightnode-json-rpc-mainnet.0g.grandvalleys.com";;
+            1) BLOCKCHAIN_RPC_ENDPOINT="https://lightnode-json-rpc-mainnet-0g.grandvalleys.com";;
             2) BLOCKCHAIN_RPC_ENDPOINT="https://evmrpc.0g.ai";;
             *) echo "Invalid choice. Exiting."; exit 1;;
         esac
