@@ -24,27 +24,13 @@ choose_json_rpc_endpoint() {
         fi
     elif [ "$JSON_RPC_CHOICE" == "2" ]; then
         echo "Available public JSON-RPC endpoints:"
-        echo "1. https://lightnode-json-rpc-0g.grandvalleys.com [$(query_block_number https://lightnode-json-rpc-0g.grandvalleys.com)]"
+        echo "1. https://lightnode-json-rpc-mainnet-0g.grandvalleys.com [$(query_block_number https://lightnode-json-rpc-mainnet-0g.grandvalleys.com)]"
         echo "2. https://evmrpc.0g.ai [$(query_block_number https://evmrpc.0g.ai)]"
-        echo "3. https://rpc.ankr.com/0g_newton [$(query_block_number https://rpc.ankr.com/0g_newton)]"
-        echo "4. https://16600.rpc.thirdweb.com [$(query_block_number https://16600.rpc.thirdweb.com)]"
-        echo "5. https://0g-json-rpc-public.originstake.com [$(query_block_number https://0g-json-rpc-public.originstake.com)]"
-        echo "6. https://0g-rpc-evm01.validatorvn.com [$(query_block_number https://0g-rpc-evm01.validatorvn.com)]"
-        echo "7. https://og-jsonrpc.itrocket.net:443 [$(query_block_number https://og-jsonrpc.itrocket.net:443)]"
-        echo "8. https://0g-evmrpc-zstake.xyz [$(query_block_number https://0g-evmrpc-zstake.xyz)]"
-        echo "9. https://zerog-json-rpc.contributiondao.com [$(query_block_number https://zerog-json-rpc.contributiondao.com)]"
         read -p "Enter the number of your chosen public JSON-RPC endpoint: " PUBLIC_RPC_CHOICE
 
         case $PUBLIC_RPC_CHOICE in
-            1) BLOCKCHAIN_RPC_ENDPOINT="https://lightnode-json-rpc-0g.grandvalleys.com";;
+            1) BLOCKCHAIN_RPC_ENDPOINT="https://lightnode-json-rpc-mainnet-0g.grandvalleys.com";;
             2) BLOCKCHAIN_RPC_ENDPOINT="https://evmrpc.0g.ai";;
-            3) BLOCKCHAIN_RPC_ENDPOINT="https://rpc.ankr.com/0g_newton";;
-            4) BLOCKCHAIN_RPC_ENDPOINT="https://16600.rpc.thirdweb.com";;
-            5) BLOCKCHAIN_RPC_ENDPOINT="https://0g-json-rpc-public.originstake.com";;
-            6) BLOCKCHAIN_RPC_ENDPOINT="https://0g-rpc-evm01.validatorvn.com";;
-            7) BLOCKCHAIN_RPC_ENDPOINT="https://og-jsonrpc.itrocket.net:443";;
-            8) BLOCKCHAIN_RPC_ENDPOINT="https://0g-evmrpc-zstake.xyz";;
-            9) BLOCKCHAIN_RPC_ENDPOINT="https://zerog-json-rpc.contributiondao.com";;
             *) echo "Invalid choice. Exiting."; exit 1;;
         esac
     else
@@ -63,7 +49,7 @@ echo "Current JSON-RPC endpoint: $BLOCKCHAIN_RPC_ENDPOINT"
 
 # Set contract type to turbo by default
 CONTRACT_TYPE="turbo"
-LOG_CONTRACT_ADDRESS="0xbD75117F80b4E22698D0Cd7612d92BDb8eaff628"
+LOG_CONTRACT_ADDRESS="0x62D4144dB0F0a6fBBaeb6296c785C71B3D57C526"
 
 # Standard contract logic (commented out for future use)
 #if [ "$CONTRACT_TYPE" == "standard" ]; then

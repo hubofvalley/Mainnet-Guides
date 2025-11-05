@@ -1,14 +1,6 @@
 #!/bin/bash
 
-# Define new boot nodes
-BOOT_NODES=(
-  "/ip4/47.251.79.83/udp/1234/p2p/16Uiu2HAkvJYQABP1MdvfWfUZUzGLx1sBSDZ2AT92EFKcMCCPVawV"
-  "/ip4/47.238.87.44/udp/1234/p2p/16Uiu2HAmFGsLoajQdEds6tJqsLX7Dg8bYd2HWR4SbpJUut4QXqCj"
-  "/ip4/47.251.78.104/udp/1234/p2p/16Uiu2HAmSe9UWdHrqkn2mKh99b9DwYZZcea6krfidtU3e5tiHiwN"
-  "/ip4/47.76.30.235/udp/1234/p2p/16Uiu2HAm5tCqwGtXJemZqBhJ9JoQxdDgkWYavfCziaqaAYkGDSfU"
-  "/ip4/47.251.88.201/udp/1234/p2p/16Uiu2HAmFGrDV8wKToa1dd8uh6bz8bSY28n33iRP3pvfeBU6ysCw"
-  "/ip4/47.76.49.188/udp/1234/p2p/16Uiu2HAmBb7PQzvfZjHBENcF7E7mZaiHSrpBoH7mKTyNijYdqMM6"
-)
+ 
 
 # Function to query the latest block number from a JSON-RPC endpoint
 query_block_number() {
@@ -114,16 +106,15 @@ if [ "$CONTRACT_TYPE" == "turbo" ]; then
 fi
 
 sed -i "
-s|^\s*#\?\s*network_boot_nodes\s*=.*|network_boot_nodes = [\"${BOOT_NODES[0]}\", \"${BOOT_NODES[1]}\", \"${BOOT_NODES[2]}\", \"${BOOT_NODES[3]}\", \"${BOOT_NODES[4]}\", \"${BOOT_NODES[5]}\"]|
 s|^\s*#\s*miner_key\s*=.*|miner_key = \"$PRIVATE_KEY\"|
 s|^\s*#\s*listen_address\s*=.*|listen_address = \"0.0.0.0:5678\"|
 s|^\s*#\s*listen_address_admin\s*=.*|listen_address_admin = \"127.0.0.1:5679\"|
 s|^\s*#\?\s*rpc_enabled\s*=.*|rpc_enabled = true|
 s|^\s*#\?\s*log_sync_start_block_number\s*=.*|log_sync_start_block_number = 326165|
 s|^\s*#\?\s*blockchain_rpc_endpoint\s*=.*|blockchain_rpc_endpoint = \"$BLOCKCHAIN_RPC_ENDPOINT\"|
-s|^\s*#\?\s*log_contract_address\s*=.*|log_contract_address = \"0xbD75117F80b4E22698D0Cd7612d92BDb8eaff628\"|
-s|^\s*#\?\s*mine_contract_address\s*=.*|mine_contract_address = \"0x3A0d1d67497Ad770d6f72e7f4B8F0BAbaa2A649C\"|
-s|^\s*#\?\s*reward_contract_address\s*=.*|reward_contract_address = \"0xd3D4D91125D76112AE256327410Dd0414Ee08Cb4\"|
+s|^\s*#\?\s*log_contract_address\s*=.*|log_contract_address = \"0x62D4144dB0F0a6fBBaeb6296c785C71B3D57C526\"|
+s|^\s*#\?\s*mine_contract_address\s*=.*|mine_contract_address = \"0xCd01c5Cd953971CE4C2c9bFb95610236a7F414fe\"|
+s|^\s*#\?\s*reward_contract_address\s*=.*|reward_contract_address = \"0x457aC76B58ffcDc118AABD6DbC63ff9072880870\"|
 " $HOME/0g-storage-node/run/config-mainnet.toml
 
 # Restart the node

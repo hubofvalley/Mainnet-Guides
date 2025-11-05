@@ -70,7 +70,7 @@ rm -rf cometbft
 git clone https://github.com/cometbft/cometbft.git
 cd cometbft
 git fetch --all
-git checkout v0.37.15
+git checkout v0.37.16
 make build
 sudo cp $HOME/cometbft/build/cometbft /usr/local/bin/
 cometbft version
