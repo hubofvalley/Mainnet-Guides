@@ -100,7 +100,7 @@ Grand Valley 0G public endpoints:${RESET}
 - evm-rpc: ${BLUE}https://lightnode-json-rpc-mainnet-0g.grandvalleys.com${RESET}
 - cosmos rest-api: ${BLUE}https://lightnode-api-mainnet-0g.grandvalleys.com${RESET}
 - peer: ${BLUE}813aeda202eae52b0d3e389a0e6e3a0354ad547a@peer-mainnet-0g.grandvalleys.com:28656${RESET}
-- validator-profile: ${BLUE}https://explorer.0g.ai/mainnet/validators/0x108e619da0cdba8a301a53948a4acc23a3d79377${RESET}
+- validator-profile: ${BLUE}https://explorer.0g.ai/mainnet/validators/0x108e619da0cdba8a301a53948a4acc23a3d79377/delegators${RESET}
 
 ${GREEN}Connect with Zero Gravity (0G):${RESET}
 - Official Website: ${BLUE}https://0g.ai/${RESET}
@@ -1729,7 +1729,7 @@ function menu() {
     echo -e "\n${YELLOW}Please run the following command to apply the changes after exiting the script:${RESET}"
     echo -e "${GREEN}source ~/.bash_profile${RESET}"
     echo -e "${YELLOW}This ensures the environment variables are set in your current bash session.${RESET}"
-    echo -e "Stake your 0G with Grand Valley: ${ORANGE}https://explorer.0g.ai/mainnet/validators/0x108e619da0cdba8a301a53948a4acc23a3d79377${RESET}"
+    echo -e "Stake your 0G with Grand Valley: ${ORANGE}https://explorer.0g.ai/mainnet/validators/0x108e619da0cdba8a301a53948a4acc23a3d79377/delegators${RESET}"
     echo -e "${GREEN}Let's Buidl 0G Together - Grand Valley${RESET}"
     read -p "Choose an option (e.g., 1a or 1 then a): " OPTION
 
