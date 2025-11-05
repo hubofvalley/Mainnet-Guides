@@ -100,12 +100,15 @@ Grand Valley 0G public endpoints:${RESET}
 - evm-rpc: ${BLUE}https://lightnode-json-rpc-mainnet-0g.grandvalleys.com${RESET}
 - cosmos rest-api: ${BLUE}https://lightnode-api-0g.grandvalleys.com${RESET}
 - peer: ${BLUE}813aeda202eae52b0d3e389a0e6e3a0354ad547a@peer-mainnet-0g.grandvalleys.com:28656${RESET}
-- Grand Valley Explorer: ${BLUE}https://explorer.grandvalleys.com${RESET}
 
 ${GREEN}Connect with Zero Gravity (0G):${RESET}
 - Official Website: ${BLUE}https://0g.ai/${RESET}
 - X: ${BLUE}https://x.com/0G_labs${RESET}
 - Official Docs: ${BLUE}https://docs.0g.ai/${RESET}
+- Official Discord: ${BLUE}https://discord.gg/0glabs${RESET}
+- Official GitHub: ${BLUE}https://github.com/0gfoundation${RESET}
+- Official Telegram: ${BLUE}https://t.me/web3_0glabs${RESET}
+- Official Explorer: ${BLUE}https://explorer.0g.ai/${RESET}
 
 ${GREEN}Connect with Grand Valley:${RESET}
 - X: ${BLUE}https://x.com/bacvalley${RESET}
@@ -793,7 +796,7 @@ function query_balance() {
             \"method\":\"eth_getBalance\",
             \"params\": [\"$evm_address\", \"latest\"],
             \"id\":16661
-        }" | jq -r '.result' | awk '{printf "Balance of %s: %0.18f A0GI\n", "'"$evm_address"'", strtonum($1)/1e18}'
+        }" | jq -r '.result' | awk '{printf "Balance of %s: %0.18f 0G\n", "'"$evm_address"'", strtonum($1)/1e18}'
 
     echo -e "\n${YELLOW}Press Enter to go back to main menu...${RESET}"
     read -r
@@ -810,7 +813,7 @@ function query_balance() {
 #
 #     AMOUNT_UAOGI=$(awk "BEGIN { printf \"%.0f\", $AMOUNT_AOGI * 1000000 }")
 #
-#     0gchaind tx bank send "$SENDER_WALLET" "$RECIPIENT_ADDRESS" "${AMOUNT_UAOGI}ua0gi" --chain-id "$OG_CHAIN_ID" --gas auto --gas-adjustment 1.5 -y
+#     0gchaind tx bank send "$SENDER_WALLET" "$RECIPIENT_ADDRESS" "${AMOUNT_UAOGI}u0G" --chain-id "$OG_CHAIN_ID" --gas auto --gas-adjustment 1.5 -y
 #
 #     menu
 # }
@@ -866,7 +869,7 @@ function query_balance() {
 #         NODE=""
 #     fi
 #
-#     0gchaind tx staking delegate "$VAL" "${AMOUNT_UAOGI}ua0gi" --from "$WALLET_NAME" --chain-id "$OG_CHAIN_ID" --gas auto --gas-adjustment 1.5 $NODE -y
+#     0gchaind tx staking delegate "$VAL" "${AMOUNT_UAOGI}u0G" --from "$WALLET_NAME" --chain-id "$OG_CHAIN_ID" --gas auto --gas-adjustment 1.5 $NODE -y
 #
 #     menu
 # }
@@ -899,7 +902,7 @@ function query_balance() {
 #         NODE=""
 #     fi
 #
-#     0gchaind tx staking unbond "$VALIDATOR_ADDRESS" "${AMOUNT_UAOGI}ua0gi" --from "$WALLET_NAME" --chain-id "$OG_CHAIN_ID" --gas auto --gas-adjustment 1.5 $NODE -y
+#     0gchaind tx staking unbond "$VALIDATOR_ADDRESS" "${AMOUNT_UAOGI}u0G" --from "$WALLET_NAME" --chain-id "$OG_CHAIN_ID" --gas auto --gas-adjustment 1.5 $NODE -y
 #
 #     menu
 # }
@@ -927,7 +930,7 @@ function query_balance() {
 #         NODE=""
 #     fi
 #
-#     0gchaind tx slashing unjail --from "$WALLET_NAME" --chain-id "$OG_CHAIN_ID" --gas-adjustment 1.6 --gas auto --gas-prices 0.003ua0gi $NODE -y
+#     0gchaind tx slashing unjail --from "$WALLET_NAME" --chain-id "$OG_CHAIN_ID" --gas-adjustment 1.6 --gas auto --gas-prices 0.003u0G $NODE -y
 #
 #     menu
 # }
