@@ -3,15 +3,18 @@
 ![image](https://github.com/user-attachments/assets/359b0d17-e451-42d7-8bc3-88c7fcf28355)
 ![alt text](resources/vo0gnew.png)
 
-**Valley of 0G** by Grand Valley is an all-in-one solution for managing nodes within the 0G decentralized AI network. It provides easy tools to deploy, monitor, and maintain validator and storage nodes, making it simple to manage AI-focused infrastructure. Designed for scalability and performance, Valley of 0G helps efficiently manage data and resources, all within a community-driven environment with public support and endpoints.
+**Valley of 0G** by Grand Valley is an all-in-one solution for managing nodes within the 0G decentralized AI network. It provides easy tools to deploy, monitor, and maintain validator node storage node and AI alignment node making it simple to manage AI-focused infrastructure. Designed for scalability and performance, Valley of 0G helps efficiently manage data and resources, all within a community-driven environment with public support and endpoints.
 
 ### Key Features of Valley of 0G
 
-- **High-Performance Validation:** Deploy powerful validator nodes to secure the 0G network, optimized for transaction consistency and processing speed.
-- **Decentralized Data Storage:** Use fast NVMe SSDs for storing 0G network data, ensuring data remains accessible and reliable within a decentralized infrastructure.
-- **Specialized Data Handling:** Operate nodes focused on key-value data storage to support real-time access and structured data needs within 0G, ideal for applications requiring rapid data retrieval and streaming.
-- **Automated Node Management:** Utilize scripts for efficient deployment, updates, and maintenance, making node management straightforward and minimizing manual effort.
-- **Public Endpoints and Support:** Benefit from open endpoints and active social channels that enable developers and users to connect, access resources, and participate in the 0G community.
+- Unified Node Control: Deploy, update, snapshot, and manage Validator, Storage, Storage KV, and AI Alignment from one menu.
+- Validator Operations: Create validator, add peers, query balance, delegate/undelegate, and view combined or per-client logs.
+- Storage Node Suite: Install/update, apply official snapshots, change config (RPC/miner key), view status and logs; aligned with latest Flow/Mine/Reward contracts.
+- Storage KV Services: Deploy/update KV, connect to storage nodes, follow the Flow log contract, and tail KV logs.
+- Lifecycle & Safety Tools: Restart/stop/delete for each service with confirmations and clear guidance.
+- Built-in Endpoints & Health: Quick access to Grand Valley public endpoints and status checks.
+- Guided UX: Interactive prompts, shortcuts like "1a", and integrated Guidelines help screen.
+- Mainnet Ready: Aristotle chain support; validator v1.0.2, storage v1.1.0, storage‑kv v1.4.0.
 
 ---
 
