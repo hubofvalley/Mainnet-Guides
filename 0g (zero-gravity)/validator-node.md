@@ -1,7 +1,7 @@
 ## Valley of 0G: Tools by Grand Valley
 
 ![image](https://github.com/user-attachments/assets/359b0d17-e451-42d7-8bc3-88c7fcf28355)
-![alt text](resources/vo0gnew.png)
+![alt text](vo0gmainnetimage.png)
 
 **Valley of 0G** by Grand Valley is an all-in-one solution for managing nodes within the 0G decentralized AI network. It provides easy tools to deploy, monitor, and maintain validator node storage node and AI alignment node making it simple to manage AI-focused infrastructure. Designed for scalability and performance, Valley of 0G helps efficiently manage data and resources, all within a community-driven environment with public support and endpoints.
 
@@ -39,10 +39,6 @@ Run the following command to install Valley of 0G:
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Testnet-Guides/main/0g%20\(zero-gravity\)/resources/valleyof0G.sh)
 ```
-
-### Validator/Full Node Automatic Installation Tutorial Video on X
-
-[![Watch the tutorial](resources/validator-node-thumbnail.jpg)](https://x.com/i/status/1920057677453107649)
 
 ---
 
@@ -95,7 +91,7 @@ sudo chmod +x $HOME/aristotle/bin/0gchaind
 ### 5. Initialize Node
 
 ```bash
-# Input your moniker and preferred port (default: 26)
+# Input your moniker, ports, and validator-specific settings
 read -p "Enter your moniker: " MONIKER
 read -p "Enter your preferred port number (default: 26): " OG_PORT
 if [ -z "$OG_PORT" ]; then
@@ -103,9 +99,23 @@ if [ -z "$OG_PORT" ]; then
 fi
 read -p "Do you want to enable the indexer? (yes/no): " ENABLE_INDEXER
 
+# Validator-specific: mainnet ETH RPC and logs block range
+read -p "Enter Mainnet ETH RPC endpoint (ETH_RPC_URL): " ETH_RPC_URL
+while [ -z "$ETH_RPC_URL" ]; do
+  echo "ETH_RPC_URL cannot be empty for validator mode."
+  read -p "Enter Mainnet ETH RPC endpoint (ETH_RPC_URL): " ETH_RPC_URL
+done
+read -p "Enter block range to fetch logs (BLOCK_NUM), e.g. 2000: " BLOCK_NUM
+while ! [[ "$BLOCK_NUM" =~ ^[0-9]+$ ]]; do
+  echo "BLOCK_NUM must be a positive integer."
+  read -p "Enter block range to fetch logs (BLOCK_NUM), e.g. 2000: " BLOCK_NUM
+done
+
 # Save environment variables
 echo "export MONIKER=\"$MONIKER\"" >> ~/.bash_profile
 echo "export OG_PORT=\"$OG_PORT\"" >> ~/.bash_profile
+echo "export ETH_RPC_URL=\"$ETH_RPC_URL\"" >> ~/.bash_profile
+echo "export BLOCK_NUM=\"$BLOCK_NUM\"" >> ~/.bash_profile
 echo 'export PATH=$PATH:$HOME/aristotle/bin' >> ~/.bash_profile
 source ~/.bash_profile
 
@@ -113,7 +123,7 @@ source ~/.bash_profile
 mkdir -p $HOME/.0gchaind/
 cp -r $HOME/aristotle/* $HOME/.0gchaind/
 0g-geth init --datadir $HOME/.0gchaind/0g-home/geth-home $HOME/.0gchaind/geth-genesis.json
-0gchaind init $MONIKER --home $HOME/.0gchaind/tmp
+0gchaind init "$MONIKER" --home $HOME/.0gchaind/tmp --chaincfg.chain-spec mainnet
 ```
 
 ### 6. Move Binaries to $HOME/go/bin/
@@ -158,11 +168,12 @@ sed -i "s/HTTPPort = .*/HTTPPort = ${OG_PORT}545/" $GCONFIG
 sed -i "s/WSPort = .*/WSPort = ${OG_PORT}546/" $GCONFIG
 sed -i "s/AuthPort = .*/AuthPort = ${OG_PORT}551/" $GCONFIG
 sed -i "s/ListenAddr = .*/ListenAddr = \":${OG_PORT}303\"/" $GCONFIG
+sed -i "s/DiscAddr = .*/DiscAddr = \":${OG_PORT}303\"/" $GCONFIG
 sed -i "s/^# *Port = .*/# Port = ${OG_PORT}901/" $GCONFIG
 sed -i "s/^# *InfluxDBEndpoint = .*/# InfluxDBEndpoint = \"http:\/\/localhost:${OG_PORT}086\"/" $GCONFIG
 ```
 
-### 7. Copy Node Keys
+### 8. Copy Node Keys
 
 ```bash
 cp $HOME/.0gchaind/tmp/data/priv_validator_state.json $HOME/.0gchaind/0g-home/0gchaind-home/data/
@@ -170,21 +181,21 @@ cp $HOME/.0gchaind/tmp/config/node_key.json $HOME/.0gchaind/0g-home/0gchaind-hom
 cp $HOME/.0gchaind/tmp/config/priv_validator_key.json $HOME/.0gchaind/0g-home/0gchaind-home/config/
 ```
 
-### 8. Generate JWT Authentication Token
+### 9. Generate JWT Authentication Token
 
 ```bash
 0gchaind jwt generate --home $HOME/.0gchaind/0g-home/0gchaind-home --chaincfg.chain-spec mainnet
 cp -f $HOME/.0gchaind/0g-home/0gchaind-home/config/jwt.hex $HOME/.0gchaind/jwt.hex
 ```
 
-### 9. Create systemd Service Files
+### 10. Create systemd Service Files
 
 #### 0gchaind Service
 
 ```bash
 sudo tee /etc/systemd/system/0gchaind.service > /dev/null <<EOF
 [Unit]
-Description=0gchaind Node Service
+Description=0gchaind Node Service (Validator)
 After=network-online.target
 
 [Service]
@@ -194,8 +205,8 @@ WorkingDirectory=$HOME/.0gchaind
 ExecStart=$HOME/go/bin/0gchaind start \\
   --chaincfg.chain-spec mainnet \\
   --chaincfg.restaking.enabled \\
-  --chaincfg.restaking.symbiotic-rpc-dial-url https://api.zan.top/eth-holesky \\
-  --chaincfg.restaking.symbiotic-get-logs-block-range 4331278 \\
+  --chaincfg.restaking.symbiotic-rpc-dial-url ${ETH_RPC_URL} \\
+  --chaincfg.restaking.symbiotic-get-logs-block-range ${BLOCK_NUM} \\
   --home $HOME/.0gchaind/0g-home/0gchaind-home \\
   --chaincfg.kzg.trusted-setup-path=$HOME/.0gchaind/kzg-trusted-setup.json \\
   --chaincfg.engine.jwt-secret-path=$HOME/.0gchaind/jwt.hex \\
@@ -228,7 +239,6 @@ ExecStart=$HOME/go/bin/0g-geth \\
   --http.port ${OG_PORT}545 \\
   --ws.port ${OG_PORT}546 \\
   --authrpc.port ${OG_PORT}551 \\
-  --bootnodes enode://de7b86d8ac452b1413983049c20eafa2ea0851a3219c2cc12649b971c1677bd83fe24c5331e078471e52a94d95e8cde84cb9d866574fec957124e57ac6056699@8.218.88.60:30303 \\
   --port ${OG_PORT}303 \\
   --networkid 16661
 Restart=always
@@ -240,7 +250,7 @@ WantedBy=multi-user.target
 EOF
 ```
 
-### 10. Start Services
+### 11. Start Services
 
 ```bash
 sudo systemctl daemon-reload
@@ -250,13 +260,13 @@ sudo systemctl start 0gchaind
 sudo systemctl start 0g-geth
 ```
 
-### 11. Check Logs
+### 12. Check Logs
 
 ```bash
 sudo journalctl -u 0gchaind -u 0g-geth -fn 100
 ```
 
-### 12. Verify Installation
+### 13. Verify Installation
 
 ```bash
 echo -e "\n✅ 0G Validator Node Installation Completed Successfully!"
@@ -287,6 +297,7 @@ sudo systemctl disable 0gchaind 0g-geth
 sudo rm -rf /etc/systemd/system/0gchaind.service /etc/systemd/system/0g-geth.service
 sudo rm -rf $HOME/.0gchaind $HOME/aristotle $HOME/aristotle-v1.0.2 $HOME/aristotle-v1.0.2.tar.gz
 sed -i "/MONIKER\|OG_PORT/d" $HOME/.bash_profile
+sed -i "/ETH_RPC_URL\|BLOCK_NUM/d" $HOME/.bash_profile
 ```
 
 ---
