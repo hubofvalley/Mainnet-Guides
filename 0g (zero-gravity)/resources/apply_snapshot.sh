@@ -8,6 +8,12 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Snapshot API URLs
+# Grand Valley (0G) — assumes same API schema/rotation as 0G's service
+# If your endpoint differs, update these two lines only.
+GV_PRUNED_API_URL="https://pruned-snapshot-mainnet-0g.grandvalleys.com/pruned_snapshot_state.json"
+GV_PRUNED_BASE_URL="https://pruned-snapshot-mainnet-0g.grandvalleys.com"
+
+# ITRocket (fallback)
 ITR_API_URL="https://server-3.itrocket.net/mainnet/og/.current_state.json"
 
 # Function to display snapshot details
@@ -41,6 +47,131 @@ prompt_back_or_continue() {
     if [[ $user_choice == "back" ]]; then
         main_script
     fi
+}
+
+# Function to choose snapshot type for Grand Valley (0G)
+choose_grandvalley_snapshot() {
+    echo -e "${GREEN}Grand Valley snapshot selected.${NC}"
+    echo -e "HEYLO MY 0G FAM... LETS SYNC FASTOOOOOOR!"
+
+    # Fetch metadata and resolve file names robustly (support multiple schemas)
+    local snapshot_info
+    if ! snapshot_info="$(curl -fsS "$GV_PRUNED_API_URL")"; then
+        echo -e "${RED}Failed to fetch snapshot info from Grand Valley.${NC}"
+        return 1
+    fi
+
+    local cons_file geth_file
+    cons_file=$(jq -r '(. ["0gchaind_snapshot_file_name"] // .["0g_snapshot_file_name"] // .ogchaind_snapshot_file_name // .consensus_snapshot_file_name // .snapshot_name // empty)' <<<"$snapshot_info")
+    geth_file=$(jq -r '(. ["0g_geth_snapshot_file_name"] // .og_geth_snapshot_file_name // .geth_snapshot_file_name // .snapshot_geth_name // .geth_file_name // empty)' <<<"$snapshot_info")
+    # Fallback detection by pattern
+    if [[ -z "$geth_file" ]]; then
+        geth_file=$(jq -r '.. | strings? | select(test("geth.*\\.(tar\\.lz4|lz4)$"; "i"))' <<<"$snapshot_info" | head -n1)
+    fi
+    if [[ -z "$cons_file" ]]; then
+        # Prefer obvious consensus hints, else pick first archive not equal to geth file
+        cons_file=$(jq -r '.. | strings? | select(test("(0g|chain|cons|chaind).*\\.(tar\\.lz4|lz4)$"; "i"))' <<<"$snapshot_info" | head -n1)
+        if [[ -z "$cons_file" ]]; then
+            # generic: any lz4 not equal to geth file
+            while IFS= read -r f; do
+                if [[ -n "$f" && "$f" != "$geth_file" ]]; then cons_file="$f"; break; fi
+            done < <(jq -r '.. | strings? | select(test("\\.(tar\\.lz4|lz4)$"; "i"))' <<<"$snapshot_info")
+        fi
+    fi
+
+    if [[ -z "$cons_file" || -z "$geth_file" ]]; then
+        echo -e "${RED}Could not resolve snapshot filenames from API. Please verify API fields.${NC}"
+        return 1
+    fi
+
+    GETH_URL="${GV_PRUNED_BASE_URL}/${geth_file}"
+    CONS_URL="${GV_PRUNED_BASE_URL}/${cons_file}"
+
+    echo -e "${GREEN}Checking availability of Grand Valley snapshots:${NC}"
+    echo -n "Execution Client (0g-geth): "
+    check_url "$GETH_URL" || return 1
+    echo -n "Consensus Client (0gchaind): "
+    check_url "$CONS_URL" || return 1
+
+    prompt_back_or_continue
+
+    # Display details (height/sha256/sizes) + realtime diff
+    display_snapshot_details "$GV_PRUNED_API_URL"
+    sha256_cons=$(jq -r '. ["sha256_0g"] // empty' <<<"$snapshot_info")
+    sha256_geth=$(jq -r '. ["sha256_geth"] // empty' <<<"$snapshot_info")
+    size_cons=$(jq -r '. ["0gchaind_snapshot_size"] // empty' <<<"$snapshot_info")
+    size_geth=$(jq -r '. ["0g_geth_snapshot_size"] // empty' <<<"$snapshot_info")
+    rot_period=$(jq -r '.rotation_period // empty' <<<"$snapshot_info")
+    if [[ -n "$sha256_cons" ]]; then
+        echo -e "${YELLOW}SHA256 (consensus):${NC} $sha256_cons"
+    fi
+    if [[ -n "$sha256_geth" ]]; then
+        echo -e "${YELLOW}SHA256 (geth):${NC} $sha256_geth"
+    fi
+    if [[ -n "$size_cons" || -n "$size_geth" ]]; then
+        echo -e "${GREEN}Sizes:${NC} consensus=$size_cons, geth=$size_geth"
+    fi
+    if [[ -n "$rot_period" ]]; then
+        echo -e "${GREEN}Rotation:${NC} $rot_period"
+    fi
+
+    # Destination directories (execution + consensus home/data)
+    EXEC_DIR="$HOME/.0gchaind/0g-home/geth-home/geth"
+    CONS_HOME="$HOME/.0gchaind/0g-home/0gchaind-home"
+    CONS_DATA="$CONS_HOME/data"
+
+    read -p "When the snapshot has been applied (decompressed), do you want to delete the uncompressed files? (y/n): " delete_choice
+
+    # Install helpers if needed
+    sudo apt install wget lz4 jq -y
+
+    # Stop services
+    sudo systemctl stop 0gchaind 0g-geth || sudo systemctl stop 0gchaind 0ggeth
+    sudo systemctl disable 0gchaind 0g-geth || sudo systemctl disable 0gchaind 0ggeth
+
+    # Backup priv_validator_state.json if present
+    if [ -f "$CONS_DATA/priv_validator_state.json" ]; then
+        cp "$CONS_DATA/priv_validator_state.json" "$HOME/.0gchaind/priv_validator_state.json.backup"
+    else
+        echo -e "${YELLOW}priv_validator_state.json not found. Skipping backup.${NC}"
+    fi
+
+    # Clean old data
+    mkdir -p "$EXEC_DIR"
+    mkdir -p "$CONS_HOME"
+    rm -rf "$EXEC_DIR/chaindata" "$CONS_DATA"
+
+    echo -e "${GREEN}Decompressing Execution Snapshot to $EXEC_DIR ...${NC}"
+    if ! curl -L "$GETH_URL" | lz4 -dc - | tar -xf - -C "$EXEC_DIR"; then
+        echo -e "${RED}Failed to extract execution snapshot. Please check the archive structure or disk space.${NC}"
+        exit 1
+    fi
+
+    echo -e "${GREEN}Decompressing Consensus Snapshot to $CONS_HOME ...${NC}"
+    if ! curl -L "$CONS_URL" | lz4 -dc - | tar -xf - -C "$CONS_HOME"; then
+        echo -e "${RED}Failed to extract consensus snapshot. Please check the archive structure or disk space.${NC}"
+        exit 1
+    fi
+
+    sudo chown -R $USER:$USER "$HOME/.0gchaind"
+
+    if [[ $delete_choice == "y" || $delete_choice == "Y" ]]; then
+        echo -e "${YELLOW}Files were streamed directly and not saved locally.${NC}"
+    else
+        echo -e "${YELLOW}No local snapshot files to retain; they were streamed during extraction.${NC}"
+    fi
+
+    # Restore priv_validator_state.json if backed up
+    if [ -f "$HOME/.0gchaind/priv_validator_state.json.backup" ]; then
+        mkdir -p "$CONS_DATA"
+        cp "$HOME/.0gchaind/priv_validator_state.json.backup" "$CONS_DATA/priv_validator_state.json"
+    fi
+
+    # Enable and restart services
+    sudo systemctl enable 0gchaind 0g-geth || sudo systemctl enable 0gchaind 0ggeth
+    sudo systemctl restart 0gchaind 0g-geth || sudo systemctl restart 0gchaind 0ggeth
+
+    echo -e "${GREEN}0G snapshot setup (Grand Valley) completed successfully.${NC}"
 }
 
 # Function to download and decompress snapshots from ITRocket
@@ -93,18 +224,19 @@ choose_itrocket_snapshot() {
     sudo apt install wget lz4 jq -y
 
     EXEC_DIR="$HOME/.0gchaind/0g-home/geth-home/geth"
-    CONS_DIR="$HOME/.0gchaind/0g-home/0gchaind-home"
+    CONS_HOME="$HOME/.0gchaind/0g-home/0gchaind-home"
+    CONS_DATA="$CONS_HOME/data"
 
     sudo systemctl stop 0gchaind 0g-geth || sudo systemctl stop 0gchaind 0ggeth
     sudo systemctl disable 0gchaind 0g-geth || sudo systemctl disable 0gchaind 0ggeth
 
-    if [ -f "$CONS_DIR/data/priv_validator_state.json" ]; then
-        cp "$CONS_DIR/data/priv_validator_state.json" "$HOME/.0gchaind/priv_validator_state.json.backup"
+    if [ -f "$CONS_DATA/priv_validator_state.json" ]; then
+        cp "$CONS_DATA/priv_validator_state.json" "$HOME/.0gchaind/priv_validator_state.json.backup"
     else
         echo -e "${YELLOW}priv_validator_state.json not found. Skipping backup.${NC}"
     fi
 
-    rm -rf "$EXEC_DIR/chaindata" "$CONS_DIR/data"
+    rm -rf "$EXEC_DIR/chaindata" "$CONS_DATA"
 
     extract_itrocket_snapshots
 
@@ -117,8 +249,8 @@ choose_itrocket_snapshot() {
     fi
 
     if [ -f "$HOME/.0gchaind/priv_validator_state.json.backup" ]; then
-        mkdir -p "$CONS_DIR/data"
-        cp "$HOME/.0gchaind/priv_validator_state.json.backup" "$CONS_DIR/data/priv_validator_state.json"
+        mkdir -p "$CONS_DATA"
+        cp "$HOME/.0gchaind/priv_validator_state.json.backup" "$CONS_DATA/priv_validator_state.json"
     fi
 
     sudo systemctl enable 0gchaind 0g-geth || sudo systemctl enable 0gchaind 0ggeth
@@ -128,18 +260,17 @@ choose_itrocket_snapshot() {
 }
 
 main_script() {
-    #echo -e "${GREEN}Choose a snapshot provider:${NC}"
-    #echo "1. ITRocket"
-    echo -e "${GREEN}Not available at this time${NC}"
-    echo "1. Exit"
+    echo -e "${GREEN}Choose a snapshot provider:${NC}"
+    echo "1. Grand Valley"
+    echo "2. Exit"
 
     read -p "Enter your choice: " choice
 
     case $choice in
-        #1)
-            #choose_itrocket_snapshot
-            #;;
         1)
+            choose_grandvalley_snapshot
+            ;;
+        2)
             echo -e "${YELLOW}Exiting.${NC}"
             exit 0
             ;;
