@@ -1234,7 +1234,7 @@ function add_peers() {
             echo "Grand Valley's peers: $peers"
             read -p "Do you want to proceed? (yes/no): " confirm
             if [[ $confirm == "yes" ]]; then
-                sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"a97c8615903e795135066842e5739e30d64e2342@peer-0g.grandvalleys.com:28656,$peers\"|" $HOME/.0gchaind/0g-home/0gchaind-home/config/config.toml
+                sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"813aeda202eae52b0d3e389a0e6e3a0354ad547a@peer-mainnet-0g.grandvalleys.com:37656,$peers\"|" $HOME/.0gchaind/0g-home/0gchaind-home/config/config.toml
                 echo "Grand Valley's peers added."
             else
                 echo "Operation cancelled. Returning to menu."
