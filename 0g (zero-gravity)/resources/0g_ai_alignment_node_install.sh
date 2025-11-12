@@ -34,6 +34,11 @@ function collect_inputs() {
   fi
 
   if [[ "${MIGRATION_MODE,,}" != "yes" ]]; then
+    read -p "2b) Enter your Node Operator Address (0x... used for approval destNode): " NODE_OPERATOR_ADDRESS
+    if [ -z "$NODE_OPERATOR_ADDRESS" ]; then
+      fail "Node Operator Address is required for fresh setup"
+    fi
+
     read -p "3) Enter NFT token IDs (comma-separated) for registration/approval: (e.g: ID1,ID2,ID3,....)" NFT_TOKEN_IDS
     if [ -z "$NFT_TOKEN_IDS" ]; then
       fail "At least one NFT token id is required for fresh setup"
@@ -63,6 +68,7 @@ function collect_inputs() {
   echo "  Port: $NODE_PORT"
   echo "  RPC: $RPC"
   if [[ "${MIGRATION_MODE,,}" != "yes" ]]; then
+    echo "  Node Operator Address: $NODE_OPERATOR_ADDRESS"
     echo "  NFT Token IDs: $NFT_TOKEN_IDS"
   fi
   echo "  UFW config: $ENABLE_UFW"
@@ -210,15 +216,29 @@ function delegate_then_approve() {
     fail ".env not found, please run configure step first"
   fi
 
-  info "Running approval (registerOperator with multiple token-ids)"
-  ./"$BIN_NAME" registerOperator \
+  if [ -z "${NODE_OPERATOR_ADDRESS:-}" ]; then
+    read -p "Enter your Node Operator Address (0x...) for approval destNode: " NODE_OPERATOR_ADDRESS
+    if [ -z "$NODE_OPERATOR_ADDRESS" ]; then
+      fail "Node Operator Address is required for approval"
+    fi
+  fi
+
+  if [ -z "${NFT_TOKEN_IDS:-}" ]; then
+    read -p "Enter NFT token IDs to approve (comma-separated): " NFT_TOKEN_IDS
+    if [ -z "$NFT_TOKEN_IDS" ]; then
+      fail "At least one NFT token id is required for approval"
+    fi
+  fi
+
+  info "Running approval transaction for provided token IDs"
+  ./"$BIN_NAME" approve \
+    --mainnet \
     --key "$ZG_ALIGNMENT_NODE_SERVICE_PRIVATEKEY" \
-    --token-id "$NFT_TOKEN_IDS" \
-    --commission "$COMMISSION" \
     --chain-id "$CHAIN_ID" \
     --rpc "$RPC" \
     --contract 0xdD158B8A76566bC0c342893568e8fd3F08A9dAac \
-    --mainnet
+    --destNode "$NODE_OPERATOR_ADDRESS" \
+    --tokenIds "$NFT_TOKEN_IDS"
 }
 
 # Step 6: Create systemd Service

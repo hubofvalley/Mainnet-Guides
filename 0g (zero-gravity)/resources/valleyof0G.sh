@@ -1571,10 +1571,10 @@ function approve_ai_alignment_node() {
     CHAIN_ID=42161
 
     echo -e "${GREEN}Executing approval command...${RESET}"
-    (cd "$APP_DIR" && ./"$(basename "$BIN_PATH")" registerOperator \
+    (cd "$APP_DIR" && ./"$(basename "$BIN_PATH")" approve \
         --key "$INPUT_KEY" \
-        --token-id "$TOKEN_IDS" \
-        --commission "$COMMISSION" \
+        --tokenIds "$TOKEN_IDS" \
+        --destNode "$DESTINATION_ADDR" \
         --chain-id "$CHAIN_ID" \
         --rpc "$RPC" \
         --contract 0xdD158B8A76566bC0c342893568e8fd3F08A9dAac \
