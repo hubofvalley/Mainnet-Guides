@@ -22,6 +22,9 @@ function fail() { echo -e "${RED}[ERROR]${RESET} $*"; exit 1; }
 # Collect all user inputs up-front
 function collect_inputs() {
   echo -e "${YELLOW}Please provide the following values before the installer proceeds:${RESET}"
+  read -p "0) Is this a migration of an already registered/delegated/approved operator? (yes/no, default no): " MIGRATION_MODE
+  MIGRATION_MODE=${MIGRATION_MODE:-no}
+
   read -p "1) Choose your port (default 8080, e.g. 34567): " NODE_PORT
   NODE_PORT=${NODE_PORT:-8080}
 
@@ -30,13 +33,19 @@ function collect_inputs() {
     fail "Private key required to configure node"
   fi
 
-  read -p "3) Enter NFT token IDs (comma-separated) for registration/approval: (e.g: ID1,ID2,ID3,....)" NFT_TOKEN_IDS
-  if [ -z "$NFT_TOKEN_IDS" ]; then
-    fail "At least one NFT token id is required"
-  fi
+  if [[ "${MIGRATION_MODE,,}" != "yes" ]]; then
+    read -p "3) Enter NFT token IDs (comma-separated) for registration/approval: (e.g: ID1,ID2,ID3,....)" NFT_TOKEN_IDS
+    if [ -z "$NFT_TOKEN_IDS" ]; then
+      fail "At least one NFT token id is required for fresh setup"
+    fi
 
-  read -p "4) Enter RPC endpoint for registration (press Enter to use default https://arb1.arbitrum.io/rpc): " RPC
-  RPC=${RPC:-https://arb1.arbitrum.io/rpc}
+    read -p "4) Enter RPC endpoint for registration (press Enter to use default https://arb1.arbitrum.io/rpc): " RPC
+    RPC=${RPC:-https://arb1.arbitrum.io/rpc}
+  else
+    # Still allow custom RPC override if desired (press Enter to keep default)
+    read -p "(Optional) RPC endpoint (press Enter to use default https://arb1.arbitrum.io/rpc): " RPC
+    RPC=${RPC:-https://arb1.arbitrum.io/rpc}
+  fi
 
   # Fixed defaults (not prompted)
   CHAIN_ID=42161
@@ -50,9 +59,12 @@ function collect_inputs() {
 
   echo ""
   echo -e "${GREEN}Summary of inputs:${RESET}"
+  echo "  Mode: $([[ \"${MIGRATION_MODE,,}\" == \"yes\" ]] && echo migration || echo fresh install)"
   echo "  Port: $NODE_PORT"
-  echo "  NFT Token IDs: $NFT_TOKEN_IDS"
   echo "  RPC: $RPC"
+  if [[ "${MIGRATION_MODE,,}" != "yes" ]]; then
+    echo "  NFT Token IDs: $NFT_TOKEN_IDS"
+  fi
   echo "  UFW config: $ENABLE_UFW"
   echo "  Create service: $CREATE_SERVICE"
   echo "  (chain-id will be $CHAIN_ID, commission will be $COMMISSION)"
@@ -106,7 +118,7 @@ function download_and_extract() {
 # Step 3: Configure Node (.env and config.toml)
 # Uses variables collected by collect_inputs()
 function configure_env() {
-  if [ -z "${NODE_PORT:-}" ] || [ -z "${PRIVATE_KEY:-}" ] || [ -z "${NFT_TOKEN_IDS:-}" ]; then
+  if [ -z "${NODE_PORT:-}" ] || [ -z "${PRIVATE_KEY:-}" ]; then
     fail "Required inputs not provided. Run collect_inputs first."
   fi
 
@@ -285,10 +297,13 @@ function run_install_flow() {
     warn "Skipping ufw configuration"
   fi
 
-  maybe_register_operator
-
-  # Prompt delegation and approval
-  delegate_then_approve
+  if [[ "${MIGRATION_MODE,,}" == "yes" ]]; then
+    info "Migration mode: skipping operator registration, delegation, and approval."
+  else
+    maybe_register_operator
+    # Prompt delegation and approval
+    delegate_then_approve
+  fi
 
   if [[ "${CREATE_SERVICE,,}" == "yes" ]]; then
     create_service
