@@ -1558,6 +1558,17 @@ function approve_ai_alignment_node() {
         return
     fi
 
+    read -p "Enter destination Node Operator address (0x... for --destNode): " DESTINATION_ADDR
+    DESTINATION_ADDR="${DESTINATION_ADDR//[[:space:]]/}"
+    if [ -z "$DESTINATION_ADDR" ]; then
+        echo -e "${RED}Destination Node Operator address is required.${RESET}"
+        return
+    fi
+    if ! [[ "$DESTINATION_ADDR" =~ ^0x[0-9a-fA-F]{40}$ ]]; then
+        echo -e "${RED}Invalid address format. Expected 0x followed by 40 hex chars.${RESET}"
+        return
+    fi
+
     read -p "Enter comma-separated NFT token IDs to approve: (e.g: ID1,ID2,ID3,....)" TOKEN_IDS
     if [ -z "$TOKEN_IDS" ]; then
         echo -e "${RED}At least one token id is required.${RESET}"
@@ -1566,8 +1577,6 @@ function approve_ai_alignment_node() {
 
     read -p "RPC endpoint [default https://arb1.arbitrum.io/rpc]: " RPC
     RPC=${RPC:-https://arb1.arbitrum.io/rpc}
-    read -p "Commission [default 10]: " COMMISSION
-    COMMISSION=${COMMISSION:-10}
     CHAIN_ID=42161
 
     echo -e "${GREEN}Executing approval command...${RESET}"
