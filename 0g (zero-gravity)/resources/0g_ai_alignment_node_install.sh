@@ -97,6 +97,41 @@ function preflight_checks() {
   fi
 }
 
+# Try to detect a suitable service IP (public IP preferred, fallback to local IP)
+function detect_service_ip() {
+  local ip=""
+  # Try via wget (public IP)
+  ip=$(wget -qO- https://api.ipify.org 2>/dev/null || true)
+  if ! [[ "$ip" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
+    ip=""
+  fi
+  # Try via curl if available
+  if [ -z "$ip" ] && command -v curl >/dev/null 2>&1; then
+    ip=$(curl -s https://api.ipify.org 2>/dev/null || true)
+    if ! [[ "$ip" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
+      ip=""
+    fi
+  fi
+  # Fallback to local IP methods
+  if [ -z "$ip" ] && command -v hostname >/dev/null 2>&1; then
+    ip=$(hostname -I 2>/dev/null | awk '{print $1}')
+    if ! [[ "$ip" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
+      ip=""
+    fi
+  fi
+  if [ -z "$ip" ] && command -v ip >/dev/null 2>&1; then
+    ip=$(ip route get 1.1.1.1 2>/dev/null | awk '/src/ {for(i=1;i<=NF;i++){if($i=="src"){print $(i+1); exit}}}')
+    if ! [[ "$ip" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}$ ]]; then
+      ip=""
+    fi
+  fi
+  # Final fallback
+  if [ -z "$ip" ]; then
+    ip="0.0.0.0"
+  fi
+  echo "$ip"
+}
+
 # Step 1: Setup Directory
 function setup_directory() {
   info "Creating directory $APP_DIR"
@@ -127,16 +162,19 @@ function configure_env() {
   if [ -z "${NODE_PORT:-}" ] || [ -z "${PRIVATE_KEY:-}" ]; then
     fail "Required inputs not provided. Run collect_inputs first."
   fi
+  local SERVICE_HOST
+  SERVICE_HOST=$(detect_service_ip)
+  info "Using service IP host: ${SERVICE_HOST}"
 
   cat > .env <<EOF
 ZG_ALIGNMENT_NODE_LOG_LEVEL=info
-ZG_ALIGNMENT_NODE_SERVICE_IP=http://0.0.0.0:${NODE_PORT}
+ZG_ALIGNMENT_NODE_SERVICE_IP=http://${SERVICE_HOST}:${NODE_PORT}
 ZG_ALIGNMENT_NODE_SERVICE_PRIVATEKEY=${PRIVATE_KEY}
 EOF
 
   cat > config.toml <<EOF
 ZG_ALIGNMENT_NODE_LOG_LEVEL="info"
-ZG_ALIGNMENT_NODE_SERVICE_IP="http://0.0.0.0:${NODE_PORT}"
+ZG_ALIGNMENT_NODE_SERVICE_IP="http://${SERVICE_HOST}:${NODE_PORT}"
 ZG_ALIGNMENT_NODE_SERVICE_PRIVATEKEY="${PRIVATE_KEY}"
 EOF
 
