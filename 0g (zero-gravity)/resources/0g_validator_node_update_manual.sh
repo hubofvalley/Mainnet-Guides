@@ -39,132 +39,28 @@ function update_version {
     echo "Update to $VERSION completed!"
 }
 
-function setup_environment {
-    NODE_TYPE=$1
-    ETH_RPC_URL=$2
-    BLOCK_NUM=$3
-    
-    {
-        echo "export NODE_TYPE=\"$NODE_TYPE\""
-        if [ "$NODE_TYPE" = "validator" ]; then
-            echo "export ETH_RPC_URL=\"$ETH_RPC_URL\""
-            echo "export BLOCK_NUM=\"$BLOCK_NUM\""
-        fi
-        echo 'export PATH=$PATH:$HOME/aristotle/bin'
-    } >> ~/.bash_profile
-    source ~/.bash_profile
-}
-
-function create_service_file {
-    NODE_TYPE=$1
-    ETH_RPC_URL=$2
-    BLOCK_NUM=$3
-    OG_PORT=${4:-26656} # Default port if not provided
-    
-    EXTERNAL_IP=$(curl -4 -s ifconfig.me)
-    SERVICE_FILE="/etc/systemd/system/0gchaind.service"
-    
-    if [ "$NODE_TYPE" = "validator" ]; then
-        sudo tee $SERVICE_FILE > /dev/null <<EOF
-[Unit]
-Description=0gchaind Node Service (Validator)
-After=network-online.target
-
-[Service]
-User=$USER
-Environment=CHAIN_SPEC=devnet
-WorkingDirectory=$HOME/.0gchaind
-ExecStart=$HOME/go/bin/0gchaind start \\
-    --chaincfg.chain-spec devnet \\
-    --chaincfg.restaking.enabled \\
-    --chaincfg.restaking.symbiotic-rpc-dial-url ${ETH_RPC_URL} \\
-    --chaincfg.restaking.symbiotic-get-logs-block-range ${BLOCK_NUM} \\
-    --home $HOME/.0gchaind/0g-home/0gchaind-home \\
-    --chaincfg.kzg.trusted-setup-path=$HOME/.0gchaind/kzg-trusted-setup.json \\
-    --chaincfg.engine.jwt-secret-path=$HOME/.0gchaind/jwt-secret.hex \\
-    --chaincfg.kzg.implementation=crate-crypto/go-kzg-4844 \\
-    --chaincfg.engine.rpc-dial-url=http://localhost:${OG_PORT}551 \\
-    --p2p.seeds 85a9b9a1b7fa0969704db2bc37f7c100855a75d9@8.218.88.60:26656 \\
-    --p2p.external_address=${EXTERNAL_IP}:${OG_PORT}656
-Restart=always
-RestartSec=3
-LimitNOFILE=65535
-
-[Install]
-WantedBy=multi-user.target
-EOF
-    else
-        sudo tee $SERVICE_FILE > /dev/null <<EOF
-[Unit]
-Description=0gchaind Node Service (RPC)
-After=network-online.target
-
-[Service]
-User=$USER
-Environment=CHAIN_SPEC=devnet
-WorkingDirectory=$HOME/.0gchaind
-ExecStart=$HOME/go/bin/0gchaind start \\
-    --chaincfg.chain-spec devnet \\
-    --home $HOME/.0gchaind/0g-home/0gchaind-home \\
-    --chaincfg.kzg.trusted-setup-path=$HOME/.0gchaind/kzg-trusted-setup.json \\
-    --chaincfg.engine.jwt-secret-path=$HOME/.0gchaind/jwt-secret.hex \\
-    --chaincfg.kzg.implementation=crate-crypto/go-kzg-4844 \\
-    --chaincfg.engine.rpc-dial-url=http://localhost:${OG_PORT}551 \\
-    --p2p.seeds 85a9b9a1b7fa0969704db2bc37f7c100855a75d9@8.218.88.60:26656 \\
-    --p2p.external_address=${EXTERNAL_IP}:${OG_PORT}656
-Restart=always
-RestartSec=3
-LimitNOFILE=65535
-
-[Install]
-WantedBy=multi-user.target
-EOF
-    fi
-}
-
 BASE_URL="https://github.com/0gfoundation/0gchain-Aristotle/releases/download"
 
 # Display menu
 echo "Select version to update:"
 echo "a) v1.0.2"
+echo "b) v1.0.3"
 
 read -p "Enter the letter corresponding to the version: " choice
 
+read -p "Are you sure you want to proceed with the update? (yes/no): " confirm
+confirm=$(echo "$confirm" | tr '[:upper:]' '[:lower:]')
+if [[ "$confirm" != "yes" ]]; then
+    echo "Update cancelled."
+    exit 0
+fi
+
 case $choice in
     a)
-        while true; do
-            read -p "Deploy type? (validator/rpc): " NODE_TYPE
-            NODE_TYPE=$(echo "$NODE_TYPE" | tr '[:upper:]' '[:lower:]')
-            if [[ "$NODE_TYPE" == "validator" || "$NODE_TYPE" == "rpc" ]]; then
-                break
-            else
-                echo "Please type exactly 'validator' or 'rpc'."
-            fi
-        done
-
-        # Extra prompts for VALIDATOR
-        if [ "$NODE_TYPE" = "validator" ]; then
-            read -p "Enter Holesky ETH RPC endpoint (ETH_RPC_URL): " ETH_RPC_URL
-            while [ -z "$ETH_RPC_URL" ]; do
-                echo "ETH_RPC_URL cannot be empty for validator mode."
-                read -p "Enter Holesky ETH RPC endpoint (ETH_RPC_URL): " ETH_RPC_URL
-            done
-            read -p "Enter block range to fetch logs (BLOCK_NUM), e.g. 2000: " BLOCK_NUM
-            while ! [[ "$BLOCK_NUM" =~ ^[0-9]+$ ]]; do
-                echo "BLOCK_NUM must be a positive integer."
-                read -p "Enter block range to fetch logs (BLOCK_NUM), e.g. 2000: " BLOCK_NUM
-            done
-        fi
-
-        read -p "Enter your preferred port number: (leave empty to use default: 26) " OG_PORT
-        if [ -z "$OG_PORT" ]; then
-            OG_PORT=26
-        fi
-
-        setup_environment "$NODE_TYPE" "$ETH_RPC_URL" "$BLOCK_NUM"
-        create_service_file "$NODE_TYPE" "$ETH_RPC_URL" "$BLOCK_NUM" "$OG_PORT"
-        
         update_version "v1.0.2" "$BASE_URL/1.0.2"
+        ;;
+    b)
+        update_version "v1.0.3" "$BASE_URL/1.0.3"
         ;;
     *)
         echo "Invalid choice. Exiting."
