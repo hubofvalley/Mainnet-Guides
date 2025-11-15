@@ -28,15 +28,12 @@ function update_version {
     sudo chmod +x $HOME/go/bin/0g-geth
     sudo chmod +x $HOME/go/bin/0gchaind
 
-    # Rollback
-    0gchaind rollback --home $HOME/.0gchaind/0g-home/0gchaind-home/
-
     # Restart services
     sudo systemctl daemon-reload
     sudo systemctl start 0g-geth.service || { echo "Failed to start 0g-geth"; exit 1; }
     sudo systemctl start 0gchaind.service || { echo "Failed to start 0gchaind"; exit 1; }
 
-    echo "Update to $VERSION completed!"
+    echo "Update to 0gchain-Aristotle $VERSION completed!"
 }
 
 BASE_URL="https://github.com/0gfoundation/0gchain-Aristotle/releases/download"
@@ -44,7 +41,7 @@ BASE_URL="https://github.com/0gfoundation/0gchain-Aristotle/releases/download"
 # Display menu
 echo "Select version to update:"
 echo "a) v1.0.2"
-echo "b) v1.0.3"
+echo "b) v1.0.3 (Latest version. Must Upgrade before November 20, 2025 at 00:00 UTC)"
 
 read -p "Enter the letter corresponding to the version: " choice
 
