@@ -212,7 +212,7 @@ function deploy_validator_node() {
 
 function manage_validator_node() {
     echo "Choose an option:"
-    echo "1. Update Validator Node Version (Manual)"
+    echo "1. Update Validator Node Version"
     echo "2. Back"
     read -p "Enter your choice (1/2): " choice
 
