@@ -250,7 +250,7 @@ echo -e "a. ${YELLOW}v1.1.0${RESET} (${GREEN}Virgil${RESET} Upgrade height: 640,
 echo -e "b. ${YELLOW}v1.1.1${RESET} (${GREEN}Additional update for validator CLI interaction${RESET} Upgrade height: 1,398,904)"
 echo -e "c. ${YELLOW}v1.2.0${RESET} (${GREEN}Ovid${RESET} Upgrade height: 4,477,880)"
 echo -e "d. ${YELLOW}v1.2.1${RESET} (${GREEN}Validator operations CLI improvements${RESET} Upgrade height: 5,084,300)"
-echo -e "e. ${YELLOW}v1.3.1${RESET} (${GREEN}Residual rewards fix${RESET} Upgrade height: 6,000,000"
+echo -e "e. ${YELLOW}v1.3.1${RESET} (${GREEN}Residual rewards fix${RESET} Upgrade height: 4,188,998)"
 echo -e "f. ${YELLOW}v1.3.2${RESET} (${GREEN}Polybius${RESET} Upgrade height: 8,270,000)"
 echo -e "g. ${YELLOW}v1.3.3${RESET} (${GREEN}Latest patch${RESET} Upgrade height: $(LC_NUMERIC='en_US.UTF-8' printf "%'d" $((realtime_block_height + 100))))"
 #echo -e "h. ${YELLOW}v1.4.1${RESET} (${GREEN}Terance${RESET} Upgrade height: $(LC_NUMERIC='en_US.UTF-8' printf "%'d" $((realtime_block_height + 100))))"
@@ -270,7 +270,7 @@ case $choice in
         update_version "v1.2.1" "https://github.com/piplabs/story/releases/download/v1.2.1" 5084300
         ;;
     e)
-        update_version "v1.3.1" "https://github.com/piplabs/story/releases/download/v1.3.1" 6000000
+        update_version "v1.3.1" "https://github.com/piplabs/story/releases/download/v1.3.1" 4188998
         ;;
     f)
         update_version "v1.3.2" "https://github.com/piplabs/story/releases/download/v1.3.2" 8270000
