@@ -41,7 +41,7 @@ ${YELLOW}| Category  | Requirements                   |
 | Storage   | 1+ TB NVMe SSD                 |
 | Bandwidth | 100 MBps for Download / Upload |${RESET}
 
-validator node current binaries version: ${CYAN}v1.0.2${RESET}
+validator node current binaries version: ${CYAN}v1.0.3${RESET}
 consensus client service file name: ${CYAN}0gchaind.service${RESET}
 0g-geth service file name: ${CYAN}0g-geth.service${RESET}
 current chain : ${CYAN}0gchain-16661 (Aristotle)${RESET}
@@ -240,14 +240,14 @@ function apply_snapshot() {
 
 function install_0gchain_app() {
     cd $HOME || return
-    echo "Downloading and installing 0gchaind v1.0.2..."
+    echo "Downloading and installing 0gchaind v1.0.3..."
     
     # Download and extract package
-    wget -q https://github.com/0gfoundation/0gchain-Aristotle/releases/download/1.0.2/aristotle-v1.0.2.tar.gz -O aristotle-v1.0.2.tar.gz
-    tar -xzf aristotle-v1.0.2.tar.gz -C $HOME
-    if [ -d "$HOME/aristotle-v1.0.2" ]; then
+    wget -q https://github.com/0gfoundation/0gchain-Aristotle/releases/download/1.0.3/aristotle-v1.0.3.tar.gz -O aristotle-v1.0.3.tar.gz
+    tar -xzf aristotle-v1.0.3.tar.gz -C $HOME
+    if [ -d "$HOME/aristotle-v1.0.3" ]; then
         rm -rf "$HOME/aristotle"
-        mv "$HOME/aristotle-v1.0.2" "$HOME/aristotle"
+        mv "$HOME/aristotle-v1.0.3" "$HOME/aristotle"
     fi
     
     # Ensure target directories exist
@@ -258,14 +258,14 @@ function install_0gchain_app() {
         # Copy to standard location
         cp "$HOME/aristotle/bin/0gchaind" "$HOME/go/bin/0gchaind"
         sudo chmod +x "$HOME/go/bin/0gchaind"
-        echo "0gchaind v1.0.2 installed successfully to:"
+        echo "0gchaind v1.0.3 installed successfully to:"
         echo "- $HOME/go/bin/0gchaind"
     else
         echo "Error: 0gchaind binary not found in extracted package!"
     fi
     
     # Cleanup
-    rm -f aristotle-v1.0.2.tar.gz
+    rm -f aristotle-v1.0.3.tar.gz
     menu
 }
 
@@ -1149,7 +1149,7 @@ function delete_validator_node() {
     sudo rm -rf /etc/systemd/system/$OG_CONSENSUS_CLIENT_SERVICE $OG_GETH_SERVICE
     sudo rm -r $HOME/aristotle
     sudo rm -r $HOME/.0gchaind
-    sudo rm -r $HOME/aristotle-v1.0.2
+    sudo rm -r $HOME/aristotle-v1.0.3
     sed -i "/OG_/d" $HOME/.bash_profile
     echo "Validator node deleted successfully."
     menu
@@ -1627,11 +1627,11 @@ function show_guidelines() {
 
     echo -e "${GREEN}5. Additional Tips${RESET}"
     echo "   - Always backup your wallets and important data before performing operations like deleting nodes."
-    echo "   - Regularly update your nodes to the latest version (currently v1.0.2) to ensure compatibility and security."
+    echo "   - Regularly update your nodes to the latest version (currently v1.0.3) to ensure compatibility and security."
 
     echo -e "${GREEN}6. Option Descriptions and Guides${RESET}"
     echo -e "${GREEN}Validator Node Options:${RESET}"
-    echo "   a. Deploy/re-Deploy Validator Node: Install/reinstall validator stack (v1.0.2)."
+    echo "   a. Deploy/re-Deploy Validator Node: Install/reinstall validator stack (v1.0.3)."
     echo "   b. Manage Validator Node: Update version or perform maintenance."
     echo "   c. Apply Validator Node Snapshot: Speed up sync using official snapshot."
     echo "   d. Add Peers: Add peers (manual or Grand Valley preset)."
@@ -1679,7 +1679,7 @@ function show_guidelines() {
     echo "   l. Delete AI Alignment Node"
  
     echo -e "${GREEN}Utilities:${RESET}"
-    echo "   6. Install 0gchain App: Installs CLI (v1.0.2) for transactions without running a node."
+    echo "   6. Install 0gchain App: Installs CLI (v1.0.3) for transactions without running a node."
     echo "   7. Show Endpoints: Displays Grand Valley's public endpoints."
     echo "   8. Show Guidelines: Displays this help information."
  
@@ -1735,7 +1735,7 @@ function menu() {
     echo "    j. Delete Storage Node"
     echo "    k. Delete Storage KV"
     echo "    l. Delete AI Alignment Node"
-    echo -e "${GREEN}6. Install the 0gchain App (v1.0.2) only to execute transactions without running a node${RESET}"
+    echo -e "${GREEN}6. Install the 0gchain App (v1.0.3) only to execute transactions without running a node${RESET}"
     echo -e "${GREEN}7. Show Grand Valley's Endpoints${RESET}"
     echo -e "${YELLOW}8. Show Guidelines${RESET}"
     echo -e "${RED}9. Exit${RESET}"
