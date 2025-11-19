@@ -50,6 +50,8 @@ Run the following command to install Valley of Story:
 bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Story/resources/valleyofStory.sh)
 ```
 
+This loader script (stored in this repo) fetches and runs the primary installer hosted in the dedicated Valley-of-Story-Mainnet repository: https://github.com/hubofvalley/Valley-of-Story-Mainnet/.
+
 - Install the Story app for command-line transactions and network interactions without running a full node.
 
 ---
@@ -304,6 +306,7 @@ Grand Valley provides fast, reliable snapshots to quickly sync your validator no
    ```bash
    bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Story/resources/valleyofStory.sh)
    ```
+   - This lightweight wrapper pulls the latest snapshot utility from https://github.com/hubofvalley/Valley-of-Story-Mainnet/ before presenting the menu.
 
 2. Input `1c` at the main menu prompt to enter "Apply Snapshot" feature
 
