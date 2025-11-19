@@ -1,0 +1,103 @@
+name: Sync Story Resources to Mainnet-Guides
+
+on:
+  push:
+    branches:
+      - main
+      - war-branch
+    paths:
+      - 'Story/resources/**'
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to sync from'
+        required: true
+        default: 'main'
+        type: choice
+        options:
+          - main
+          - war-branch
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Valley-of-Story-Mainnet (source repo)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref_name }}
+          fetch-depth: 0
+
+      - name: Determine target branch in Mainnet-Guides
+        id: target
+        run: |
+          SOURCE_BRANCH="${{ github.event.inputs.branch || github.ref_name }}"
+          
+          if [ "$SOURCE_BRANCH" = "main" ]; then
+            TARGET_BRANCH="main"
+            echo "🎯 Syncing to PRODUCTION (main branch)"
+          else
+            TARGET_BRANCH="war-branch"
+            echo "🧪 Syncing to TESTING (war-branch)"
+          fi
+          
+          echo "source_branch=$SOURCE_BRANCH" >> $GITHUB_OUTPUT
+          echo "target_branch=$TARGET_BRANCH" >> $GITHUB_OUTPUT
+
+      - name: Checkout Mainnet-Guides (target repo)
+        uses: actions/checkout@v4
+        with:
+          repository: hubofvalley/Mainnet-Guides
+          ref: ${{ steps.target.outputs.target_branch }}
+          token: ${{ secrets.SYNC_TOKEN }}
+          path: mainnet-guides
+          fetch-depth: 0
+
+      - name: Sync Story resources folder
+        run: |
+          echo "🔄 Syncing Story resources..."
+          echo "   Source: Valley-of-Story-Mainnet (${{ steps.target.outputs.source_branch }})"
+          echo "   Target: Mainnet-Guides (${{ steps.target.outputs.target_branch }})"
+          echo ""
+          
+          # Remove old resources folder in Mainnet-Guides
+          rm -rf mainnet-guides/Story/resources
+          
+          # Copy new resources folder from Valley-of-Story-Mainnet
+          mkdir -p mainnet-guides/Story
+          cp -r Story/resources mainnet-guides/Story/
+          
+          echo "✅ Files copied successfully"
+          
+          # Show what changed
+          cd mainnet-guides
+          git status
+
+      - name: Commit and push changes
+        run: |
+          cd mainnet-guides
+          git config user.name "Valley Bot"
+          git config user.email "bot@grandvalley.com"
+          
+          # Add all changes in Story/resources
+          git add Story/resources/
+          
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "ℹ️ No changes to commit"
+          else
+            EMOJI="🔄"
+            if [ "${{ steps.target.outputs.target_branch }}" = "main" ]; then
+              EMOJI="🚀"
+            fi
+            
+            git commit -m "$EMOJI Auto-sync Story resources from Valley-of-Story-Mainnet
+            
+            Source branch: ${{ steps.target.outputs.source_branch }}
+            Target branch: ${{ steps.target.outputs.target_branch }}
+            Synced at: $(date -u +'%Y-%m-%d %H:%M:%S UTC')
+            Commit: ${{ github.sha }}"
+            
+            git push
+            echo "✅ Changes pushed successfully to Mainnet-Guides (${{ steps.target.outputs.target_branch }})"
+          fi
