@@ -253,7 +253,7 @@ echo -e "d. ${YELLOW}v1.2.1${RESET} (${GREEN}Validator operations CLI improvemen
 echo -e "e. ${YELLOW}v1.3.1${RESET} (${GREEN}Residual rewards fix${RESET} Upgrade height: 4,188,998)"
 echo -e "f. ${YELLOW}v1.3.2${RESET} (${GREEN}Polybius${RESET} Upgrade height: 8,270,000)"
 echo -e "g. ${YELLOW}v1.3.3${RESET} (${GREEN}Latest patch${RESET} Upgrade height: $(LC_NUMERIC='en_US.UTF-8' printf "%'d" $((realtime_block_height + 100))))"
-#echo -e "h. ${YELLOW}v1.4.1${RESET} (${GREEN}Terence${RESET} Upgrade height: $(LC_NUMERIC='en_US.UTF-8' printf "%'d" $((realtime_block_height + 100))))"
+echo -e "h. ${YELLOW}v1.4.1${RESET} (${GREEN}Terence${RESET} Upgrade height: $(LC_NUMERIC='en_US.UTF-8' printf "%'d" $((realtime_block_height + 100))))"
 read -p "Enter the letter corresponding to the version: " choice
 
 case $choice in

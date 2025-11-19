@@ -41,7 +41,7 @@ ${YELLOW}| Category  | Requirements     |
 - consensus client service file name: ${CYAN}story.service${RESET}
 - geth service file name: ${CYAN}story-geth.service${RESET}
 - current chain: ${CYAN}story${RESET}
-- current story node version: ${CYAN}v1.1.0 - v1.1.1 - v1.2.0 - v1.2.1 - v1.3.1 - v1.3.2 - v1.3.3${RESET}
+- current story node version: ${CYAN}v1.1.0 - v1.1.1 - v1.2.0 - v1.2.1 - v1.3.1 - v1.3.2 - v1.3.3 - v1.4.1${RESET}
 - current story-geth node version: ${CYAN}v1.1.2${RESET}
 "
 
@@ -633,9 +633,9 @@ function show_geth_logs() {
 
 function install_story_app() {
     echo -e "${YELLOW}This option is only for those who want to execute the transactions without running the node.${RESET}"
-    mkdir -p story-v1.3.3
-    wget -O story-v1.3.3/story https://github.com/piplabs/story/releases/download/v1.3.3/story-linux-amd64
-    cp story-v1.3.3/story $HOME/go/bin/story
+    mkdir -p story-v1.4.1
+    wget -O story-v1.4.1/story https://github.com/piplabs/story/releases/download/v1.4.1/story-linux-amd64
+    cp story-v1.4.1/story $HOME/go/bin/story
     sudo chown -R $USER:$USER $HOME/go/bin/story
     sudo chmod +x $HOME/go/bin/story
     story init --network $STORY_CHAIN_ID --moniker gv-story
@@ -727,7 +727,7 @@ function show_guidelines() {
     echo "      - Guide: This option will backup your validator key to your home directory. Ensure you keep this key secure."
     echo "   h. Delete Validator Node: Deletes the validator node. Ensure you backup your seeds phrase/EVM-private key and priv_validator_key.json before doing this."
     echo "      - Guide: Use this option to delete your validator node. Make sure to backup all important data before proceeding."
-    echo -e "${GREEN}Install Story App only: Installs the Story app (v1.3.3) for executing transactions without running the node.${RESET}"
+    echo -e "${GREEN}Install Story App only: Installs the Story app (v1.4.1) for executing transactions without running the node.${RESET}"
     echo "      - Guide: Use this option to install the Story app if you only need to execute transactions without running a full node."
     echo -e "${GREEN}Show Grand Valley's Endpoints:${RESET}"
     echo "   Displays Grand Valley's public endpoints."
@@ -772,7 +772,7 @@ function menu() {
     echo "   f. Stop Geth Only"
     echo "   g. Backup Validator Key (store it to $HOME directory)"
     echo "   h. Delete Validator Node (BACKUP YOUR SEEDS PHRASE/EVM-PRIVATE KEY AND priv_validator_key.json BEFORE YOU DO THIS)"
-    echo -e "${GREEN}4. Install the Story App (v1.3.3) only to execute transactions without running a node${RESET}"
+    echo -e "${GREEN}4. Install the Story App (v1.4.1) only to execute transactions without running a node${RESET}"
     echo -e "${GREEN}5. Show Grand Valley's Endpoints${RESET}"
     echo -e "${YELLOW}6. Show Guidelines${RESET}"
     echo -e "${RED}7. Exit${RESET}"
