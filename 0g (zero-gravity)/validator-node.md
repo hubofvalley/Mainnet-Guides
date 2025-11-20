@@ -40,6 +40,10 @@ Run the following command to install Valley of 0G:
 bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/0g%20\(zero-gravity\)/resources/valleyof0G.sh)
 ```
 
+This loader script (stored in this repo) fetches and runs the primary installer hosted in the dedicated Valley-of-0G-Mainnet repository: https://github.com/hubofvalley/Valley-of-0G-Mainnet/.
+
+- Install the 0G app for command-line transactions and network interactions without running a full node.
+
 ---
 
 ## Manual Installation (Aristotle Validator Node)
