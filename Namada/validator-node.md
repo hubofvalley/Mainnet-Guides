@@ -100,6 +100,10 @@ Run the following command to install Valley of Namada:
 bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Namada/resources/valleyofNamada.sh)
 ```
 
+This loader script (stored in this repo) fetches and runs the primary installer hosted in the dedicated Valley-of-Namada-Mainnet repository: https://github.com/hubofvalley/Valley-of-Namada-Mainnet/.
+
+- Install the Namada app for command-line transactions and network interactions without running a full node.
+
 ---
 
 ### Manual Installation
