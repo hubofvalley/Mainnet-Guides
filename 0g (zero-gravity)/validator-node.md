@@ -1,26 +1,34 @@
-## Valley of 0G: Tools by Grand Valley
+# 0G Mainnet Installation Guide
 
-![image](https://github.com/user-attachments/assets/359b0d17-e451-42d7-8bc3-88c7fcf28355)
-![alt text](vo0gmainnetimage.png)
+# Table of Contents
+- [0G Mainnet Installation Guide](#0g-mainnet-installation-guide)
+- [Table of Contents](#table-of-contents)
+  - [System Requirements](#system-requirements)
+  - [Automatic Installation](#automatic-installation)
+    - [Valley of 0G: Tools by Grand Valley](#valley-of-0g-tools-by-grand-valley)
+    - [Key Features of Valley of 0G](#key-features-of-valley-of-0g)
+      - [Run the following command to install Valley of 0G:](#run-the-following-command-to-install-valley-of-0g)
+  - [Manual Installation](#manual-installation)
+    - [1. Prepare Environment Variables](#1-prepare-environment-variables)
+    - [2. Cleanup Previous Installations](#2-cleanup-previous-installations)
+    - [3. Install Dependencies](#3-install-dependencies)
+    - [4. Install Go](#4-install-go)
+    - [5. Download and Extract Aristotle Binary](#5-download-and-extract-aristotle-binary)
+    - [6. Initialize Chain](#6-initialize-chain)
+    - [7. Move Binaries to $HOME/go/bin/](#7-move-binaries-to-homegobin)
+    - [8. Patch Configuration Files](#8-patch-configuration-files)
+    - [9. Copy Node Keys](#9-copy-node-keys)
+    - [10. Generate JWT Authentication Token](#10-generate-jwt-authentication-token)
+    - [11. Create systemd Service Files](#11-create-systemd-service-files)
+      - [0gchaind Service](#0gchaind-service)
+      - [0g-geth Service](#0g-geth-service)
+    - [12. Start Services](#12-start-services)
+    - [13. Check Logs](#13-check-logs)
+    - [14. Verify Installation](#14-verify-installation)
+  - [Delete the Node](#delete-the-node)
 
-**Valley of 0G** by Grand Valley is an all-in-one solution for managing nodes within the 0G decentralized AI network. It provides easy tools to deploy, monitor, and maintain validator node storage node and AI alignment node making it simple to manage AI-focused infrastructure. Designed for scalability and performance, Valley of 0G helps efficiently manage data and resources, all within a community-driven environment with public support and endpoints.
 
-### Key Features of Valley of 0G
-
-- Unified Node Control: Deploy, update, snapshot, and manage Validator, Storage, Storage KV, and AI Alignment from one menu.
-- Validator Operations: Create validator, add peers, query balance, delegate/undelegate, and view combined or per-client logs.
-- Storage Node Suite: Install/update, apply official snapshots, change config (RPC/miner key), view status and logs; aligned with latest Flow/Mine/Reward contracts.
-- Storage KV Services: Deploy/update KV, connect to storage nodes, follow the Flow log contract, and tail KV logs.
-- Lifecycle & Safety Tools: Restart/stop/delete for each service with confirmations and clear guidance.
-- Built-in Endpoints & Health: Quick access to Grand Valley public endpoints and status checks.
-- Guided UX: Interactive prompts, shortcuts like "1a", and integrated Guidelines help screen.
-- Mainnet Ready: Aristotle chain support; validator v1.0.2, storage v1.1.0, storage‑kv v1.4.0.
-
----
-
-## Installation
-
-#### System Requirements
+## System Requirements
 
 | Category   | Requirements                  |
 | ---------- | ---------------------------- |
@@ -29,45 +37,106 @@
 | Storage    | 1+ TB NVMe SSD               |
 | Bandwidth  | 100 MBps for Download/Upload |
 
-- Guide's current binaries version: `v1.0.2` (will automatically update to the latest version)
+- Guide's current binaries version: `v1.0.3` (will automatically update to the latest version)
 - Service file name: `0gchaind.service`
 
-### Automatic Installation
+## Automatic Installation
 
-Run the following command to install Valley of 0G:
+### Valley of 0G: Tools by Grand Valley
 
-```bash
-bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/0g%20\(zero-gravity\)/resources/valleyof0G.sh)
-```
+![image](https://github.com/user-attachments/assets/359b0d17-e451-42d7-8bc3-88c7fcf28355)
+![alt text](resources/vo0gnew.png)
 
-This loader script (stored in this repo) fetches and runs the primary installer hosted in the dedicated Valley-of-0G-Mainnet repository: https://github.com/hubofvalley/Valley-of-0G-Mainnet/.
+**Valley of 0G** by Grand Valley is an all-in-one solution for managing nodes within the 0G decentralized AI network. It provides easy tools to deploy, monitor, and maintain validator and storage nodes, making it simple to manage AI-focused infrastructure. Designed for scalability and performance, Valley of 0G helps efficiently manage data and resources, all within a community-driven environment with public support and endpoints.
 
-- Install the 0G app for command-line transactions and network interactions without running a full node.
+### Key Features of Valley of 0G
+
+- **High-Performance Validation:** Deploy powerful validator nodes to secure the 0G network, optimized for transaction consistency and processing speed.
+- **Decentralized Data Storage:** Use fast NVMe SSDs for storing 0G network data, ensuring data remains accessible and reliable within a decentralized infrastructure.
+- **Specialized Data Handling:** Operate nodes focused on key-value data storage to support real-time access and structured data needs within 0G, ideal for applications requiring rapid data retrieval and streaming.
+- **Automated Node Management:** Utilize scripts for efficient deployment, updates, and maintenance, making node management straightforward and minimizing manual effort.
+- **Public Endpoints and Support:** Benefit from open endpoints and active social channels that enable developers and users to connect, access resources, and participate in the 0G community.
 
 ---
 
-## Manual Installation (Aristotle Validator Node)
+#### Run the following command to install Valley of 0G:
+
+```bash
+bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Testnet-Guides/main/0g%20(zero-gravity)/resources/valleyof0G.sh)
+```
+
+This loader script (stored in this repo) fetches and runs the primary installer hosted in the dedicated Valley-of-0G-Mainnet repository: https://github.com/hubofvalley/Valley-of-0G-Mainnet.
+
+---
+
+## Manual Installation
 
 > **Warning:** This process will remove any previous 0gchaind/0g-geth installation and data on your server.
 
-### 1. Cleanup Previous Installations
+### 1. Prepare Environment Variables
+
+```bash
+# ===== CHOOSE NODE TYPE =====
+while true; do
+  read -p "Deploy type? (validator/rpc): " NODE_TYPE
+  NODE_TYPE=$(echo "$NODE_TYPE" | tr '[:upper:]' '[:lower:]')
+  if [[ "$NODE_TYPE" == "validator" || "$NODE_TYPE" == "rpc" ]]; then
+    break
+  else
+    echo "Please type exactly 'validator' or 'rpc'."
+  fi
+done
+
+# Input your moniker, ports, and validator-specific settings
+read -p "Enter your moniker: " MONIKER
+read -p "Enter your preferred port number (default: 26): " OG_PORT
+if [ -z "$OG_PORT" ]; then
+    OG_PORT=26
+fi
+read -p "Do you want to enable the indexer? (yes/no): " ENABLE_INDEXER
+
+# Extra prompts for VALIDATOR
+if [ "$NODE_TYPE" = "validator" ]; then
+  read -p "Enter Mainnet ETH RPC endpoint (ETH_RPC_URL): " ETH_RPC_URL
+  while [ -z "$ETH_RPC_URL" ]; do
+    echo "ETH_RPC_URL cannot be empty for validator mode."
+    read -p "Enter Mainnet ETH RPC endpoint (ETH_RPC_URL): " ETH_RPC_URL
+  done
+  read -p "Enter block range to fetch logs (BLOCK_NUM), e.g. 2000: " BLOCK_NUM
+  while ! [[ "$BLOCK_NUM" =~ ^[0-9]+$ ]]; do
+    echo "BLOCK_NUM must be a positive integer."
+    read -p "Enter block range to fetch logs (BLOCK_NUM), e.g. 2000: " BLOCK_NUM
+  done
+fi
+
+# Save environment variables
+echo "export NODE_TYPE=\"$NODE_TYPE\"" >> ~/.bash_profile
+echo "export MONIKER=\"$MONIKER\"" >> ~/.bash_profile
+echo "export OG_PORT=\"$OG_PORT\"" >> ~/.bash_profile
+echo "export ETH_RPC_URL=\"$ETH_RPC_URL\"" >> ~/.bash_profile
+echo "export BLOCK_NUM=\"$BLOCK_NUM\"" >> ~/.bash_profile
+echo 'export PATH=$PATH:$HOME/aristotle/bin' >> ~/.bash_profile
+source ~/.bash_profile
+```
+
+### 2. Cleanup Previous Installations
 
 ```bash
 sudo systemctl stop 0gchaind 0g-geth 0ggeth
 sudo systemctl disable 0gchaind 0g-geth 0ggeth
 sudo rm -f /etc/systemd/system/0gchaind.service /etc/systemd/system/0g-geth.service /etc/systemd/system/0ggeth.service
 sudo rm -f $HOME/go/bin/0gchaind $HOME/go/bin/0g-geth $HOME/go/bin/0ggeth
-rm -rf $HOME/.0gchaind $HOME/aristotle $HOME/aristotle-v1.0.2 $HOME/aristotle-v1.0.2.tar.gz
+rm -rf $HOME/.0gchaind $HOME/aristotle $HOME/aristotle-v1.0.3 $HOME/aristotle-v1.0.3.tar.gz
 ```
 
-### 2. Install Dependencies
+### 3. Install Dependencies
 
 ```bash
 sudo apt update && sudo apt upgrade -y
 sudo apt install curl git wget htop tmux build-essential jq make lz4 gcc unzip -y
 ```
 
-### 3. Install Go
+### 4. Install Go
 
 ```bash
 cd $HOME && ver="1.22.5"
@@ -80,64 +149,35 @@ source ~/.bash_profile
 go version
 ```
 
-### 4. Download and Extract Aristotle Binary
+### 5. Download and Extract Aristotle Binary
 
 ```bash
 cd $HOME
-wget https://github.com/0gfoundation/0gchain-Aristotle/releases/download/1.0.2/aristotle-v1.0.2.tar.gz
-tar -xzvf aristotle-v1.0.2.tar.gz
-mv aristotle-v1.0.2 aristotle
-rm aristotle-v1.0.2.tar.gz
+wget https://github.com/0gfoundation/0gchain-Aristotle/releases/download/1.0.3/aristotle-v1.0.3.tar.gz
+tar -xzvf aristotle-v1.0.3.tar.gz
+cp -r aristotle-v1.0.3/${NODE_TYPE} aristotle
+rm aristotle-v1.0.3.tar.gz
 sudo chmod +x $HOME/aristotle/bin/geth
 sudo chmod +x $HOME/aristotle/bin/0gchaind
 ```
 
-### 5. Initialize Node
+### 6. Initialize Chain
 
 ```bash
-# Input your moniker, ports, and validator-specific settings
-read -p "Enter your moniker: " MONIKER
-read -p "Enter your preferred port number (default: 26): " OG_PORT
-if [ -z "$OG_PORT" ]; then
-    OG_PORT=26
-fi
-read -p "Do you want to enable the indexer? (yes/no): " ENABLE_INDEXER
-
-# Validator-specific: mainnet ETH RPC and logs block range
-read -p "Enter Mainnet ETH RPC endpoint (ETH_RPC_URL): " ETH_RPC_URL
-while [ -z "$ETH_RPC_URL" ]; do
-  echo "ETH_RPC_URL cannot be empty for validator mode."
-  read -p "Enter Mainnet ETH RPC endpoint (ETH_RPC_URL): " ETH_RPC_URL
-done
-read -p "Enter block range to fetch logs (BLOCK_NUM), e.g. 2000: " BLOCK_NUM
-while ! [[ "$BLOCK_NUM" =~ ^[0-9]+$ ]]; do
-  echo "BLOCK_NUM must be a positive integer."
-  read -p "Enter block range to fetch logs (BLOCK_NUM), e.g. 2000: " BLOCK_NUM
-done
-
-# Save environment variables
-echo "export MONIKER=\"$MONIKER\"" >> ~/.bash_profile
-echo "export OG_PORT=\"$OG_PORT\"" >> ~/.bash_profile
-echo "export ETH_RPC_URL=\"$ETH_RPC_URL\"" >> ~/.bash_profile
-echo "export BLOCK_NUM=\"$BLOCK_NUM\"" >> ~/.bash_profile
-echo 'export PATH=$PATH:$HOME/aristotle/bin' >> ~/.bash_profile
-source ~/.bash_profile
-
-# Initialize chain
 mkdir -p $HOME/.0gchaind/
 cp -r $HOME/aristotle/* $HOME/.0gchaind/
 0g-geth init --datadir $HOME/.0gchaind/0g-home/geth-home $HOME/.0gchaind/geth-genesis.json
 0gchaind init "$MONIKER" --home $HOME/.0gchaind/tmp --chaincfg.chain-spec mainnet
 ```
 
-### 6. Move Binaries to $HOME/go/bin/
+### 7. Move Binaries to $HOME/go/bin/
 
 ```bash
 cp $HOME/aristotle/bin/geth $HOME/go/bin/0g-geth
 cp $HOME/aristotle/bin/0gchaind $HOME/go/bin/0gchaind
 ```
 
-### 7. Patch Configuration Files
+### 8. Patch Configuration Files
 
 ```bash
 CONFIG="$HOME/.0gchaind/0g-home/0gchaind-home/config"
@@ -177,7 +217,7 @@ sed -i "s/^# *Port = .*/# Port = ${OG_PORT}901/" $GCONFIG
 sed -i "s/^# *InfluxDBEndpoint = .*/# InfluxDBEndpoint = \"http:\/\/localhost:${OG_PORT}086\"/" $GCONFIG
 ```
 
-### 8. Copy Node Keys
+### 9. Copy Node Keys
 
 ```bash
 cp $HOME/.0gchaind/tmp/data/priv_validator_state.json $HOME/.0gchaind/0g-home/0gchaind-home/data/
@@ -185,14 +225,14 @@ cp $HOME/.0gchaind/tmp/config/node_key.json $HOME/.0gchaind/0g-home/0gchaind-hom
 cp $HOME/.0gchaind/tmp/config/priv_validator_key.json $HOME/.0gchaind/0g-home/0gchaind-home/config/
 ```
 
-### 9. Generate JWT Authentication Token
+### 10. Generate JWT Authentication Token
 
 ```bash
 0gchaind jwt generate --home $HOME/.0gchaind/0g-home/0gchaind-home --chaincfg.chain-spec mainnet
 cp -f $HOME/.0gchaind/0g-home/0gchaind-home/config/jwt.hex $HOME/.0gchaind/jwt.hex
 ```
 
-### 10. Create systemd Service Files
+### 11. Create systemd Service Files
 
 #### 0gchaind Service
 
@@ -254,7 +294,7 @@ WantedBy=multi-user.target
 EOF
 ```
 
-### 11. Start Services
+### 12. Start Services
 
 ```bash
 sudo systemctl daemon-reload
@@ -264,13 +304,13 @@ sudo systemctl start 0gchaind
 sudo systemctl start 0g-geth
 ```
 
-### 12. Check Logs
+### 13. Check Logs
 
 ```bash
 sudo journalctl -u 0gchaind -u 0g-geth -fn 100
 ```
 
-### 13. Verify Installation
+### 14. Verify Installation
 
 ```bash
 echo -e "\n✅ 0G Validator Node Installation Completed Successfully!"
@@ -299,11 +339,9 @@ echo -e "Node ID: $($HOME/aristotle/bin/0gchaind comet show-node-id --home $HOME
 sudo systemctl stop 0gchaind 0g-geth
 sudo systemctl disable 0gchaind 0g-geth
 sudo rm -rf /etc/systemd/system/0gchaind.service /etc/systemd/system/0g-geth.service
-sudo rm -rf $HOME/.0gchaind $HOME/aristotle $HOME/aristotle-v1.0.2 $HOME/aristotle-v1.0.2.tar.gz
+sudo rm -rf $HOME/.0gchaind $HOME/aristotle $HOME/aristotle-v1.0.3 $HOME/aristotle-v1.0.3.tar.gz
 sed -i "/MONIKER\|OG_PORT/d" $HOME/.bash_profile
 sed -i "/ETH_RPC_URL\|BLOCK_NUM/d" $HOME/.bash_profile
 ```
 
 ---
-
-# Lets Buidl 0G Together
