@@ -1,83 +1,34 @@
-## Valley of Namada (Mainnet): Tools by Grand Valley
+# Namada Mainnet Installation Guide
 
-**Valley of Namada** is an all-in-one infrastructure solution developed by Grand Valley, designed to provide powerful tools for efficient node management and validator interactions within the Namada network. This toolkit is intended for node runners, validators, and anyone participating in the Namada ecosystem. Valley of Namada offers an accessible, streamlined interface to manage nodes, maintain network participation, and perform validator functions effectively, making it easier to operate and maintain a secure and up-to-date node.
+# Table of Contents
 
-![VON](resources/image.png)
-![VoN](resources/image1.png)
+- [Namada Mainnet Installation Guide](#namada-mainnet-installation-guide)
+- [Table of Contents](#table-of-contents)
+  - [System Requirements](#system-requirements)
+  - [Automatic Installation](#automatic-installation)
+    - [Valley of Namada (Mainnet): Tools by Grand Valley](#valley-of-namada-mainnet-tools-by-grand-valley)
+      - [Key Features of Valley of Namada](#key-features-of-valley-of-namada)
+  - [Manual Installation](#manual-installation)
+    - [1. Install dependencies for building from source](#1-install-dependencies-for-building-from-source)
+    - [2. install go](#2-install-go)
+    - [3. install rust](#3-install-rust)
+    - [4. install cometbft](#4-install-cometbft)
+    - [5. set vars](#5-set-vars)
+    - [6. download binary](#6-download-binary)
+    - [7. join the network](#7-join-the-network)
+      - [as post-genesis validator](#as-post-genesis-validator)
+      - [as pre-genesis validator](#as-pre-genesis-validator)
+          - [input your validator alias](#input-your-validator-alias)
+    - [8. set custom ports in config.toml file](#8-set-custom-ports-in-configtoml-file)
+    - [9. disable indexer (optional) (if u want to run a full node, skip this step)](#9-disable-indexer-optional-if-u-want-to-run-a-full-node-skip-this-step)
+    - [10. create service file](#10-create-service-file)
+    - [11. start the node](#11-start-the-node)
+      - [this is an example of the node is running well](#this-is-an-example-of-the-node-is-running-well)
+    - [12. check node version](#12-check-node-version)
+  - [update peers](#update-peers)
+  - [update seeds](#update-seeds)
 
----
-
-## Key Features of Valley of Namada
-
-Valley of Namada (VoN) is a comprehensive toolkit designed to simplify and enhance the experience of running and managing validator nodes on the Namada network. Below are the main features and their detailed explanations:
-
-### 1. Deploy and Manage Validator Nodes
-
-Easily deploy new validator nodes or remove existing ones through an intuitive interface. This feature streamlines the process of joining or leaving the network, ensuring that even users with minimal technical background can participate. **Important:** Always back up critical files such as seed phrases, private keys, and `priv_validator_key.json` before performing any deletion to prevent loss of access to your validator.
-
-### 2. Node Control and Monitoring
-
-Start, stop, or restart validator nodes as needed, providing full operational control. Monitor the current status of your validator node in real time, including health checks and synchronization status. This ensures your node remains active and in good standing within the network.
-
-### 3. Peer Management
-
-Add or update peer connections to improve network stability and communication. By managing your node’s peer list, you can optimize connectivity, reduce downtime, and ensure your validator is well-integrated with the rest of the network.
-
-### 4. Logging and Troubleshooting
-
-Access unified and comprehensive logs for your validator node. This feature aids in troubleshooting by providing clear, centralized log data, making it easier to identify and resolve issues quickly.
-
-### 5. Snapshot Application
-
-Accelerate node setup and recovery by applying the latest network snapshot. This allows you to synchronize your node with the current state of the blockchain much faster than syncing from genesis, saving significant time and bandwidth.
-
-### 6. Validator and Key Management
-
-- **Validator Setup:** Create a new validator to participate in network consensus and security.
-- **Key Management:** Generate and manage wallets, restore wallets from seed phrases, and create payment addresses. This ensures secure handling of your cryptographic keys and funds.
-- **Stake and Unstake Tokens:** Stake tokens to support network security or unstake them as needed. You can also query validator public keys and account balances directly from the toolkit.
-- **Redelegate Tokens:** Move your stake from one validator to another without unbonding, allowing for flexible delegation strategies.
-- **Withdraw Unbonded Tokens:** Easily withdraw tokens that have completed the unbonding period.
-- **Claim Rewards:** Claim staking rewards earned by your validator.
-- **Transfer Tokens:** Transfer tokens between transparent and shielded accounts, supporting both privacy and transparency as needed.
-
-### 7. Namada App Installation
-
-Install the Namada app (v1.1.5) for command-line transactions and network interactions without running a full node. This lightweight client allows you to interact with the Namada blockchain, send transactions, and manage your accounts efficiently.
-
-### 8. Cubic Slashing Rate (CSR) Monitoring Tool
-
-The CSR Monitoring Tool is a unique feature of VoN that helps stakers and validators understand and manage Namada’s Cubic Slashing system. In Namada, slashing penalties are not linear but cubic, meaning that larger validators are penalized more heavily for misbehavior or downtime. This tool provides:
-
-- **Real-time Monitoring:** Visualize the current slashing rates and how they affect each validator based on their voting power.
-- **Risk Assessment:** Evaluate the risks and potential penalties associated with staking to large vs. small validators.
-- **Reward Optimization:** Make informed decisions about how to distribute your stake to minimize slashing risk and maximize rewards.
-- **Decentralization Encouragement:** The tool encourages users to spread their stake across smaller validators, supporting a more decentralized and resilient network.
-
-By using the CSR Monitoring Tool, both stakers and validators can better understand the dynamics of Namada’s security model and make smarter decisions to protect their assets.
-
-![image](https://github.com/user-attachments/assets/b76a7fe9-465e-4434-9c97-8d3538f1216b)
-![image](https://github.com/user-attachments/assets/0cb5953c-50c9-431f-868d-70af93927dc3)
-
-### 9. Namada Indexer Management
-
-- **Deploy Namada Indexer:** Set up the Namada Indexer to enable efficient transaction and event indexing for the network.
-- **Apply Snapshot:** Quickly synchronize the indexer with the latest network state.
-- **Show Logs:** Access and review logs for the Namada Indexer to monitor performance and troubleshoot issues.
-- **Management:** Restart, stop, backup, and delete the Namada Indexer as needed for maintenance and upgrades.
-
-### 10. Namada MASP Indexer Management
-
-- **Deploy Namada MASP Indexer:** Deploy the MASP Indexer for specialized MASP transaction indexing.
-- **Apply Snapshot:** Synchronize the MASP Indexer with the current network state.
-- **Show Logs:** View logs for the MASP Indexer to ensure proper operation and diagnose problems.
-- **Management:** Restart, stop, backup, and delete the MASP Indexer for full lifecycle control.
-
----
-
-## Installation
-
-#### System Requirements
+## System Requirements
 
 | Category  | Requirements                   |
 | --------- | ------------------------------ |
@@ -86,11 +37,58 @@ By using the CSR Monitoring Tool, both stakers and validators can better underst
 | Storage   | 1+ TB NVMe SSD                 |
 | Bandwidth | 100 MBps for Download / Upload |
 
-- Guide's current binaries version: `v1.0.0 - v1.1.1 - v1.1.5 - v101.1.4`
+- Guide's current binaries version: `v1.0.0 - v1.1.1 - v1.1.5 - v101.1.7 - v201.1.7`
 - Service file name: `namadad.service`
 - Current chain: `namada.5f5de2dd1b88cba30586420`
 
-### Automatic Installation
+## Automatic Installation
+
+### Valley of Namada (Mainnet): Tools by Grand Valley
+
+**Valley of Namada** is an all-in-one infrastructure solution developed by Grand Valley, designed to provide powerful tools for efficient node management and validator interactions within the Namada network. This toolkit is intended for node runners, validators, and anyone participating in the Namada ecosystem. Valley of Namada offers an accessible, streamlined interface to manage nodes, maintain network participation, and perform validator functions effectively, making it easier to operate and maintain a secure and up-to-date node.
+
+![VON](resources/image.png)
+![VoN](resources/image1.png)
+
+---
+
+#### Key Features of Valley of Namada
+
+Valley of Namada (VoN) is a comprehensive toolkit designed to simplify and enhance the experience of running and managing validator nodes on the Namada network. Below are the main features and their detailed explanations:
+
+- **Deploy and Manage Validator Nodes:** Easily deploy new validator nodes or remove existing ones through an intuitive interface. This feature streamlines the process of joining or leaving the network, ensuring that even users with minimal technical background can participate. **Important:** Always back up critical files such as seed phrases, private keys, and `priv_validator_key.json` before performing any deletion to prevent loss of access to your validator.
+- **Node Control and Monitoring:** Start, stop, or restart validator nodes as needed, providing full operational control. Monitor the current status of your validator node in real time, including health checks and synchronization status. This ensures your node remains active and in good standing within the network.
+- **Peer Management:** Add or update peer connections to improve network stability and communication. By managing your node’s peer list, you can optimize connectivity, reduce downtime, and ensure your validator is well-integrated with the rest of the network.
+- **Logging and Troubleshooting:** Access unified and comprehensive logs for your validator node. This feature aids in troubleshooting by providing clear, centralized log data, making it easier to identify and resolve issues quickly.
+- **Snapshot Application:** Accelerate node setup and recovery by applying the latest network snapshot. This allows you to synchronize your node with the current state of the blockchain much faster than syncing from genesis, saving significant time and bandwidth.
+- **Validator and Key Management**: Perform essential validator operations such as creating new validators, managing keys, staking tokens, and claiming rewards. This feature provides a user-friendly interface for all validator-related tasks, ensuring secure and efficient management of your staking activities.
+  - **Validator Setup:** Create a new validator to participate in network consensus and security.
+  - **Key Management:** Generate and manage wallets, restore wallets from seed phrases, and create payment addresses. This ensures secure handling of your cryptographic keys and funds.
+  - **Stake and Unstake Tokens:** Stake tokens to support network security or unstake them as needed. You can also query validator public keys and account balances directly from the toolkit.
+  - **Redelegate Tokens:** Move your stake from one validator to another without unbonding, allowing for flexible delegation strategies.
+  - **Withdraw Unbonded Tokens:** Easily withdraw tokens that have completed the unbonding period.
+  - **Claim Rewards:** Claim staking rewards earned by your validator.
+  - **Transfer Tokens:** Transfer tokens between transparent and shielded accounts, supporting both privacy and transparency as needed.
+- **Namada App Installation**: Install the Namada app (v1.1.5) for command-line transactions and network interactions without running a full node. This lightweight client allows you to interact with the Namada blockchain, send transactions, and manage your accounts efficiently.
+- **Cubic Slashing Rate (CSR) Monitoring Tool** The CSR Monitoring Tool is a unique feature of VoN that helps stakers and validators understand and manage Namada’s Cubic Slashing system. In Namada, slashing penalties are not linear but cubic, meaning that larger validators are penalized more heavily for misbehavior or downtime. This tool provides:
+  - **Real-time Monitoring:** Visualize the current slashing rates and how they affect each validator based on their voting power.
+  - **Risk Assessment:** Evaluate the risks and potential penalties associated with staking to large vs. small validators.
+  - **Reward Optimization:** Make informed decisions about how to distribute your stake to minimize slashing risk and maximize rewards.
+  - **Decentralization Encouragement:** The tool encourages users to spread their stake across smaller validators, supporting a more decentralized and resilient network.
+  - By using the CSR Monitoring Tool, both stakers and validators can better understand the dynamics of Namada’s security model and make smarter decisions to protect their assets.
+  ![image](https://github.com/user-attachments/assets/b76a7fe9-465e-4434-9c97-8d3538f1216b)
+  ![image](https://github.com/user-attachments/assets/0cb5953c-50c9-431f-868d-70af93927dc3)
+  - **Namada Indexer Management**
+    - **Deploy Namada Indexer:** Set up the Namada Indexer to enable efficient transaction and event indexing for the network.
+    - **Deploy Namada Indexer:** Set up the Namada Indexer to enable efficient transaction and event indexing for the network.
+    - **Apply Snapshot:** Quickly synchronize the indexer with the latest network state.
+    - **Show Logs:** Access and review logs for the Namada Indexer to monitor performance and troubleshoot issues.
+    - **Management:** Restart, stop, backup, and delete the Namada Indexer as needed for maintenance and upgrades.
+  - **Namada MASP Indexer Management**
+    - **Deploy Namada MASP Indexer:** Deploy the MASP Indexer for specialized MASP transaction indexing.
+    - **Apply Snapshot:** Synchronize the MASP Indexer with the current network state.
+    - **Show Logs:** View logs for the MASP Indexer to ensure proper operation and diagnose problems.
+    - **Management:** Restart, stop, backup, and delete the MASP Indexer for full lifecycle control.
 
 Recommended for most users. This method uses an installation script for a quick and easy setup.
 
@@ -102,17 +100,15 @@ bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main
 
 This loader script (stored in this repo) fetches and runs the primary installer hosted in the dedicated Valley-of-Namada-Mainnet repository: https://github.com/hubofvalley/Valley-of-Namada-Mainnet/.
 
-- Install the Namada app for command-line transactions and network interactions without running a full node.
-
 ---
 
-### Manual Installation
+## Manual Installation
 
 For advanced users who want full control over each installation step, troubleshooting, or custom configurations. This method requires manual execution of all commands and setup processes.
 
 ---
 
-#### 1. Install dependencies for building from source
+### 1. Install dependencies for building from source
 
 ```bash
 sudo apt update -y && sudo apt upgrade -y && \
@@ -120,7 +116,7 @@ sudo apt install -y curl git jq build-essential gcc unzip wget lz4 openssl \
 libssl-dev pkg-config protobuf-compiler clang cmake llvm llvm-dev
 ```
 
-#### 2. install go
+### 2. install go
 
 ```bash
 cd $HOME && ver="1.22.0" && \
@@ -131,7 +127,7 @@ echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin' >> ~/.bash_profile && \
 source ~/.bash_profile && go version
 ```
 
-#### 3. install rust
+### 3. install rust
 
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
@@ -139,7 +135,7 @@ source $HOME/.cargo/env
 rustc --version
 ```
 
-#### 4. install cometbft
+### 4. install cometbft
 
 ```bash
 cd $HOME
@@ -152,7 +148,7 @@ sudo cp $HOME/cometbft/build/cometbft /usr/local/bin/
 cometbft version
 ```
 
-#### 5. set vars
+### 5. set vars
 
 ENTER YOUR MONIKER & YOUR PREFERRED PORT NUMBER
 
@@ -169,7 +165,7 @@ export NAMADA_NETWORK_CONFIGS_SERVER="https://github.com/anoma/namada-mainnet-ge
 source $HOME/.bash_profile
 ```
 
-#### 6. download binary
+### 6. download binary
 
 ```bash
 cd $HOME
@@ -179,9 +175,9 @@ cd namada-v1.0.0-Linux-x86_64
 mv namad* /usr/local/bin/
 ```
 
-#### 7. join the network
+### 7. join the network
 
-##### as post-genesis validator
+#### as post-genesis validator
 
 ```bash
 namadac utils join-network --chain-id $NAMADA_CHAIN_ID
@@ -190,7 +186,7 @@ echo "Grand Valley's peers: $peers"
 sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$peers\"|" $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml
 ```
 
-##### as pre-genesis validator
+#### as pre-genesis validator
 
 ###### input your validator alias
 
@@ -201,7 +197,7 @@ echo $peers
 sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$peers\"|" $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml
 ```
 
-#### 8. set custom ports in config.toml file
+### 8. set custom ports in config.toml file
 
 ```bash
 sed -i.bak -e "s%laddr = \"tcp://0.0.0.0:26656\"%laddr = \"tcp://0.0.0.0:${NAMADA_PORT}656\"%;
@@ -212,13 +208,13 @@ s%^oracle_rpc_endpoint = \"http://127.0.0.1:8545\"oracle_rpc_endpoint = \"http:/
 s%^pprof_laddr = \"localhost:26060\"%pprof_laddr = \"localhost:${NAMADA_PORT}060\"%g" $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml
 ```
 
-#### 9. disable indexer (optional) (if u want to run a full node, skip this step)
+### 9. disable indexer (optional) (if u want to run a full node, skip this step)
 
 ```bash
 sed -i -e "s/^indexer *=.*/indexer = \"null\"/" $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml
 ```
 
-#### 10. create service file
+### 10. create service file
 
 ```bash
 sudo tee /etc/systemd/system/namadad.service > /dev/null <<EOF
@@ -243,7 +239,7 @@ WantedBy=multi-user.target
 EOF
 ```
 
-#### 11. start the node
+### 11. start the node
 
 ```bash
 sudo systemctl daemon-reload && \
@@ -252,17 +248,17 @@ sudo systemctl restart namadad && \
 sudo journalctl -u namadad -fn 100
 ```
 
-##### this is an example of the node is running well
+#### this is an example of the node is running well
 
 ![logs](resources/logs.png)
 
-#### 12. check node version
+### 12. check node version
 
 ```bash
 namada --version
 ```
 
-#### update peers
+## update peers
 
 ```bash
 peers=$(curl -sS https://lightnode-rpc-mainnet-namada.grandvalleys.com/net_info | jq -r '.result.peers[] | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr)"' | awk -F ':' '{print $1":"$(NF)}' | paste -sd, -)
@@ -270,7 +266,7 @@ echo "Grand Valley's peers: $peers"
 sed -i -e "s|^persistent_peers *=.*|persistent_peers = \"$peers\"|" $HOME/.local/share/namada/namada.5f5de2dd1b88cba30586420/config.toml
 ```
 
-#### update seeds
+## update seeds
 
 ```bash
 peers=tcp://65882ea69f4146d8cc83564257252f4711d3e05e@seed-mainnet-namada.grandvalleys.com:56656
