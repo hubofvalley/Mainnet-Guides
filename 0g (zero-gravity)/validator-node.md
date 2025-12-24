@@ -62,7 +62,7 @@
 #### Run the following command to install Valley of 0G:
 
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Testnet-Guides/main/0g%20(zero-gravity)/resources/valleyof0G.sh)
+bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/0g%20(zero-gravity)/resources/valleyof0G.sh)
 ```
 
 This loader script (stored in this repo) fetches and runs the primary installer hosted in the dedicated Valley-of-0G-Mainnet repository: https://github.com/hubofvalley/Valley-of-0G-Mainnet.
