@@ -343,5 +343,3 @@ sudo rm -rf $HOME/.0gchaind $HOME/aristotle $HOME/aristotle-v1.0.3 $HOME/aristot
 sed -i "/MONIKER\|OG_PORT/d" $HOME/.bash_profile
 sed -i "/ETH_RPC_URL\|BLOCK_NUM/d" $HOME/.bash_profile
 ```
-
----
