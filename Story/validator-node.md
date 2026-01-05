@@ -61,7 +61,7 @@
 - Service file names: `story.service`, `story-geth.service`
 - Current chain: `story`
 - Current story node version: `v1.4.2`
-- Current story-geth node version: `v1.1.2`
+- Current story-geth node version: `v1.2.0`
 
 ## Automatic Installation
 
@@ -160,9 +160,9 @@ cd $HOME
 # geth binary
 mkdir -p story-geth
 cd story-geth
-wget -O v1.1.2.tar.gz https://github.com/piplabs/story-geth/archive/refs/tags/v1.1.2.tar.gz
-tar -xzf v1.1.2.tar.gz
-cd story-geth-1.1.2
+wget -O v1.2.0.tar.gz https://github.com/piplabs/story-geth/archive/refs/tags/v1.2.0.tar.gz
+tar -xzf v1.2.0.tar.gz
+cd story-geth-1.2.0
 make geth
 cp /build/bin/geth $HOME/go/bin/
 sudo chown -R $USER:$USER $HOME/go/bin/geth
@@ -483,7 +483,7 @@ sed -i "/STORY_/d" $HOME/.bash_profile
 
 ```bash
 ####Prompt user for input
-read -p "Enter the story-geth version (e.g., v1.1.2): " GETH_VERSION
+read -p "Enter the story-geth version (e.g., v1.2.0): " GETH_VERSION
 read -p "Enter the installation directory (e.g., $HOME/story-geth-$GETH_VERSION): " GETH_INSTALL_DIR
 
 ####Define variables
