@@ -96,7 +96,7 @@ With Public Mainnet, Story's docs and code become public. Check them out below:
 - **Cosmos REST API:** `https://lightnode-api-mainnet-story.grandvalleys.com`
 - **Cosmos WS:** `wss://lightnode-rpc-mainnet-story.grandvalleys.com/websocket`
 - **EVM WS:** `wss://lightnode-wss-mainnet-story.grandvalleys.com`
-- **Peer:** `fffb1a0dc2b6af331c65328c1ed9afad0bf107de@peer-mainnet-story.grandvalleys.com:38656`
+- **Peer:** `fffb1a0dc2b6af331c65328c1ed9afad0bf107de@peer-mainnet-story.grandvalleys.com:37656`
 - **Seed:** `68205aae335cffa1e1995f59a6fc8832e434d98a@seed-mainnet-story.grandvalleys.com:38656`
 
 # Lets Buidl Story Together
