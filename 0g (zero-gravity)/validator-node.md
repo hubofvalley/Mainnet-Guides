@@ -12,19 +12,21 @@
     - [1. Prepare Environment Variables](#1-prepare-environment-variables)
     - [2. Cleanup Previous Installations](#2-cleanup-previous-installations)
     - [3. Install Dependencies](#3-install-dependencies)
-    - [4. Install Go](#4-install-go)
-    - [5. Download and Extract Aristotle Binary](#5-download-and-extract-aristotle-binary)
-    - [6. Initialize Chain](#6-initialize-chain)
-    - [7. Move Binaries to $HOME/go/bin/](#7-move-binaries-to-homegobin)
-    - [8. Patch Configuration Files](#8-patch-configuration-files)
-    - [9. Copy Node Keys](#9-copy-node-keys)
-    - [10. Generate JWT Authentication Token](#10-generate-jwt-authentication-token)
-    - [11. Create systemd Service Files](#11-create-systemd-service-files)
+    - [4. Prepare Environment Variables](#4-prepare-environment-variables)
+    - [5. Open Firewall Ports (Optional but recommended)](#5-open-firewall-ports-optional-but-recommended)
+    - [6. Install Go](#6-install-go)
+    - [7. Download and Extract Aristotle Binary](#7-download-and-extract-aristotle-binary)
+    - [8. Initialize Chain](#8-initialize-chain)
+    - [9. Move Binaries to $HOME/go/bin/](#9-move-binaries-to-homegobin)
+    - [10. Patch Configuration Files](#10-patch-configuration-files)
+    - [11. Copy Node Keys](#11-copy-node-keys)
+    - [12. Generate JWT Authentication Token](#12-generate-jwt-authentication-token)
+    - [13. Create systemd Service Files](#13-create-systemd-service-files)
       - [0gchaind Service](#0gchaind-service)
       - [0g-geth Service](#0g-geth-service)
-    - [12. Start Services](#12-start-services)
-    - [13. Check Logs](#13-check-logs)
-    - [14. Verify Installation](#14-verify-installation)
+    - [14. Start Services](#14-start-services)
+    - [15. Check Logs](#15-check-logs)
+    - [16. Verify Installation](#16-verify-installation)
   - [Delete the Node](#delete-the-node)
 
 
@@ -136,7 +138,38 @@ sudo apt update && sudo apt upgrade -y
 sudo apt install curl git wget htop tmux build-essential jq make lz4 gcc unzip -y
 ```
 
-### 4. Install Go
+### 4. Prepare Environment Variables
+
+Edit your moniker and your preferred port number:
+
+```bash
+read -p "Enter your moniker: " OG_MONIKER && echo "Current moniker: $OG_MONIKER"
+read -p "Enter your 2 digits custom port: (leave empty to use default: 26)" OG_PORT && echo "Current port number: ${OG_PORT:-26}"
+
+echo "export OG_MONIKER=$OG_MONIKER" >> $HOME/.bash_profile
+echo "export OG_CHAIN_ID=story" >> $HOME/.bash_profile
+echo "export OG_PORT=$OG_PORT" >> $HOME/.bash_profile
+source $HOME/.bash_profile
+```
+
+### 5. Open Firewall Ports (Optional but recommended)
+
+0G uses specific ports for peering and RPC. Allow SSH first so you do not lock yourself out.
+
+- 22 (TCP): SSH
+- 30303 (TCP/UDP): 0g-geth P2P
+- 26656 (TCP): 0g CometBFT P2P
+
+```bash
+sudo ufw allow 22/tcp comment "SSH Access"
+sudo ufw allow ${OG_PORT}303/tcp comment "0g-geth P2P"
+sudo ufw allow ${OG_PORT}303/udp comment "0g-geth discovery"
+sudo ufw allow ${OG_PORT}656/tcp comment "0g CometBFT P2P"
+sudo ufw --force enable
+sudo ufw status verbose
+```
+
+### 6. Install Go
 
 ```bash
 cd $HOME && ver="1.22.5"
@@ -149,7 +182,7 @@ source ~/.bash_profile
 go version
 ```
 
-### 5. Download and Extract Aristotle Binary
+### 7. Download and Extract Aristotle Binary
 
 ```bash
 cd $HOME
@@ -161,7 +194,7 @@ sudo chmod +x $HOME/aristotle/bin/geth
 sudo chmod +x $HOME/aristotle/bin/0gchaind
 ```
 
-### 6. Initialize Chain
+### 8. Initialize Chain
 
 ```bash
 mkdir -p $HOME/.0gchaind/
@@ -170,14 +203,14 @@ cp -r $HOME/aristotle/* $HOME/.0gchaind/
 0gchaind init "$OG_MONIKER" --home $HOME/.0gchaind/tmp --chaincfg.chain-spec mainnet
 ```
 
-### 7. Move Binaries to $HOME/go/bin/
+### 9. Move Binaries to $HOME/go/bin/
 
 ```bash
 cp $HOME/aristotle/bin/geth $HOME/go/bin/0g-geth
 cp $HOME/aristotle/bin/0gchaind $HOME/go/bin/0gchaind
 ```
 
-### 8. Patch Configuration Files
+### 10. Patch Configuration Files
 
 ```bash
 CONFIG="$HOME/.0gchaind/0g-home/0gchaind-home/config"
@@ -190,6 +223,8 @@ sed -i "s|laddr = \"tcp://127.0.0.1:26657\"|laddr = \"tcp://127.0.0.1:${OG_PORT}
 sed -i "s|^proxy_app = .*|proxy_app = \"tcp://127.0.0.1:${OG_PORT}658\"|" $CONFIG/config.toml
 sed -i "s|^pprof_laddr = .*|pprof_laddr = \"0.0.0.0:${OG_PORT}060\"|" $CONFIG/config.toml
 sed -i "s|prometheus_listen_addr = \".*\"|prometheus_listen_addr = \"0.0.0.0:${OG_PORT}660\"|" $CONFIG/config.toml
+sed -i "s|timeout_commit = \".*\"|timeout_commit = \"200ms\"|" $CONFIG/config.toml
+
 
 # Configure indexer based on user input
 if [ "$ENABLE_INDEXER" = "yes" ]; then
@@ -206,6 +241,7 @@ sed -i "s|^rpc-dial-url *=.*|rpc-dial-url = \"http://localhost:${OG_PORT}551\"|"
 sed -i "s/^pruning *=.*/pruning = \"custom\"/" $CONFIG/app.toml
 sed -i "s/^pruning-keep-recent *=.*/pruning-keep-recent = \"100\"/" $CONFIG/app.toml
 sed -i "s/^pruning-interval *=.*/pruning-interval = \"19\"/" $CONFIG/app.toml
+sed -i "s/^payload-timeout *=.*/payload-timeout = \"200ms\"/" $CONFIG/app.toml
 
 # geth-config.toml
 sed -i "s/HTTPPort = .*/HTTPPort = ${OG_PORT}545/" $GCONFIG
@@ -217,7 +253,7 @@ sed -i "s/^# *Port = .*/# Port = ${OG_PORT}901/" $GCONFIG
 sed -i "s/^# *InfluxDBEndpoint = .*/# InfluxDBEndpoint = \"http:\/\/localhost:${OG_PORT}086\"/" $GCONFIG
 ```
 
-### 9. Copy Node Keys
+### 11. Copy Node Keys
 
 ```bash
 cp $HOME/.0gchaind/tmp/data/priv_validator_state.json $HOME/.0gchaind/0g-home/0gchaind-home/data/
@@ -225,14 +261,14 @@ cp $HOME/.0gchaind/tmp/config/node_key.json $HOME/.0gchaind/0g-home/0gchaind-hom
 cp $HOME/.0gchaind/tmp/config/priv_validator_key.json $HOME/.0gchaind/0g-home/0gchaind-home/config/
 ```
 
-### 10. Generate JWT Authentication Token
+### 12. Generate JWT Authentication Token
 
 ```bash
 0gchaind jwt generate --home $HOME/.0gchaind/0g-home/0gchaind-home --chaincfg.chain-spec mainnet
 cp -f $HOME/.0gchaind/0g-home/0gchaind-home/config/jwt.hex $HOME/.0gchaind/jwt.hex
 ```
 
-### 11. Create systemd Service Files
+### 13. Create systemd Service Files
 
 #### 0gchaind Service
 
@@ -294,7 +330,7 @@ WantedBy=multi-user.target
 EOF
 ```
 
-### 12. Start Services
+### 14. Start Services
 
 ```bash
 sudo systemctl daemon-reload
@@ -304,13 +340,13 @@ sudo systemctl start 0gchaind
 sudo systemctl start 0g-geth
 ```
 
-### 13. Check Logs
+### 15. Check Logs
 
 ```bash
 sudo journalctl -u 0gchaind -u 0g-geth -fn 100
 ```
 
-### 14. Verify Installation
+### 16. Verify Installation
 
 ```bash
 echo -e "\n✅ 0G Validator Node Installation Completed Successfully!"
