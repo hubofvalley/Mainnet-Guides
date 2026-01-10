@@ -98,6 +98,6 @@ With Public Mainnet, Story's docs and code become public. Check them out below:
 - **EVM WS:** `wss://lightnode-wss-mainnet-story.grandvalleys.com`
 - **Peer:** `fffb1a0dc2b6af331c65328c1ed9afad0bf107de@peer-mainnet-story.grandvalleys.com:37656`
 - **Seed:** `68205aae335cffa1e1995f59a6fc8832e434d98a@seed-mainnet-story.grandvalleys.com:36656`
-- **Enode**: `enode://0c8ac41a0249cbfbdeac561962dd723f80d0a03aec7e9cfa0bee80990e7ec974139ab3e627376725f0afe37e5ae4c36ea7b941f7ebf1742257e2d58eadae58a3@enode-mainnet-story.grandvalleys.com:37303`
+- **enode**: `enode://3a46c66eb9978a33dab0cbdc9f28b2627a97935ee71cef5d40547a87b06f5883fd9048a38007c12778ccf01ca4c43ff6d9a044383e791187a3ea6235927dc76@enode-mainnet-story.grandvalleys.com:37303`
 
 # Lets Buidl Story Together
