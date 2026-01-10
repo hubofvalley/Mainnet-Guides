@@ -293,7 +293,7 @@ ExecStart=$HOME/go/bin/0gchaind start \\
   --chaincfg.kzg.implementation=crate-crypto/go-kzg-4844 \\
   --chaincfg.engine.rpc-dial-url=http://localhost:${OG_PORT}551 \\
   --p2p.external_address=$(curl -4 -s ifconfig.me):${OG_PORT}656
-Restart=always
+Restart=on-failure
 RestartSec=3
 LimitNOFILE=65535
 
@@ -321,7 +321,7 @@ ExecStart=$HOME/go/bin/0g-geth \\
   --authrpc.port ${OG_PORT}551 \\
   --port ${OG_PORT}303 \\
   --networkid 16661
-Restart=always
+Restart=on-failure
 RestartSec=3
 LimitNOFILE=65535
 
