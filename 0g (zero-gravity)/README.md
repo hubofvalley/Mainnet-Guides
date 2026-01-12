@@ -15,7 +15,7 @@ oO> _This guide is continuously updated._
   - [0G’s Architecture](#0gs-architecture)
   - [0G Solving Target](#0g-solving-target)
   - [Conclusion](#conclusion)
-  - [Grand Valley's 0G Testnet Public Endpoints](#grand-valleys-0g-testnet-public-endpoints)
+  - [Grand Valley's 0G Mainnet Public Endpoints](#grand-valleys-0g-mainnet-public-endpoints)
 - [Continue to Storage Node](#continue-to-storage-node)
 - [Let's Buidl 0G Together](#lets-buidl-0g-together)
 
@@ -75,10 +75,11 @@ With Public Mainnet, 0G’s docs and code become public. Check them out below:
 
 ## Grand Valley's 0G Mainnet Public Endpoints
 
-- **Cosmos RPC:** `https://lightnode-rpc-0g.grandvalleys.com`
-- **JSON-RPC:** `https://lightnode-json-rpc-0g.grandvalleys.com`
-- **Cosmos REST API:** `https://lightnode-api-0g.grandvalleys.com`
-- **Peer:** `a97c8615903e795135066842e5739e30d64e2342@peer-0g.grandvalleys.com:28656`
+- **Cosmos RPC:** `https://lightnode-rpc-mainnet-0g.grandvalleys.com`
+- **JSON-RPC:** `https://lightnode-json-rpc-mainnet-0g.grandvalleys.com`
+- **Cosmos REST API:** `https://lightnode-api-mainnet-0g.grandvalleys.com`
+- **Peer:** `c27d9181c99091aa2fe2dbc3f28148cdce534f22@peer-mainnet-0g.grandvalleys.com:28656`
+- **Enode:** `enode://c79ca76c97446ed4509db37a1297f4697e49941dda42bbe46cd1651edfc41a5acdf3e97c42dbe42f52be6a5684266f3e2918cb8630b22e39c13c194846501f7f@enode-mainnet-0g.grandvalleys.com:28303`
 
 ---
 
