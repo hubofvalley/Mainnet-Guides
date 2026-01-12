@@ -83,7 +83,7 @@ With Public Mainnet, 0G’s docs and code become public. Check them out below:
 
 ---
 
-# [Continue to Storage Node](https://github.com/hubofvalley/Testnet-Guides/blob/main/0g%20(zero-gravity)/storage-node.md)
+# [Continue to Storage Node](https://github.com/hubofvalley/Mainnet-Guides/blob/main/0g%20(zero-gravity)/storage-node.md)
 
 ---
 
