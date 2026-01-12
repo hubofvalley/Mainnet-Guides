@@ -78,6 +78,8 @@ With Public Mainnet, 0G’s docs and code become public. Check them out below:
 - **Cosmos RPC:** `https://lightnode-rpc-mainnet-0g.grandvalleys.com`
 - **JSON-RPC:** `https://lightnode-json-rpc-mainnet-0g.grandvalleys.com`
 - **Cosmos REST API:** `https://lightnode-api-mainnet-0g.grandvalleys.com`
+- **Cosmos WebSocket API**: `ws://lightnode-rpc-mainnet-0g.grandvalleys.com/websocket`
+- **EVM Websocket API**: `ws://lightnode-wss-mainnet-0g.grandvalleys.com`
 - **Peer:** `c27d9181c99091aa2fe2dbc3f28148cdce534f22@peer-mainnet-0g.grandvalleys.com:28656`
 - **Enode:** `enode://c79ca76c97446ed4509db37a1297f4697e49941dda42bbe46cd1651edfc41a5acdf3e97c42dbe42f52be6a5684266f3e2918cb8630b22e39c13c194846501f7f@enode-mainnet-0g.grandvalleys.com:28303`
 
