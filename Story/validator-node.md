@@ -92,6 +92,11 @@
 bash <(curl -s https://raw.githubusercontent.com/hubofvalley/Mainnet-Guides/main/Story/resources/valleyofStory.sh)
 ```
 
+> **Note on Custom Service Names:**
+> On first run, the script will ask for your **Consensus Service Name** and **Geth Service Name**.
+> - If this is your first/only node, just press **Enter** to use the defaults (`story` and `story-geth`).
+> - If you are running **multiple nodes** on the same server (e.g., Mainnet + Testnet, or Locked + Unlocked validators), enter unique names like `story-locked` and `story-geth-locked` to avoid service conflicts.
+
 This loader script (stored in this repo) fetches and runs the primary installer hosted in the dedicated Valley-of-Story-Mainnet repository: https://github.com/hubofvalley/Valley-of-Story-Mainnet.
 
 ---
