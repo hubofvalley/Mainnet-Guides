@@ -39,7 +39,7 @@
 | Storage    | 1+ TB NVMe SSD               |
 | Bandwidth  | 100 MBps for Download/Upload |
 
-- Guide's current binaries version: `v1.0.3` (will automatically update to the latest version)
+- Guide's current binaries version: `v1.0.4` (will automatically update to the latest version)
 - Service file name: `0gchaind.service`
 
 ## Automatic Installation
@@ -128,7 +128,7 @@ sudo systemctl stop 0gchaind 0g-geth 0ggeth
 sudo systemctl disable 0gchaind 0g-geth 0ggeth
 sudo rm -f /etc/systemd/system/0gchaind.service /etc/systemd/system/0g-geth.service /etc/systemd/system/0ggeth.service
 sudo rm -f $HOME/go/bin/0gchaind $HOME/go/bin/0g-geth $HOME/go/bin/0ggeth
-rm -rf $HOME/.0gchaind $HOME/aristotle $HOME/aristotle-v1.0.3 $HOME/aristotle-v1.0.3.tar.gz
+rm -rf $HOME/.0gchaind $HOME/aristotle $HOME/aristotle-v1.0.4 $HOME/aristotle-v1.0.4.tar.gz
 ```
 
 ### 3. Install Dependencies
@@ -186,10 +186,10 @@ go version
 
 ```bash
 cd $HOME
-wget https://github.com/0gfoundation/0gchain-Aristotle/releases/download/1.0.3/aristotle-v1.0.3.tar.gz
-tar -xzvf aristotle-v1.0.3.tar.gz
-cp -r aristotle-v1.0.3/${NODE_TYPE} aristotle
-rm aristotle-v1.0.3.tar.gz
+wget https://github.com/0gfoundation/0gchain-Aristotle/releases/download/1.0.4/aristotle-v1.0.4.tar.gz
+tar -xzvf aristotle-v1.0.4.tar.gz
+cp -r aristotle-v1.0.4/${NODE_TYPE} aristotle
+rm aristotle-v1.0.4.tar.gz
 sudo chmod +x $HOME/aristotle/bin/geth
 sudo chmod +x $HOME/aristotle/bin/0gchaind
 ```
@@ -382,7 +382,7 @@ echo -e "Node ID: $($HOME/aristotle/bin/0gchaind comet show-node-id --home $HOME
 sudo systemctl stop 0gchaind 0g-geth
 sudo systemctl disable 0gchaind 0g-geth
 sudo rm -rf /etc/systemd/system/0gchaind.service /etc/systemd/system/0g-geth.service
-sudo rm -rf $HOME/.0gchaind $HOME/aristotle $HOME/aristotle-v1.0.3 $HOME/aristotle-v1.0.3.tar.gz
+sudo rm -rf $HOME/.0gchaind $HOME/aristotle $HOME/aristotle-v1.0.4 $HOME/aristotle-v1.0.4.tar.gz
 sed -i "/OG_MONIKER\|OG_PORT/d" $HOME/.bash_profile
 sed -i "/ETH_RPC_URL\|BLOCK_NUM/d" $HOME/.bash_profile
 ```
