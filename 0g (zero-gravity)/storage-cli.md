@@ -1,5 +1,7 @@
 # 0gchain Storage CLI Guide
 
+> **Legacy guide:** verify the current release and contracts against official 0G documentation before use. This page is not managed by the Valley of 0G version manifest.
+
 ## Table of Contents
 
 - [0gchain Storage CLI Guide](#0gchain-storage-cli-guide)
@@ -175,3 +177,5 @@ echo -e "\033[3mLet's Buidl 0G Together - Grand Valley\033[0m"
 ---
 
 # Lets Buidl 0G Together
+
+last updated by: John
