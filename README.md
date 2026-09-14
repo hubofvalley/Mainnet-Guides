@@ -32,6 +32,11 @@ I'm Grand Valley, and I run validator nodes on a couple of mainnets. Here’s wh
 - You can delegate to my validator or use the endpoints for your own node/app.
 - I keep things stable and try to help the community where I can.
 
+### Gnoland
+- Gno.land `gnoland-1` mainnet node tooling with the established Valley of Gnoland terminal UX.
+- The maintained launcher, verified release metadata, node guide, and safety checks live in [Valley of Gnoland Mainnet](https://github.com/hubofvalley/Valley-of-Gnoland-Mainnet).
+- Public RPC: https://rpc.gno.land
+
 ---
 
 ## How I Work
